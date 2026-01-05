@@ -1,0 +1,14 @@
+{
+  "vimMode": false,
+  "showLineNumber": true,
+  "defaultViewMode": "preview",
+  "livePreview": true,
+  "showFrontmatter": false,
+  "foldHeading": true,
+  "foldIndent": true,
+  "attachmentFolderPath": "Assets/images",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "Notes/topics",
+  "alwaysUpdateLinks": true,
+  "promptDelete": false
+}
