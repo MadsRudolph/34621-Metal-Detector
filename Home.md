@@ -7,15 +7,21 @@
 
 ---
 
+## 📚 Theory
+
+See [[Theory References]] for links to DSP and EM course materials from my DTU vault.
+
+---
+
 ## 📋 Quick Links
 
-| Section | Description |
-|---------|-------------|
-| [[Code/README\|💻 Code]] | Arduino firmware and DSP implementation |
-| [[LTspice/README\|⚡ LTspice]] | Circuit simulations |
-| [[KiCad/README\|🔧 KiCad]] | PCB schematics and layout |
-| [[Literature/README\|📚 Literature]] | Course materials and datasheets |
-| [[Notes/README\|📝 Notes]] | Personal notes and documentation |
+| Section                              | Description                             |
+| ------------------------------------ | --------------------------------------- |
+| [[Code/README\|💻 Code]]             | Arduino firmware and DSP implementation |
+| [[LTspice/README\|⚡ LTspice]]        | Circuit simulations                     |
+| [[KiCad/README\|🔧 KiCad]]           | PCB schematics and layout               |
+| [[Literature/README\|📚 Literature]] | Course materials and datasheets         |
+| [[Notes/README\|📝 Notes]]           | Personal notes and documentation        |
 
 ---
 
@@ -108,7 +114,7 @@
 
 ## 🔗 External Resources
 
-- [ATmega2560 Datasheet](https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf)
+- [[databogMega2560.pdf]]
 - [MCP3208 Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/21298e.pdf)
 - [SSD1306 Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
 

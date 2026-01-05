@@ -2,6 +2,10 @@
 
 Hardware design files for the VLF Metal Detector.
 
+> 🚀 **Open Project:** [Metaldetector.kicad_pro](file:///C:/Users/Mads2/34621-EM-Sensors-DSP/KiCad/Metaldetector/Metaldetector.kicad_pro)
+
+> 📚 **Theory:** [Op-Amp Design](obsidian://open?vault=Obsidian&file=Courses%2FIntegrated%20Analog%20Electronics%2FLTspice%20%26%20Kicad%2F02%20-%20Two-Stage%20CMOS%20Op-Amp) | [Inductance](obsidian://open?vault=Obsidian&file=Courses%2FElectromagnetics%2FFormulas%2FL23%20-%20Magnetostatics%20II)
+
 ## Structure
 
 ```

@@ -1,5 +1,7 @@
 # DFT Algorithm
 
+> 📚 **Theory:** [DSP-Bible](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FDSP-Bible) | [Windowing Guide](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFIR_Windowing_Complete_Guide) | [Week 1-4](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FWeek%201-4)
+
 The optimized single-bin Discrete Fourier Transform used in our metal detector.
 
 ## The Optimization Trick

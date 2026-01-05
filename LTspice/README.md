@@ -2,6 +2,8 @@
 
 Circuit simulations for the VLF Metal Detector.
 
+> 📚 **Theory:** [Op-Amp Design](obsidian://open?vault=Obsidian&file=Courses%2FIntegrated%20Analog%20Electronics%2FLTspice%20%26%20Kicad%2F02%20-%20Two-Stage%20CMOS%20Op-Amp) | [Filter Prototypes](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFilter_Prototypes_Comparison)
+
 ## Structure
 
 ```
@@ -42,12 +44,12 @@ LTspice/
 
 ## Simulation Checklist
 
-| Circuit | Schematic | Transient | AC Analysis | Notes |
-|---------|-----------|-----------|-------------|-------|
-| TX Driver | ⬜ | ⬜ | ⬜ | |
-| RX Amp | ⬜ | ⬜ | ⬜ | |
-| Filter | ⬜ | ⬜ | ⬜ | |
-| Full Chain | ⬜ | ⬜ | ⬜ | |
+| Circuit    | Schematic | Transient | AC Analysis | Notes |
+| ---------- | --------- | --------- | ----------- | ----- |
+| TX Driver  | ⬜         | ⬜         | ⬜           |       |
+| RX Amp     | ⬜         | ⬜         | ⬜           |       |
+| Filter     | ⬜         | ⬜         | ⬜           |       |
+| Full Chain | ⬜         | ⬜         | ⬜           |       |
 
 ## LTspice Tips
 

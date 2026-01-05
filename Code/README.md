@@ -2,6 +2,8 @@
 
 Arduino Mega 2560 (ATmega2560) firmware for VLF metal detection.
 
+> 📚 **Theory:** [DSP-Bible](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FDSP-Bible) | [FIIR & IIR](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFIIR%20%26%20IIR) | [Under Sampling](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FUnder%20Sampling)
+
 ## Structure
 
 ```
