@@ -11,30 +11,17 @@
             "id": "05aefcf8b5943939",
             "type": "leaf",
             "state": {
-              "type": "pdf",
-              "state": {
-                "file": "Literature/databogMega2560.pdf"
-              },
-              "icon": "lucide-file-text",
-              "title": "databogMega2560"
-            }
-          },
-          {
-            "id": "e3b1412d8778538a",
-            "type": "leaf",
-            "state": {
               "type": "markdown",
               "state": {
-                "file": "Home.md",
-                "mode": "preview",
+                "file": "Notes/topics/⚡ Power Budget Analysis.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Home"
+              "title": "⚡ Power Budget Analysis"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -196,31 +183,36 @@
       "bases:Create new base": false
     }
   },
-  "active": "e3b1412d8778538a",
+  "active": "05aefcf8b5943939",
   "lastOpenFiles": [
-    "Literature/databogMega2560.pdf",
-    "Home.md",
-    "Notes/README.md",
-    "Notes/topics/DFT Algorithm.md",
-    "Theory References.md",
-    "README.md",
-    "KiCad/README.md",
+    "LTspice/example.op.raw",
+    "LTspice/example.log",
+    "LTspice/example.raw",
+    "LTspice/example.net",
+    "LTspice/bc337.t",
+    "LTspice/example.asc",
+    "Literature/20240103_144208.jpg",
+    "Literature/20240103_144158.jpg",
+    "Literature/bipolar_transistor.pdf",
     "Literature/Day_1/kravspecifikation.pdf",
-    "KiCad/Metaldetector/Metaldetector.kicad_prl",
-    "KiCad/Metaldetector/Metaldetector-backups/Metaldetector-2026-01-05_214004.zip",
-    "KiCad/Metaldetector/Metaldetector-backups",
+    "Notes/topics/⚡ Power Budget Analysis.md",
+    "Literature/kravspecifikation.pdf.md",
+    "Literature/duracell_9volt.pdf",
     "LTspice/README.md",
-    "Literature/filters_v3_III_v1.pdf",
-    "Literature/op_amps_everyone.pdf",
+    "KiCad/README.md",
+    "Theory References.md",
+    "Home.md",
+    "Literature/databogMega2560.pdf",
+    "Code/src/drivers/sed0nBYRG",
+    "README.md",
+    "Notes/topics/DFT Algorithm.md",
     "Code/README.md",
     "Notes/topics/[[.md",
-    "Home.md.tmp.39224.1767644381746",
-    "Theory References.md.tmp.39224.1767644354111",
     "Templates/Literature Note.md",
     "Templates/Debug Log.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
-    "KiCad/Metaldetector/~Metaldetector.kicad_pro.lck",
+    "Notes/README.md",
     "Literature/README.md"
   ]
 }

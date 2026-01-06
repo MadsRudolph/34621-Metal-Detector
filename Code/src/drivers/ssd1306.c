@@ -26,7 +26,7 @@
 #endif
 #include <util/delay.h>
 #include <avr/pgmspace.h>
-#include "ssd1306_driver.h"
+#include "ssd1306.h"
 #include "data.h"
 #define ssd1306_swap(a, b) { int16_t t = a; a = b; b = t; }
 #define _vccstate 1  //externalVcc
