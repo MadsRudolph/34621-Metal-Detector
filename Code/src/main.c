@@ -15,9 +15,20 @@
 
 /* TODO: Implement */
 
+//init, ADC, timere, TCNT, enum tilstande,
+
+
+// timer SigGen
+// ISR Siggen
+
+
 int main(void)
 {
     while (1) {
+ 
+ 
+ 
+ 
     }
     return 0;
 }
