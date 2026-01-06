@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/topics/⚡ Power Budget Analysis.md",
+                "file": "Notes/topics/Coil Configuration Comparison.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "⚡ Power Budget Analysis"
+              "title": "Coil Configuration Comparison"
             }
           }
         ]
@@ -185,27 +185,29 @@
   },
   "active": "05aefcf8b5943939",
   "lastOpenFiles": [
+    "Code/src/drivers/ssd1306.h",
+    "Code/src/drivers/ssd1306.c",
+    "Code/src/drivers/I2C.h",
+    "Code/src/drivers/I2C.c",
+    "Code/src/drivers/data.h",
+    "Code/src/drivers",
+    "Code/sedhuZJlg",
+    "Notes/topics/Power Budget Analysis.md",
+    "Notes/topics/Coil Configuration Comparison.md",
+    "Notes/topics/DFT Algorithm.md",
+    "Notes/topics/Current Measurement Guide.md",
+    "Code/src/power_test.c",
+    "Home.md",
     "LTspice/example.op.raw",
     "LTspice/example.log",
     "LTspice/example.raw",
-    "LTspice/example.net",
-    "LTspice/bc337.t",
-    "LTspice/example.asc",
     "Literature/20240103_144208.jpg",
     "Literature/20240103_144158.jpg",
-    "Literature/bipolar_transistor.pdf",
-    "Literature/Day_1/kravspecifikation.pdf",
-    "Notes/topics/⚡ Power Budget Analysis.md",
     "Literature/kravspecifikation.pdf.md",
-    "Literature/duracell_9volt.pdf",
     "LTspice/README.md",
     "KiCad/README.md",
     "Theory References.md",
-    "Home.md",
-    "Literature/databogMega2560.pdf",
-    "Code/src/drivers/sed0nBYRG",
     "README.md",
-    "Notes/topics/DFT Algorithm.md",
     "Code/README.md",
     "Notes/topics/[[.md",
     "Templates/Literature Note.md",
