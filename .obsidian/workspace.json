@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "cd91af6cd3a45c7d",
+        "id": "177f0530fef6cb54",
         "type": "tabs",
         "children": [
           {
-            "id": "05aefcf8b5943939",
+            "id": "84d1ef613851da3e",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/topics/Coil Configuration Comparison.md",
-                "mode": "source",
+                "file": "Notes/topics/Power Budget Analysis.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Coil Configuration Comparison"
+              "title": "Power Budget Analysis"
             }
           }
         ]
@@ -183,24 +183,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "05aefcf8b5943939",
+  "active": "84d1ef613851da3e",
   "lastOpenFiles": [
-    "Code/src/drivers/ssd1306.h",
-    "Code/src/drivers/ssd1306.c",
-    "Code/src/drivers/I2C.h",
-    "Code/src/drivers/I2C.c",
-    "Code/src/drivers/data.h",
-    "Code/src/drivers",
-    "Code/sedhuZJlg",
+    "Code/src/sedHHRBeo",
+    "Code/src/sed6CqfL1",
+    "Notes/README.md",
+    "Notes/topics/Power Budget Analysis.md.tmp.33196.1767722096594",
     "Notes/topics/Power Budget Analysis.md",
+    "Notes/topics/Current Measurement Guide.md",
+    "Code/platformio.ini",
+    "Code/src/dsp.h",
+    "Code/src/dsp.c",
+    "Code/src/sampling.h",
+    "Code/src/sampling.c",
+    "Code/src/tx.h",
+    "Code/src/tx.c",
+    "Code/src/uart.h",
     "Notes/topics/Coil Configuration Comparison.md",
     "Notes/topics/DFT Algorithm.md",
-    "Notes/topics/Current Measurement Guide.md",
-    "Code/src/power_test.c",
     "Home.md",
-    "LTspice/example.op.raw",
-    "LTspice/example.log",
-    "LTspice/example.raw",
     "Literature/20240103_144208.jpg",
     "Literature/20240103_144158.jpg",
     "Literature/kravspecifikation.pdf.md",
@@ -214,7 +215,6 @@
     "Templates/Debug Log.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
-    "Notes/README.md",
     "Literature/README.md"
   ]
 }

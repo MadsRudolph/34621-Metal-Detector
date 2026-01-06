@@ -8,7 +8,8 @@
       "Bash(/c/Users/Mads2/.platformio/penv/Scripts/pio.exe run:*)",
       "Bash(python3:*)",
       "Bash(python:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(mkdir:*)"
     ]
   }
 }
