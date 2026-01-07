@@ -1,7 +1,8 @@
 # Power Budget Analysis
 
-> **Requirement:** Metal detector must run for 100 minutes on a 9V battery (6LR61) with remaining voltage >6V.
-> 
+> [!abstract] Core Requirement
+> Metal detector must run for **100 minutes** on a 9V battery (6LR61) with remaining voltage **>6V**.
+>
 > See: [[kravspecifikation.pdf|Kravspecifikation]] requirements 4 & 5
 
 ---
@@ -49,12 +50,12 @@ From datasheet curves at 21°C:
 
 |Current (mA)|Runtime to 6V|Effective Capacity|Efficiency|
 |---|---|---|---|
-|10|2400 min (40h)|400 mAh|80%|
-|25|1080 min (18h)|450 mAh|90%|
-|50|600 min (10h)|500 mAh|100%|
-|100|210 min (3.5h)|350 mAh|70%|
-|150|120 min (2h)|300 mAh|60%|
-|200|75 min (1.25h)|250 mAh|50%|
+|10|2400 min (40h)|400 mAh|80\%|
+|25|1080 min (18h)|450 mAh|90\%|
+|50|600 min (10h)|500 mAh|100\%|
+|100|210 min (3.5h)|350 mAh|70\%|
+|150|120 min (2h)|300 mAh|60\%|
+|200|75 min (1.25h)|250 mAh|50\%|
 
 ### 1.4 Internal Resistance Effects
 
@@ -110,16 +111,17 @@ $$t = \frac{C_{eff}}{I} \Rightarrow I = \frac{C_{eff}}{t} = \frac{300\ \text{mAh
 
 Factors reducing actual capacity:
 
-- Temperature variation: -10% (if cold)
-- Battery aging: -5%
-- Manufacturing variation: -5%
-- Self-discharge: -2%
+- Temperature variation: -10\% (if cold)
+- Battery aging: -5\%
+- Manufacturing variation: -5\%
+- Self-discharge: -2\%
 
 Combined derating factor: $0.9 \times 0.95 \times 0.95 \times 0.98 = 0.79$
 
 $$I_{conservative} = I_{max} \times 0.79 = 161 \times 0.79 = 127\ \text{mA}$$
 
-> **Design Maximum: $I_{max} = 120$ mA** (rounded down for margin)
+> [!danger] Design Maximum
+> $I_{max} = 120$ mA (rounded down for margin)
 
 ### 2.3 Design Target with Safety Margin
 
@@ -127,7 +129,8 @@ Applying 1.2× safety factor for measurement uncertainty:
 
 $$I_{target} = \frac{I_{max}}{1.2} = \frac{120}{1.2} = 100\ \text{mA}$$
 
-> **Design Target: $I_{system} \leq 100$ mA**
+> [!success] Design Target
+> $I_{system} \leq 100$ mA
 
 ---
 
@@ -138,7 +141,7 @@ $$I_{target} = \frac{I_{max}}{1.2} = \frac{120}{1.2} = 100\ \text{mA}$$
 |Parameter|Value|
 |---|---|
 |Date|January 2025|
-|Shunt Resistor|$R_{shunt} = 1.00\ \Omega \pm 1%$|
+|Shunt Resistor|$R_{shunt} = 1.00\ \Omega \pm 1\%$|
 |Measurement Device|Analog Discovery 3 Oscilloscope|
 |AD3 Resolution|14-bit, ±25mV range|
 |Sampling Rate|1 kHz|
@@ -178,9 +181,9 @@ This 1:1 relationship simplifies calculations.
 
 **Sources of uncertainty:**
 
-1. **Shunt resistor tolerance:** ±1% $$u_R = 0.01 \times 79.49 = 0.79\ \text{mA}$$
+1. **Shunt resistor tolerance:** ±1\% $$u_R = 0.01 \times 79.49 = 0.79\ \text{mA}$$
     
-2. **AD3 voltage accuracy:** ±0.5% + 2mV offset $$u_V = 0.005 \times 79.49 + 2 \times 1 = 0.40 + 2 = 2.4\ \text{mA}$$
+2. **AD3 voltage accuracy:** ±0.5\% + 2mV offset $$u_V = 0.005 \times 79.49 + 2 \times 1 = 0.40 + 2 = 2.4\ \text{mA}$$
     
 3. **Temperature coefficient of shunt:** ~50 ppm/°C At ΔT = 10°C: $$u_T = 50 \times 10^{-6} \times 10 \times 79.49 = 0.04\ \text{mA}$$
     
@@ -199,7 +202,7 @@ $$u_{combined} = \sqrt{6.39} = 2.53\ \text{mA}$$
 
 $$I_{measured} = 79.5 \pm 2.5\ \text{mA}\ (k=1)$$
 
-Or with 95% confidence (k=2):
+Or with 95\% confidence (k=2):
 
 $$I_{measured} = 79.5 \pm 5.1\ \text{mA (95\% CI)}$$
 
@@ -213,7 +216,7 @@ The observed 25.2 mA peak-to-peak variation has identifiable sources:
 - Bytes per frame: ~1024 bytes (8 pages × 128 columns)
 - Transmission time: 1024 × 9 bits / 400 kHz = 23 ms
 - Update period: ~83 ms (12 Hz)
-- I2C duty cycle: 23/83 = 28%
+- I2C duty cycle: 23/83 = 28\%
 
 During I2C transmission, current increases due to:
 
@@ -357,10 +360,10 @@ This power is wasted as heat in the regulator.
 |---|---|
 |Supply voltage|3.3V - 5V|
 |Standby current|10 µA|
-|Operating current (50% pixels)|8-10 mA|
+|Operating current (50\% pixels)|8-10 mA|
 |Operating current (all pixels ON)|20 mA|
 
-For typical text display (~30% pixels lit):
+For typical text display (~30\% pixels lit):
 
 **$I_{OLED} = 15$ mA**
 
@@ -381,7 +384,7 @@ LP2985 provides 3.3V for some analog circuitry.
 |ATmega16U2 (USB chip)|12|Always on|
 |Power LED|8|Green LED|
 |NCP1117 quiescent|5|LDO overhead|
-|SSD1306 OLED|15|~30% pixels|
+|SSD1306 OLED|15|~30\% pixels|
 |3.3V regulator system|2|LP2985 + load|
 |PCB leakage|1|Capacitors, traces|
 |**Subtotal (5V rail)**|**63 mA**||
@@ -472,13 +475,13 @@ But since main loop is also active (not idle), the marginal increase is essentia
 - Conversion time: 13 ADC cycles = 104 µs
 - Sample rate: 8 kHz (in ISR)
 
-104 µs conversion time vs 125 µs sample period means ADC is active 83% of the time.
+104 µs conversion time vs 125 µs sample period means ADC is active 83\% of the time.
 
 **ADC current:**
 
 From datasheet: ADC adds 0.3 mA when active.
 
-At 83% duty cycle:
+At 83\% duty cycle:
 
 $$I_{ADC} = 0.3\ \text{mA} \times 0.83 = 0.25\ \text{mA}$$
 
@@ -525,7 +528,7 @@ $$y[n] = 0.1 \cdot x[n] + 0.9 \cdot y[n-1]$$
 |---|---|
 |Timer1 peripheral|0.1|
 |Timer3 peripheral|0.1|
-|ADC (83% active)|0.3|
+|ADC (83\% active)|0.3|
 |DFT computation|0|
 |IIR filter|0|
 |**Total DSP overhead**|**0.5 mA**|
@@ -548,11 +551,12 @@ $$I_{TX,available} = I_{max} - I_{electronics}$$
 
 $$I_{TX,available} = 120\ \text{mA} - 80\ \text{mA} = 40\ \text{mA}$$
 
-With 10% margin for measurement uncertainty:
+With 10\% margin for measurement uncertainty:
 
 $$I_{TX,design} = 40 \times 0.9 = 36\ \text{mA}$$
 
-> **Design target for TX coil: 35-40 mA**
+> [!tip] Design Target for TX Coil
+> **35-40 mA** available for TX coil drive
 
 ### 6.3 Available Power for TX Coil
 
@@ -561,13 +565,14 @@ $$P_{TX} = V_{supply} \times I_{TX}$$
 |Battery State|$V_{supply}$ (V)|$I_{TX}$ (mA)|$P_{TX}$ (mW)|
 |---|---|---|---|
 |Fresh|9.0|40|**360**|
-|75% capacity|8.0|40|**320**|
-|50% capacity|7.5|40|**300**|
-|25% capacity|7.0|40|**280**|
+|75\% capacity|8.0|40|**320**|
+|50\% capacity|7.5|40|**300**|
+|25\% capacity|7.0|40|**280**|
 |End of life|6.5|40|**260**|
 |Cutoff|6.0|40|**240**|
 
-> **TX Coil power budget: 240-360 mW**
+> [!info] TX Coil Power Budget
+> **240-360 mW** available (varies with battery voltage)
 
 ---
 
@@ -690,7 +695,8 @@ $$L = \frac{\lvert Z \rvert}{2\pi f} = \frac{190}{2\pi \times 2000} = \frac{190}
 |Impedance @ 2kHz|**140 Ω**|—|
 |Current @ 7.5V|**54 mA** ⚠️|—|
 
-**⚠️ Double-D Issue:** Lower impedance means higher current (54 mA vs 40 mA budget).
+> [!warning] Double-D Issue
+> Lower impedance means higher current (54 mA vs 40 mA budget).
 
 **Solutions for Double-D:**
 
@@ -712,7 +718,8 @@ $$L = \frac{\lvert Z \rvert}{2\pi f} = \frac{190}{2\pi \times 2000} = \frac{190}
 |Pinpointing|Excellent|Good|
 |Construction|Easier|Harder|
 
-> **Recommendation:** Start with **Concentric** — fits power budget perfectly.
+> [!tip] Recommendation
+> Start with **Concentric** coil design — fits power budget perfectly.
 
 ---
 
@@ -724,22 +731,24 @@ $$L = \frac{\lvert Z \rvert}{2\pi f} = \frac{190}{2\pi \times 2000} = \frac{190}
 
 |Aspect|Class D (Switching)|Class AB (Linear)|
 |---|---|---|
-|**Efficiency**|90-99%|50-70%|
+|**Efficiency**|90-99\%|50-70\%|
 |**Heat dissipation**|Very low|High (~140 mW)|
 |**Power to coil**|~340 mW|~220 mW|
 |**Complexity**|Low-Medium|Low|
 
-> **Selected: Class D (Switching)** — Higher efficiency critical for battery life.
+> [!success] Selected Topology
+> **Class D (Switching)** — Higher efficiency critical for battery life.
 
 ### 8.2 Driver Options
 
 |Option|Components|Efficiency|Drive Current|
 |---|---|---|---|
-|Simple NPN|2N2222A + 1N4148|94%|2.9 mA|
-|BJT Half-Bridge|2×NPN + 2×PNP|82%|6 mA|
-|**MOSFET Half-Bridge**|Si2301 + Si2302|**99.9%**|**~0 mA**|
+|Simple NPN|2N2222A + 1N4148|94\%|2.9 mA|
+|BJT Half-Bridge|2×NPN + 2×PNP|82\%|6 mA|
+|**MOSFET Half-Bridge**|Si2301 + Si2302|**99.9\%**|**~0 mA**|
 
-> **Recommended: MOSFET Half-Bridge** — Saves 6 mA, virtually zero losses.
+> [!tip] Recommended Driver
+> **MOSFET Half-Bridge** — Saves 6 mA, virtually zero losses.
 
 ### 8.3 MOSFET Half-Bridge Design
 
@@ -776,7 +785,7 @@ $$L = \frac{\lvert Z \rvert}{2\pi f} = \frac{190}{2\pi \times 2000} = \frac{190}
 |Gate drive loss|0.1 mW|
 |**Total driver loss**|**0.35 mW**|
 |Power to coil|**359.65 mW**|
-|**Driver efficiency**|**99.9%**|
+|**Driver efficiency**|**99.9\%**|
 
 ### 8.5 Complete Driver BOM
 
@@ -833,7 +842,8 @@ Since skin depth (0.36 mm) << target radius (15 mm), the entire cross-section co
 
 With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 
-> **Assessment:** Detection at 50mm should be achievable with careful analog design
+> [!success] Assessment
+> Detection at 50mm should be achievable with careful analog design
 
 ---
 
@@ -851,7 +861,7 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 │                                                                      │
 │  BATTERY: Duracell MN1604 → ~350 mAh to 6V @ 120mA                  │
 │  TARGET RUNTIME: 100 min (requirement)                               │
-│  TX DUTY CYCLE: 100% (continuous)                                    │
+│  TX DUTY CYCLE: 100\% (continuous)                                    │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
@@ -868,7 +878,7 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  TX COIL SYSTEM (100% duty cycle)                        40 mA      │
+│  TX COIL SYSTEM (100\% duty cycle)                        40 mA      │
 │  ├─ TX Coil (L=15mH, Z=189Ω @ 7.5V)                      40 mA      │
 │  ├─ Coil DC resistance loss (R=4.7Ω)                    7.5 mW      │
 │  └─ Driver losses (MOSFET)                             <0.5 mW      │
@@ -879,16 +889,16 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 │  EXPECTED RUNTIME                                      ~100 min     │
 │                                                                      │
 │  DETECTION PERFORMANCE                                  MAXIMUM     │
-│  MAGNETIC FIELD STRENGTH                                  100%      │
+│  MAGNETIC FIELD STRENGTH                                  100\%      │
 │                                                                      │
 │  STATUS: ✅ MEETS REQUIREMENT - Maximum detection depth!            │
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-### 10.2 Option B: Conservative Mode (20% Margin)
+### 10.2 Option B: Conservative Mode (20\% Margin)
 
-> **Philosophy:** Trade 20% detection performance for 20% runtime safety margin.
+> **Philosophy:** Trade 20\% detection performance for 20\% runtime safety margin.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -897,23 +907,23 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │  BATTERY: Duracell MN1604 → ~400 mAh to 6V @ 100mA                  │
-│  TARGET RUNTIME: 120 min (100 min + 20% margin)                      │
-│  TX DUTY CYCLE: 80% (160ms ON / 40ms OFF)                           │
+│  TARGET RUNTIME: 120 min (100 min + 20\% margin)                      │
+│  TX DUTY CYCLE: 80\% (160ms ON / 40ms OFF)                           │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  ELECTRONICS (with 80% duty cycle)                       69 mA      │
-│  ├─ ATmega2560 (80% active, 20% idle)                   21.1 mA     │
+│  ELECTRONICS (with 80\% duty cycle)                       69 mA      │
+│  ├─ ATmega2560 (80\% active, 20\% idle)                   21.1 mA     │
 │  ├─ ATmega16U2 (always on)                               12 mA      │
 │  ├─ Power LED                                             8 mA      │
 │  ├─ Regulators + 3.3V                                     9 mA      │
 │  ├─ PCB leakage                                           5 mA      │
-│  └─ SSD1306 OLED (80% active)                           14.4 mA     │
+│  └─ SSD1306 OLED (80\% active)                           14.4 mA     │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  TX COIL SYSTEM (80% duty cycle)                         32 mA      │
-│  ├─ TX Coil (40mA × 80%)                                 32 mA      │
+│  TX COIL SYSTEM (80\% duty cycle)                         32 mA      │
+│  ├─ TX Coil (40mA × 80\%)                                 32 mA      │
 │  └─ Driver losses                                       ~0 mA       │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
@@ -921,8 +931,8 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 │  AVERAGE SYSTEM CURRENT                                 ~100 mA     │
 │  EXPECTED RUNTIME                                      ~120 min     │
 │                                                                      │
-│  DETECTION PERFORMANCE                                     80%      │
-│  MAGNETIC FIELD STRENGTH                                   80%      │
+│  DETECTION PERFORMANCE                                     80\%      │
+│  MAGNETIC FIELD STRENGTH                                   80\%      │
 │  RUNTIME MARGIN                                        +20 min      │
 │                                                                      │
 │  STATUS: ✅ SAFE - Good balance of performance and margin           │
@@ -934,15 +944,16 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 
 |Parameter|Maximum Power|Conservative|
 |---|---|---|
-|TX duty cycle|100%|80%|
+|TX duty cycle|100\%|80\%|
 |Average TX current|40 mA|32 mA|
 |Total current|120 mA|100 mA|
 |Runtime|~100 min|~120 min|
-|**Magnetic field**|**100%**|**80%**|
-|**Detection depth**|**100%**|**~93%**|
+|**Magnetic field**|**100\%**|**80\%**|
+|**Detection depth**|**100\%**|**~93\%**|
 |Safety margin|0 min|+20 min|
 
-> **Detection depth scales as cube root of power:** 80% field ≈ 93% depth
+> [!note] Detection Physics
+> Detection depth scales as **cube root of power:** 80% field ≈ 93% depth
 
 ### 10.4 With LED Removed (Best Performance)
 
@@ -969,7 +980,7 @@ Removing the power LED frees 8 mA for either more margin or more TX power:
 |Mode|Concentric (40mA TX)|Double-D (54mA TX)|
 |---|---|---|
 |Maximum Power|120 mA → 100 min ✅|134 mA → 85 min ⚠️|
-|Conservative (80%)|100 mA → 120 min ✅|109 mA → 105 min ✅|
+|Conservative (80\%)|100 mA → 120 min ✅|109 mA → 105 min ✅|
 |With LED removed|112 mA → 110 min ✅|126 mA → 95 min ⚠️|
 
 > **Double-D requires Conservative mode** to meet 100 min requirement, OR add 47Ω series resistor to limit TX current.
@@ -980,15 +991,94 @@ Removing the power LED frees 8 mA for either more margin or more TX power:
 
 ### 11.0 Design Philosophy: Maximize Detection Power
 
-> **Goal:** Maximum TX power (= maximum detection depth) while meeting 100 min runtime requirement.
-> 
+> [!abstract] Design Goal
+> Maximum TX power (= maximum detection depth) while meeting 100 min runtime requirement.
 > We want to **use** the available power budget, not save it unnecessarily!
 
 The requirement is 100 minutes runtime. Running for 200+ minutes means we're leaving detection performance on the table.
 
+### 11.0.1 Design for 7.5V Supply Voltage
+
+**Problem with designing for 9V:**
+- Fresh battery: 9.4V under load
+- Mid-life battery: 7.5V under load  
+- End-of-life: 6.0V (cutoff)
+
+If we design the TX driver for 9V operation:
+- Performance is maximum only when battery is fresh
+- Detection depth degrades continuously as battery discharges
+- User experience is inconsistent
+
+**Solution: Design all circuits for 7.5V**
+
+By using 7.5V as the design voltage:
+
+| Benefit | Explanation |
+|---------|-------------|
+| **Consistent performance** | Same TX current from fresh to near-depleted battery |
+| **No compensation code** | No need for voltage sensing or adaptive drive |
+| **Predictable behavior** | Detection depth stays constant throughout use |
+| **Simpler design** | One operating point, not a variable range |
+
+**Voltage availability analysis:**
+
+| Battery State | Open Circuit | Under Load (100mA) | Time at State |
+|---------------|--------------|-------------------|---------------|
+| Fresh | 9.4V | ~9.2V | 0-20 min |
+| Mid-life | 8.0V | ~7.5V | 20-70 min |
+| Low | 7.0V | ~6.5V | 70-95 min |
+| Cutoff | 6.5V | ~6.0V | 95-100 min |
+
+**7.5V is available for ~80\% of the battery's useful life.** During the first 20 minutes (fresh battery), we simply have extra headroom. During the last 5-10 minutes, performance may drop slightly but remains acceptable until cutoff.
+
+### 11.0.2 Power Redistribution Strategy
+
+**Key Insight:** Detection depth depends on **peak magnetic field strength**, not average power consumption.
+
+Instead of running continuously at moderate power, we can:
+1. **Sleep during idle periods** → Reduce average system current
+2. **Use the saved current budget** → Drive TX coil harder during active periods
+3. **Result:** Higher peak magnetic field → Deeper detection
+
+**Example calculation:**
+
+| Mode | Duty Cycle | Average I | Peak TX I | Relative Field |
+|------|------------|-----------|-----------|----------------|
+| Continuous | 100\% | 120 mA | 40 mA | Baseline |
+| Pulsed | 80\% | 100 mA | **50 mA** | **125\%** |
+| Aggressive Pulsed | 50\% | 70 mA | **80 mA** | **200\%** |
+
+By sleeping 20\% of the time, we save 20 mA average current. This headroom can be redirected to increase peak TX drive current from 40 mA to 50 mA during active periods.
+
+**The math:**
+
+At 100\% duty, 120 mA budget:
+$$I_{TX,peak} = 120 - 80 = 40\ \text{mA}$$
+
+At 80\% duty, same 120 mA average budget:
+$$I_{avg} = I_{fixed} + I_{variable} \times 0.8 + I_{TX,peak} \times 0.8 = 120\ \text{mA}$$
+
+Solving for increased peak TX current:
+$$I_{TX,peak} = \frac{120 - 32 - (25 + 18) \times 0.8}{0.8} = \frac{120 - 32 - 34.4}{0.8} = \frac{53.6}{0.8} = 67\ \text{mA}$$
+
+> **Result:** 80\% duty cycle allows **67 mA peak TX current** vs 40 mA continuous — a **68\% increase in peak field strength!**
+
+**Trade-off considerations:**
+
+| Factor | Continuous (100\%) | Pulsed (80\%) |
+|--------|-------------------|--------------|
+| Peak TX current | 40 mA | 67 mA |
+| Peak magnetic field | Baseline | **+68\%** |
+| Detection depth | Baseline | **~+19\%** (cube root) |
+| Update rate | Continuous | 5 Hz |
+| Code complexity | Simple | Moderate |
+| Coil settling time | N/A | ~5 ms needed |
+
+**Recommendation:** Use 80\% duty cycle with increased peak TX current for maximum detection depth while meeting runtime requirements.
+
 ### 11.1 Current Budget Analysis
 
-**Target runtime:** 100 min (requirement) to 120 min (with 20% margin)
+**Target runtime:** 100 min (requirement) to 120 min (with 20\% margin)
 
 From battery discharge curves:
 
@@ -1019,7 +1109,7 @@ $$I_{avg} = 32 + 5.5 + (19.5 + 18 + 40) \times X = 37.5 + 77.5X\ \text{mA}$$
 
 ### 11.2 Optimal Duty Cycle Calculation
 
-**For 120 min runtime (conservative, 20% margin):**
+**For 120 min runtime (conservative, 20\% margin):**
 
 Target $I_{avg} = 100$ mA:
 
@@ -1031,47 +1121,94 @@ Target $I_{avg} = 120$ mA:
 
 $$120 = 37.5 + 77.5X$$ $$X = \frac{82.5}{77.5} = 106\% \rightarrow 100\%$$
 
-> **Result:** We can run at **100% duty cycle** and still meet the 100 min requirement!
+> **Result:** We can run at **100\% duty cycle** and still meet the 100 min requirement!
 
 ### 11.3 Operating Mode Options
 
 |Mode|Duty Cycle|TX Average|Relative Field|Runtime|
 |---|---|---|---|---|
-|Maximum Power|**100%**|**40 mA**|**100%**|**~100 min**|
-|Conservative|80%|32 mA|80%|~120 min|
-|Battery Saver|50%|20 mA|50%|~160 min|
-|Ultra Saver|25%|10 mA|25%|~210 min|
+|Maximum Power|**100\%**|**40 mA**|**100\%**|**~100 min**|
+|Conservative|80\%|32 mA|80\%|~120 min|
+|Battery Saver|50\%|20 mA|50\%|~160 min|
+|Ultra Saver|25\%|10 mA|25\%|~210 min|
 
 ### 11.4 Recommended Configuration
 
-#### Option A: Maximum Power Mode (Recommended)
+#### Option A: Power Redistribution Mode (RECOMMENDED)
 
-**Use when:** Detection depth is priority, runtime exactly meets requirement.
+**Use when:** Maximum detection depth is priority. This is the optimal configuration.
+
+**Strategy:** Use duty cycling to save average current, redirect savings to higher peak TX drive.
+
+```
+         ┌────────────────────────┐     ┌────────────────
+    TX:  │    ON (67mA peak)      │     │   ON (67mA)
+         ┘                        └─────┘
+         ├────────160ms───────────┤─40ms┤
+         
+              Sample + DFT          Sleep
+         
+    vs Continuous mode: ════════════════════════════════
+                          ON (40mA continuous)
+```
+
+|Parameter|Value|
+|---|---|
+|Design voltage|**7.5V** (consistent across battery life)|
+|TX duty cycle|80\%|
+|Active period|160 ms (320 TX cycles)|
+|Sleep period|40 ms|
+|Update rate|5 Hz|
+|**Peak TX current**|**67 mA** (vs 40 mA continuous)|
+|Average TX current|53.6 mA|
+|Total system current|~120 mA average|
+|Expected runtime|~100 min|
+|**Detection performance**|**+68\% field strength, +19\% depth vs continuous**|
+
+**Why this beats continuous operation:**
+
+| Metric | Continuous (100\%) | Pulsed (80\%) | Improvement |
+|--------|-------------------|--------------|-------------|
+| Peak TX current | 40 mA | 67 mA | **+68\%** |
+| Peak magnetic field | Baseline | +68\% | **+68\%** |
+| Detection depth | Baseline | +19\% | **+19\%** |
+| Runtime | 100 min | 100 min | Same |
+
+**Implementation notes:**
+- TX driver must be designed for 67 mA at 7.5V
+- Coil needs ~5 ms settling time after TX enable
+- MCU enters IDLE sleep during off periods
+- OLED can remain on (small current vs TX savings)
+
+#### Option B: Simple Continuous Mode
+
+**Use when:** Simplicity is priority over maximum detection depth.
 
 ```
     TX: ████████████████████████████████████████████████
         ├──────────────── Continuous ─────────────────►
         
-        100% duty cycle = Maximum magnetic field
+        100\% duty cycle @ 40mA = Baseline magnetic field
 ```
 
 |Parameter|Value|
 |---|---|
-|TX duty cycle|100%|
-|Average TX current|40 mA|
+|Design voltage|7.5V|
+|TX duty cycle|100\%|
+|TX current|40 mA (continuous)|
 |Total system current|120 mA|
 |Expected runtime|~100 min|
-|Detection performance|**Maximum**|
+|Detection performance|**Baseline**|
 
-**No duty cycling needed!** The continuous design already meets requirements.
+**Simpler code, but 19\% less detection depth than Option A.**
 
-#### Option B: Conservative Mode (Recommended for reliability)
+#### Option C: Conservative Mode (Extra Runtime Margin)
 
-**Use when:** Want 20% safety margin on runtime.
+**Use when:** Want 20\% runtime safety margin, don't need maximum detection depth.
 
 ```
          ┌────────────────────────┐     ┌────────────────
-    TX:  │          ON            │     │       ON
+    TX:  │     ON (40mA std)      │     │   ON (40mA)
          ┘                        └─────┘
          ├────────160ms───────────┤─40ms┤
          
@@ -1080,36 +1217,28 @@ $$120 = 37.5 + 77.5X$$ $$X = \frac{82.5}{77.5} = 106\% \rightarrow 100\%$$
 
 |Parameter|Value|
 |---|---|
-|TX duty cycle|80%|
+|Design voltage|7.5V|
+|TX duty cycle|80\%|
 |Active period|160 ms (320 TX cycles)|
 |Sleep period|40 ms|
 |Update rate|5 Hz|
+|Peak TX current|40 mA (standard)|
 |Average TX current|32 mA|
 |Total system current|~100 mA|
-|Expected runtime|~120 min|
-|Detection performance|**80% of maximum**|
+|Expected runtime|**~120 min (+20\% margin)**|
+|Detection performance|**80\% of baseline**|
 
-**Benefits of 80% mode:**
+**Use this if:** Battery quality is uncertain, or you want extra runtime margin. Does NOT redirect saved power to TX coil.
 
-- 20% runtime safety margin
-- Still captures 320 cycles per measurement (excellent SNR)
-- 5 Hz update rate (faster than human sweep speed)
-- Allows for battery variation/aging
+### 11.5 Mode Comparison Summary
 
-### 11.5 Why Duty Cycling Below 80% Wastes Performance
+|Mode|Duty|Peak TX|Avg Current|Runtime|Detection Depth|
+|---|---|---|---|---|---|
+|**A: Power Redistribution**|80\%|**67 mA**|120 mA|100 min|**+19\% vs baseline**|
+|B: Simple Continuous|100\%|40 mA|120 mA|100 min|Baseline|
+|C: Conservative|80\%|40 mA|100 mA|120 min|80\% of baseline|
 
-|Duty Cycle|TX Field|Runtime|Wasted Potential|
-|---|---|---|---|
-|100%|100%|100 min|None|
-|80%|80%|120 min|Acceptable margin|
-|50%|50%|160 min|60 min unused!|
-|25%|25%|210 min|**110 min unused!**|
-
-Every 1% reduction in duty cycle:
-
-- Reduces magnetic field by 1%
-- Reduces detection depth by ~0.3% (cube root relationship)
-- Gains ~1.3 min of unnecessary runtime
+> **Recommendation:** Use **Option A (Power Redistribution)** for maximum detection performance at 7.5V design voltage.
 
 ### 11.6 Physical Constraints (Why Updates > 5 Hz Don't Help)
 
@@ -1119,22 +1248,24 @@ Every 1% reduction in duty cycle:
 |Coil diameter|150 mm||
 |Target traverse time|300 ms|Time for object to cross coil|
 |Nyquist update rate|3.3 Hz|Minimum to not miss targets|
-|Chosen update rate|5 Hz|50% margin|
+|Chosen update rate|5 Hz|50\% margin|
 
 At 5 Hz updates with 0.5 m/s sweep:
 
 - Sample spacing: 100 mm
 - Guaranteed overlap with 150 mm coil ✓
 
-### 11.7 Implementation: Conservative Mode (80%)
+### 11.7 Implementation: Power Redistribution Mode (Option A - RECOMMENDED)
 
 ```c
-#define ACTIVE_PERIOD_MS   160   // 320 TX cycles at 2kHz
-#define SLEEP_PERIOD_MS    40    // Brief sleep
-#define UPDATE_RATE_HZ     5     // 200ms total period
+#define DESIGN_VOLTAGE     7.5      // Design for mid-life battery voltage
+#define ACTIVE_PERIOD_MS   160      // 320 TX cycles at 2kHz
+#define SLEEP_PERIOD_MS    40       // Brief sleep
+#define UPDATE_RATE_HZ     5        // 200ms total period
+#define TX_PEAK_CURRENT_MA 67       // Increased from 40mA baseline
 
 void measurement_cycle(void) {
-    // Turn on TX driver
+    // Turn on TX driver (configured for 67mA at 7.5V)
     enable_tx_driver();
     
     // Wait for coil to stabilize (~5ms)
@@ -1158,22 +1289,41 @@ void measurement_cycle(void) {
 }
 ```
 
-### 11.8 Implementation: Maximum Power Mode (100%)
+**TX Driver Design for 67mA at 7.5V:**
+
+The TX coil impedance at 2kHz with 15mH inductance and 4.7Ω DC resistance:
+$$Z_{coil} = \sqrt{R_{dc}^2 + (2\pi f L)^2} = \sqrt{4.7^2 + (2\pi \times 2000 \times 0.015)^2} = \sqrt{22 + 35400} = 188\ \Omega$$
+
+For 67mA peak current:
+$$V_{required} = I \times Z = 0.067 \times 188 = 12.6\ V_{peak}$$
+
+This requires a voltage boost or H-bridge driver to achieve higher peak voltage than the 7.5V supply. Options:
+1. **H-bridge driver** - doubles effective voltage swing (±7.5V = 15V peak-to-peak)
+2. **Resonant tank circuit** - Q factor multiplies voltage at resonance
+3. **Boost converter** - increase supply voltage to TX driver
+
+### 11.8 Implementation: Simple Continuous Mode (Option B)
 
 ```c
-// No duty cycling needed - continuous operation
+#define DESIGN_VOLTAGE     7.5      // Design for mid-life battery voltage
+#define TX_CURRENT_MA      40       // Standard continuous current
+
+// No duty cycling - continuous operation at 7.5V design point
 void main_loop(void) {
+    // TX runs continuously (Timer1 hardware PWM)
+    // ADC sampling synchronized to TX (Timer1 triggered)
+    
     while (1) {
-        // Continuous sampling via ISR (Timer3 @ 8kHz)
-        // DFT computed in main loop
         if (samples_ready) {
             compute_dft();
-            update_display();  // ~5 Hz update rate
+            update_display();  // Throttle to ~5 Hz
             samples_ready = 0;
         }
     }
 }
 ```
+
+**Simpler than Option A, but 19\% less detection depth.**
 
 ---
 
@@ -1185,12 +1335,12 @@ void main_loop(void) {
 - Zero functional impact
 - Frees 8 mA for more TX power or longer runtime
 
-**With LED removed:**
+**With LED removed (Power Redistribution mode):**
 
-|Mode|Current|Runtime|Notes|
-|---|---|---|---|
-|Max Power|112 mA|~110 min|+10 min margin|
-|Conservative|92 mA|~130 min|+30 min margin|
+|Configuration|Peak TX|Avg Current|Runtime|Depth Improvement|
+|---|---|---|---|---|
+|Standard|67 mA|120 mA|100 min|+19\%|
+|LED removed|**75 mA**|120 mA|100 min|**+28\%**|
 
 **Priority 2: Use bare ATmega2560** (future optimization)
 
@@ -1203,37 +1353,44 @@ void main_loop(void) {
 
 |Parameter|0.3mm Wire|0.52mm Wire|Improvement|
 |---|---|---|---|
-|DC resistance|14.6 Ω|4.7 Ω|**68% lower**|
+|DC resistance|14.6 Ω|4.7 Ω|**68\% lower**|
 |Q factor|12.9|40|**3× higher**|
-|Power in R_dc|23 mW|7.5 mW|**67% less heat**|
+|Power in R_dc|23 mW|7.5 mW|**67\% less heat**|
 |Coil bandwidth|155 Hz|50 Hz|Narrower (more selective)|
 
 Lower DC resistance means more power reaches the magnetic field instead of being wasted as heat.
 
-### 11.11 Why MOSFET Driver Matters
+### 11.11 Why MOSFET H-Bridge Driver is Essential
+
+For the Power Redistribution strategy, the MOSFET H-bridge is critical:
 
 |Parameter|Simple NPN|MOSFET H-Bridge|
 |---|---|---|
 |Drive current|2.9 mA|~0 mA|
 |Driver loss|20 mW|0.35 mW|
-|Efficiency|94%|99.9%|
+|Efficiency|94\%|99.9\%|
+|**Voltage swing**|0 to V+|**-V+ to +V+**|
+|**Effective peak voltage**|7.5V|**15V (doubled)**|
 
-**MOSFET saves ~3 mA** — this can be redirected to more TX power or runtime margin.
+**MOSFET H-bridge doubles the effective voltage swing**, enabling the higher peak currents needed for the power redistribution strategy. With an H-bridge, you get ±7.5V swing (15V peak-to-peak) from a 7.5V supply.
 
 ### 11.12 Summary: Recommended Operating Modes
 
-|Coil Type|Mode|TX Current|Total Current|Runtime|Performance|
-|---|---|---|---|---|---|
-|**Concentric**|**Max Power**|**40 mA**|**120 mA**|**100 min**|**100%**|
-|Concentric|Conservative|32 mA|100 mA|120 min|80%|
-|Concentric|Max + no LED|40 mA|112 mA|110 min|100% ✅ Best|
-|Double-D|Conservative|43 mA|109 mA|105 min|80%|
-|Double-D|Max Power|54 mA|134 mA|85 min|❌ Too short|
+**Design Voltage: 7.5V** (consistent performance throughout battery life)
 
-> **Recommendation:**
-> 
-> - **Concentric:** Use Maximum Power mode (or Max + LED removed for 10 min margin)
-> - **Double-D:** Use Conservative (80%) mode to meet runtime requirement
+|Coil Type|Mode|Peak TX|Avg Current|Runtime|Detection Depth|
+|---|---|---|---|---|---|
+|**Concentric**|**Power Redistribution**|**67 mA**|**120 mA**|**100 min**|**+19\% vs baseline ✅**|
+|Concentric|Simple Continuous|40 mA|120 mA|100 min|Baseline|
+|Concentric|Conservative|40 mA|100 mA|120 min|80\% of baseline|
+|Concentric|Redistribution + no LED|75 mA|120 mA|100 min|**+28\% vs baseline**|
+|Double-D|Conservative|43 mA|109 mA|105 min|80\% of baseline|
+
+> [!tip] Final Recommendation
+> - **Use Power Redistribution Mode** with 7.5V design voltage and MOSFET H-bridge driver
+> - **Concentric coil:** 67 mA peak TX current → +19% detection depth vs continuous
+> - **Remove Power LED** for additional 8 mA headroom → 75 mA peak → +28% depth
+> - **Double-D:** Use Conservative mode with standard 40 mA to meet runtime
 
 ---
 
@@ -1262,7 +1419,7 @@ Lower DC resistance means more power reaches the magnetic field instead of being
 
 **Test both operating modes:**
 
-#### Maximum Power Mode (100% duty cycle)
+#### Maximum Power Mode (100\% duty cycle)
 
 |Time (min)|Target I (mA)|$V_{bat}$ (V)|Status|
 |---|---|---|---|
@@ -1272,7 +1429,7 @@ Lower DC resistance means more power reaches the magnetic field instead of being
 |75|120|>7.0||
 |**100**|120|**>6.0**|**PASS?**|
 
-#### Conservative Mode (80% duty cycle)
+#### Conservative Mode (80\% duty cycle)
 
 |Time (min)|Target I (mA)|$V_{bat}$ (V)|Status|
 |---|---|---|---|
@@ -1288,9 +1445,9 @@ Verify detection depth correlates with TX power:
 
 |Mode|TX Current|Expected Depth|Measured Depth|
 |---|---|---|---|
-|Maximum (100%)|40 mA|50 mm baseline||
-|Conservative (80%)|32 mA|~47 mm (93%)||
-|Battery Saver (50%)|20 mA|~40 mm (80%)||
+|Maximum (100\%)|40 mA|50 mm baseline||
+|Conservative (80\%)|32 mA|~47 mm (93\%)||
+|Battery Saver (50\%)|20 mA|~40 mm (80\%)||
 
 > Test target: Ø30mm × 50mm iron cylinder
 

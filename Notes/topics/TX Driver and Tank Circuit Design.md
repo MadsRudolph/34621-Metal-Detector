@@ -1,6 +1,7 @@
 # TX Driver and Tank Circuit Design
 
-> **Purpose:** Design the power amplifier stage to drive the TX coil efficiently within the power budget constraints.
+> [!abstract] Purpose
+> Design the power amplifier stage to drive the TX coil efficiently within the power budget constraints.
 >
 > See: [[Power Budget Analysis]] for current budget, [[Coil Basics.pdf|Coil Basics]]
 
@@ -56,9 +57,7 @@ $$P_{wasted} = 360 - 234 = 126\ \text{mW (as heat)}$$
 
 ### 1.4 Decision
 
-> **Selected topology: Class D (Switching)**
->
-> Rationale:
+> [!success] Selected Topology: Class D (Switching)
 > - 97% efficiency vs 65% for Class AB
 > - More power delivered to coil (better detection range)
 > - Lower heat dissipation (no heatsink needed)
@@ -127,11 +126,12 @@ This means the circuit responds to frequencies from ~1920 Hz to ~2080 Hz.
 
 ### 2.5 Current Amplification
 
-At resonance, the tank circuit provides current amplification. The current in the LC loop can be Q times higher than the drive current:
-
-$$I_{coil} = Q \times I_{drive}$$
-
-This is a key advantage — we can achieve higher coil current with lower driver current!
+> [!note] Q Factor Advantage
+> At resonance, the tank circuit provides current amplification. The current in the LC loop can be **Q times higher** than the drive current:
+>
+> $$I_{coil} = Q \times I_{drive}$$
+>
+> This is a key advantage — we can achieve higher coil current with lower driver current!
 
 ---
 
@@ -186,7 +186,8 @@ At resonance with Q = 12.6, voltage can be amplified:
 
 $$V_{C,peak} \approx Q \times \frac{4}{\pi} \times \frac{V_{supply}}{2} = 12.6 \times 1.27 \times 4.5 = 72V$$
 
-Use **50V rated capacitors minimum**, preferably 100V for safety margin.
+> [!warning] Voltage Rating
+> Use **50V rated capacitors minimum**, preferably 100V for safety margin.
 
 ---
 
@@ -385,7 +386,8 @@ $$P_{cond} = (40mA)^2 \times (100m\Omega + 50m\Omega) = 0.0016 \times 0.15 = 0.2
 
 ### 5.5 Verdict
 
-> **Use MOSFETs for half-bridge designs.** The efficiency advantage is overwhelming, and the circuit is actually simpler (no base resistors, built-in body diodes).
+> [!tip] Use MOSFETs for half-bridge designs
+> The efficiency advantage is overwhelming, and the circuit is actually simpler (no base resistors, built-in body diodes).
 
 ---
 
@@ -421,8 +423,8 @@ $$P_{cond} = (40mA)^2 \times (100m\Omega + 50m\Omega) = 0.0016 \times 0.15 = 0.2
 
 ### 6.4 Recommended Pair
 
+> [!success] Recommended MOSFET Pair
 > **Si2301 (P-ch) + Si2302 (N-ch)**
->
 > - Matched characteristics
 > - Very low threshold voltage (works with 3.3V or 5V logic)
 > - Widely available
@@ -509,9 +511,9 @@ $$P_{cond} = (40mA)^2 \times (100m\Omega + 50m\Omega) = 0.0016 \times 0.15 = 0.2
 
 ### 7.3 Dead-Time (Shoot-Through Prevention)
 
-**Critical:** Both MOSFETs must NEVER be ON simultaneously!
-
-If both conduct: $I_{short} = V_{bat} / R_{DS,total} = 9V / 0.15Ω = 60A$ → instant destruction!
+> [!danger] CRITICAL: Shoot-Through Prevention
+> Both MOSFETs must NEVER be ON simultaneously!
+> If both conduct: $I_{short} = V_{bat} / R_{DS,total} = 9V / 0.15Ω = 60A$ → instant destruction!
 
 **Software dead-time implementation:**
 
@@ -556,7 +558,8 @@ The Si2301 P-channel turns ON when $V_{GS} < -V_{th}$ (gate lower than source).
 - When MCU outputs LOW (0V): $V_{GS} = 0 - 9 = -9V$ → **ON**
 - When MCU outputs HIGH (5V): $V_{GS} = 5 - 9 = -4V$ → still ON!
 
-**Problem:** 5V MCU cannot fully turn OFF a P-channel with source at 9V!
+> [!warning] Problem
+> 5V MCU cannot fully turn OFF a P-channel with source at 9V!
 
 **Solutions:**
 
@@ -767,19 +770,20 @@ Complete solution in one chip:
 
 ### 10.2 Recommendations by Priority
 
-**If simplicity is priority:** Use Simple NPN Switch (Option 1)
-- Proven design, minimal components
-- 94% efficient — good enough for your budget
-
-**If efficiency is priority:** Use MOSFET Half-Bridge (Option 2)
-- Saves 6 mA from tight budget
-- 99.9% efficient
-- Bipolar drive = stronger magnetic field
-
-**If robustness is priority:** Use DRV8837 IC (Option 3)
-- Built-in protections
-- Guaranteed dead-time
-- Professional solution
+> [!tip] Recommendations by Priority
+> **If simplicity is priority:** Use Simple NPN Switch (Option 1)
+> - Proven design, minimal components
+> - 94% efficient — good enough for your budget
+>
+> **If efficiency is priority:** Use MOSFET Half-Bridge (Option 2)
+> - Saves 6 mA from tight budget
+> - 99.9% efficient
+> - Bipolar drive = stronger magnetic field
+>
+> **If robustness is priority:** Use DRV8837 IC (Option 3)
+> - Built-in protections
+> - Guaranteed dead-time
+> - Professional solution
 
 ### 10.3 Recommended Final BOM
 

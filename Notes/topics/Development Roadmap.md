@@ -4,17 +4,17 @@
 
 This roadmap outlines the development of a VLF (Very Low Frequency) metal detector for DTU course 34621. The detector uses phase-based metal classification to distinguish between ferrous metals (iron, steel) and non-ferrous metals (copper, aluminum, gold, silver).
 
-### Design Goals
-- **Runtime:** 100+ minutes on a single 9V battery
-- **Detection method:** Phase shift analysis at 2kHz
-- **Metal classification:** Ferrous (phase < 65°) vs Non-ferrous (phase > 65°)
-- **User feedback:** OLED display + audio buzzer
+> [!abstract] Design Goals
+> - **Runtime:** 100+ minutes on a single 9V battery
+> - **Detection method:** Phase shift analysis at 2kHz
+> - **Metal classification:** Ferrous (phase < 65°) vs Non-ferrous (phase > 65°)
+> - **User feedback:** OLED display + audio buzzer
 
-### Your Current Setup
-- **Test Equipment:** Oscilloscope + Signal Generator (allows full signal chain testing without coils)
-- **ADC:** Internal 10-bit ADC on ATmega2560 (simpler than external MCP3208)
-- **Coils:** Not built yet - signal generator will simulate RX signal for software development
-- **TX Driver:** Direct MCU pin initially (add driver circuit later for actual coil drive)
+> [!info] Current Test Setup
+> - **Test Equipment:** Oscilloscope + Signal Generator (allows full signal chain testing without coils)
+> - **ADC:** Internal 10-bit ADC on ATmega2560 (simpler than external MCP3208)
+> - **Coils:** Not built yet - signal generator will simulate RX signal for software development
+> - **TX Driver:** Direct MCU pin initially (add driver circuit later for actual coil drive)
 
 ---
 
@@ -26,39 +26,39 @@ TX Coil (2kHz) → Magnetic Field → Target Metal → Eddy Currents →
 → Secondary Field → RX Coil → Amplifier → ADC → DFT → Phase/Magnitude → Display
 ```
 
-### The Key Insight: Phase Detection
-When the TX coil generates a 2kHz magnetic field:
-- **Ferrous metals** (iron, steel) have high magnetic permeability - they "pull" the field, causing a small phase shift (< 65°)
-- **Non-ferrous metals** (copper, coins) generate eddy currents that oppose the field, causing a larger phase shift (> 65°)
+> [!tip] The Key Insight: Phase Detection
+> When the TX coil generates a 2kHz magnetic field:
+> - **Ferrous metals** (iron, steel) have high magnetic permeability - they "pull" the field, causing a small phase shift (< 65°)
+> - **Non-ferrous metals** (copper, coins) generate eddy currents that oppose the field, causing a larger phase shift (> 65°)
+>
+> By measuring the phase difference between TX and RX signals, we can classify the metal type.
 
-By measuring the phase difference between TX and RX signals, we can classify the metal type.
-
-### Why 4× Oversampling?
-We sample at 8kHz (4× the 2kHz TX frequency). This is a clever optimization:
-- At exactly 4× oversampling, the DFT coefficients become trivial: {1, 0, -1, 0}
-- No sine/cosine calculations needed - just additions and subtractions
-- Dramatically reduces CPU load on the ATmega2560
+> [!note] Why 4× Oversampling?
+> We sample at 8kHz (4× the 2kHz TX frequency). This is a clever optimization:
+> - At exactly 4× oversampling, the DFT coefficients become trivial: {1, 0, -1, 0}
+> - No sine/cosine calculations needed - just additions and subtractions
+> - Dramatically reduces CPU load on the ATmega2560
 
 ---
 
 ## Current Codebase Status
 
-### Fully Implemented (Ready to Use)
-- [x] `tx.c/h` - 2kHz PWM generation on Timer1/OC1A (Pin 11)
-- [x] `I2C.c/h` - Complete TWI (I2C) master driver for ATmega2560
-- [x] `ssd1306.c/h` - Full OLED display driver with text, graphics, and fonts
-- [x] `data.h` - Font data (8x8 ASCII + large numbers)
+> [!success] Fully Implemented ✅
+> - [x] `tx.c/h` - 2kHz PWM generation on Timer1/OC1A (Pin 11)
+> - [x] `I2C.c/h` - Complete TWI (I2C) master driver for ATmega2560
+> - [x] `ssd1306.c/h` - Full OLED display driver with text, graphics, and fonts
+> - [x] `data.h` - Font data (8x8 ASCII + large numbers)
+> - [x] `display.c/h` - Wrapper functions + screen rendering (splash, idle, calibrating, detection)
+> - [x] `rx.c/h` - Timer1-synchronized ADC sampling at 8kHz, 64-sample buffer
+> - [x] `dsp.c/h` - DFT accumulator + magnitude/phase calculation + IIR filter
+> - [x] `detector.c/h` - Metal classification with calibration, hysteresis, phase threshold
+> - [x] `ui.c/h` - Button polling with debounce + PWM buzzer with variable pitch
+> - [x] `main.c` - Complete state machine (STARTUP → CALIBRATING → IDLE ⇄ RUNNING)
 
-### Partially Implemented (Needs Completion)
-- [ ] `rx.c/h` - ADC initialization exists but not integrated into main loop
-- [ ] `dsp.c/h` - DFT accumulator algorithm works, but `DFT_Calc()` (magnitude/phase) is empty
-
-### Not Yet Implemented (Stub Files Only)
-- [ ] `detector.c/h` - Metal classification logic
-- [ ] `display.c/h` - Screen rendering and UI
-- [ ] `ui.c/h` - Button handling and buzzer control
-- [ ] `config.h` - Pin definitions (currently just comments)
-- [ ] `main.c` - Only calls `timer1_init()`, main loop is empty
+> [!warning] Hardware Pending
+> - [ ] TX driver circuit (NPN or MOSFET)
+> - [ ] TX/RX coils (15mH, 150mm diameter)
+> - [ ] RX amplifier circuit
 
 ---
 
@@ -74,7 +74,7 @@ Each phase builds on the previous one. Complete all tasks and pass all tests bef
 Verify that the existing TX code correctly generates a 2kHz square wave. This is the foundation of the entire detector - if TX isn't working, nothing else will.
 
 ### Why This Matters
-The TX signal drives the transmit coil and serves as the reference for phase detection. It must be exactly 2kHz (±1%) for the DFT algorithm to work correctly.
+The TX signal drives the transmit coil and serves as the reference for phase detection. It must be exactly 2kHz (±1\%) for the DFT algorithm to work correctly.
 
 ### Files Involved
 - `Code/src/main.c` - Entry point, calls `timer1_init()`
@@ -97,14 +97,14 @@ Timer1 is configured in CTC (Clear Timer on Compare) mode:
 - [x] Connect oscilloscope to Pin 11
 - [x] Verify 2kHz square wave (period = 500µs)
 - [x] Verify amplitude is 0-5V (full CMOS swing)
-- [x] Verify duty cycle is 50%
+- [x] Verify duty cycle is 50\%
 
 ### Expected Results
 - Frequency: 2000 Hz ± 20 Hz
 - Period: 500 µs
 - High level: ~5V
 - Low level: ~0V
-- Duty cycle: 50%
+- Duty cycle: 50\%
 
 ### Troubleshooting
 - **No signal:** Check that `timer1_init()` is called in main, verify Pin 11 connection
@@ -226,69 +226,85 @@ ADC Configuration:
 
 ---
 
-## Phase 4: Timer-Based Sampling at 8kHz
+## Phase 4: Synchronized Sampling at 8kHz
 
 ### Goal
-Sample the ADC at a precise 8kHz rate using Timer3 interrupts. Fill a 64-sample buffer for DFT processing.
+Sample the ADC at a precise 8kHz rate **synchronized to the TX signal** using Timer1 Compare Match B. Fill a 64-sample buffer for DFT processing.
 
 ### Why This Matters
-Accurate timing is critical for phase detection. The DFT algorithm assumes exactly 4 samples per cycle of the 2kHz signal. Any timing error will cause phase measurement errors.
+
+> [!danger] CRITICAL: Synchronized Sampling Required
+> The ADC sampling **MUST** be synchronized to the TX signal. From the course slides:
+> > "To avoid scalloping loss, etc. synchronous sampling is needed... when restarting the sampling, it must start at a rising edge of the output coil P.A. signal."
+>
+> Using a separate timer (like Timer3) would cause phase drift and meaningless measurements. Timer1 already generates the TX signal, so we use its Compare Match B to trigger ADC conversions at precise phase-locked points.
 
 ### Files Involved
-- `Code/src/signal/rx.c` - Timer3 ISR and buffer management
+- `Code/src/signal/rx.c` - ADC auto-trigger and ISR
 - `Code/src/signal/rx.h` - Buffer declarations
 - `Code/src/main.c` - Check for buffer complete flag
 
 ### Technical Details
-Timer3 Configuration for 8kHz:
-- Clock: 16MHz
-- Prescaler: 8 (2MHz timer clock)
-- Compare value: 250 (2MHz / 250 = 8kHz)
-- Mode: CTC (Clear Timer on Compare)
-- Interrupt: TIMER3_COMPA_vect
 
-Sampling Strategy:
-- Timer3 compare match triggers ADC conversion
-- ADC complete interrupt stores sample in buffer
-- After 64 samples, set flag and swap buffers (double buffering)
+**Timer1 Configuration (already set up for TX):**
+- Clock: 16MHz (no prescaler)
+- OCR1A = 3999 → Timer counts 0-3999, toggles TX pin at overflow
+- This gives 4kHz toggle rate = 2kHz square wave
 
-Buffer Structure:
+**ADC Synchronization Strategy:**
+Timer1 cycle = 4000 counts. For 8kHz sampling (2 samples per Timer1 cycle):
+- OCR1B alternates between 999 and 2999 (at 1/4 and 3/4 points)
+- ADC auto-trigger on Timer1 Compare Match B
+- ADC ISR stores sample and updates OCR1B for next trigger point
+
+```c
+// ADC auto-trigger source = Timer1 Compare Match B
+ADCSRB = (1 << ADTS2) | (1 << ADTS0);
+
+// In ADC ISR: clear flag and alternate trigger point
+ISR(ADC_vect) {
+    TIFR1 = (1 << OCF1B);  // Clear Compare B flag for next trigger
+    adc_buffer[sample_index++] = ADC;
+    OCR1B = (OCR1B == 999) ? 2999 : 999;  // Alternate
+}
+```
+
+**Buffer Structure:**
 ```c
 volatile uint16_t adc_buffer[64];  // Current buffer being filled
 volatile uint8_t buffer_ready;     // Flag: buffer ready for processing
-volatile uint8_t sample_index;     // Current position in buffer (0-63)
+static volatile uint8_t sample_index;  // Current position (0-63)
 ```
 
 ### Hardware Setup
 1. Keep OLED connected for debug display
 2. Connect signal generator to A0:
    - Waveform: Sine wave
-   - Frequency: 2kHz
+   - Frequency: 2kHz (same as TX!)
    - Amplitude: 2V peak-to-peak
    - DC Offset: 2.5V (so signal stays in 1.5V to 3.5V range)
-3. Connect scope to a debug pin (e.g., Pin 13) to verify 8kHz timing
+3. Connect scope CH1 to Pin 11 (TX), CH2 to A0 (input) to verify synchronization
 
 ### Tasks
-- [ ] Configure Timer3 for 8kHz interrupt
-- [ ] Implement `timer3_init()` in rx.c
-- [ ] Create 64-sample buffer array
-- [ ] Implement Timer3 ISR to trigger ADC
-- [ ] Implement ADC complete ISR to store samples
-- [ ] Set buffer_ready flag after 64 samples
-- [ ] Toggle debug pin in ISR for scope verification
-- [ ] Display sample count or buffer status on OLED
-- [ ] Verify 8kHz timing on oscilloscope
+- [x] Configure ADC for Timer1 Compare B auto-trigger
+- [x] Set up OCR1B to alternate between sample points
+- [x] Create 64-sample buffer array
+- [x] Implement ADC ISR to store samples
+- [x] Clear OCF1B flag in ISR (required for next trigger!)
+- [x] Set buffer_ready flag after 64 samples
+- [x] Display buffer count and sample values on OLED
+- [x] Verify sampling with oscilloscope (TX and input signals aligned)
 
 ### Expected Results
-- Debug pin toggles at exactly 8kHz (125µs period)
+- Samples are phase-locked to TX signal
 - Buffer fills with 64 samples every 8ms
 - buffer_ready flag sets every 8ms
-- No missed samples or timing jitter
+- Sample values reflect the input sine wave amplitude
 
-### Troubleshooting
-- **Wrong frequency:** Check Timer3 prescaler and compare value
-- **Missed samples:** ADC conversion may be too slow, reduce prescaler
-- **Buffer overflow:** Ensure buffer_ready is cleared after processing
+> [!bug] Troubleshooting
+> - **ADC only triggers once:** Must clear OCF1B flag in ISR with `TIFR1 = (1 << OCF1B)`
+> - **Samples not synchronized:** Verify ADCSRB trigger source is Timer1 Compare B
+> - **Wrong sample rate:** Check OCR1B alternates correctly between 999 and 2999
 
 ---
 
@@ -351,16 +367,15 @@ Same as Phase 4:
 - Vary phase (if your sig gen supports it) to test phase response
 
 ### Tasks
-- [ ] Implement integer square root function
-- [ ] Implement atan2 approximation (lookup table or CORDIC)
-- [ ] Complete `DFT_Calc()` function
-- [ ] Calculate magnitude from Re_buff and Im_buff
-- [ ] Calculate phase in degrees (0-360°)
-- [ ] Display magnitude and phase on OLED
-- [ ] Test: 2kHz input should show high magnitude
-- [ ] Test: 1kHz or 3kHz input should show low magnitude (out of band)
-- [ ] Test: Varying amplitude should change magnitude proportionally
-- [ ] Test: Phase reading should be stable (±5° when signal is steady)
+- [x] Implement integer square root function (Newton's method)
+- [x] Implement atan2 approximation (linear interpolation)
+- [x] Complete `DFT_Calc()` function
+- [x] Calculate magnitude from Re_buff and Im_buff
+- [x] Calculate phase in degrees (-180 to +180°)
+- [x] Display magnitude and phase on OLED
+- [x] Added IIR low-pass filter for stable readings
+- [x] Test: 2kHz input shows high magnitude
+- [x] Test: Varying amplitude changes magnitude proportionally
 
 ### Expected Results
 - 2kHz sine input: High magnitude, stable phase
@@ -434,15 +449,18 @@ For now, simulate with signal generator:
 - Vary magnitude to test detection threshold
 
 ### Tasks
-- [ ] Define metal_type_t enum (NONE, FERROUS, NONFERROUS)
-- [ ] Implement `detector_init()` function
-- [ ] Implement `detector_calibrate()` function
-- [ ] Implement `detector_get_metal_type()` function
-- [ ] Add magnitude threshold for valid detection
-- [ ] Store calibration baseline in global variable
-- [ ] Display metal type on OLED ("FERROUS", "NON-FERROUS", "---")
-- [ ] Display signal strength indicator (bar graph or percentage)
-- [ ] Test with simulated phase values from signal generator
+- [x] Define metal_type_t enum (NONE, FERROUS, NONFERROUS)
+- [x] Implement `detector_init()` function
+- [x] Implement `detector_calibrate()` function
+- [x] Implement `detector_classify()` function
+- [x] Implement `detector_get_strength()` function
+- [x] Add magnitude threshold for valid detection (MIN_DETECTION_MAG)
+- [x] Store calibration baseline in detector_state_t struct
+- [x] Display metal type on OLED ("FERRO", "NON-FE", "---")
+- [x] Display signal strength indicator (percentage)
+- [x] Added hysteresis (±10°) to prevent rapid type switching
+- [x] Positive-only detection (only signal above baseline triggers)
+- [x] Test with simulated amplitude from signal generator
 
 ### Expected Results
 - Calibration stores baseline phase
@@ -490,7 +508,7 @@ EICRB |= (1 << ISC41) | (1 << ISC51);
 **Buzzer Configuration:**
 - Pin 8 (PH5/OC4C) - Timer4 PWM output
 - Frequency: Variable (200Hz - 2kHz based on signal strength)
-- Duty cycle: 50% for loudest tone
+- Duty cycle: 50\% for loudest tone
 
 **Beep Rate Algorithm:**
 ```c
@@ -505,21 +523,19 @@ uint16_t beep_interval = 1000 - (magnitude * 900 / MAX_MAGNITUDE);
 3. Connect piezo buzzer between Pin 8 and GND (through 100Ω resistor)
 
 ### Tasks
-- [ ] Add button pin definitions to config.h
-- [ ] Add buzzer pin definition to config.h
-- [ ] Implement `ui_init()` - configure pins and interrupts
-- [ ] Implement INT4 ISR for Start/Stop button
-- [ ] Implement INT5 ISR for Calibrate button
-- [ ] Add debounce logic (50ms lockout after press)
-- [ ] Configure Timer4 for buzzer PWM
-- [ ] Implement `buzzer_on(frequency)` function
-- [ ] Implement `buzzer_off()` function
-- [ ] Implement `buzzer_beep(duration)` function
-- [ ] Variable beep rate based on signal strength
-- [ ] Test: Start button enables detection
-- [ ] Test: Stop button pauses detection
-- [ ] Test: Calibrate button triggers calibration
-- [ ] Test: Buzzer beeps faster with stronger signal
+- [x] Button pins defined in ui.c (PE4=Pin2, PE5=Pin3)
+- [x] Buzzer pin defined in ui.c (PH5=Pin8)
+- [x] Implement `ui_init()` - configure pins with pull-ups, Timer4 for PWM
+- [x] Implement `ui_poll_buttons()` with polling (not ISR)
+- [x] Add debounce logic (50ms delay after edge detection)
+- [x] Configure Timer4 for buzzer PWM (variable frequency)
+- [x] Implement `buzzer_on()` function
+- [x] Implement `buzzer_off()` function
+- [x] Implement `buzzer_beep(duration_ms)` function
+- [x] Implement `buzzer_update(strength)` - variable pitch based on signal
+- [x] Test: Start button toggles detection on/off
+- [x] Test: Calibrate button triggers calibration
+- [x] Test: Buzzer pitch increases with signal strength
 
 ### Expected Results
 - Buttons respond to presses with no bouncing
@@ -583,7 +599,7 @@ Good UI makes the detector easy to use. Clear screens for each state help the us
 |  Keep coil away  |
 |  from metal      |
 |                  |
-|  [████░░░░] 50%  |
+|  [████░░░░] 50\%  |
 +------------------+
 ```
 
@@ -600,14 +616,13 @@ Good UI makes the detector easy to use. Clear screens for each state help the us
 ```
 
 ### Tasks
-- [ ] Implement `display_splash_screen()` - shown at startup
-- [ ] Implement `display_detection_screen(magnitude, phase, metal_type)`
-- [ ] Implement `display_calibration_screen(progress)` - progress bar
-- [ ] Implement `display_stopped_screen()`
-- [ ] Create signal strength bar graph function
-- [ ] Create large text function for metal type
-- [ ] Add screen transition logic
-- [ ] Test all screens visually
+- [x] Implement `screen_splash()` - shown at startup
+- [x] Implement `screen_detection(strength, phase, metal_type)` - live data
+- [x] Implement `screen_calibrating()` - calibration in progress
+- [x] Implement `screen_idle()` - stopped/waiting state
+- [x] Create `display_bar()` with solid pixel blocks
+- [x] Screen functions handle all layout internally
+- [x] Test all screens visually
 
 ### Expected Results
 - All screens render correctly without glitches
@@ -703,20 +718,20 @@ int main(void) {
 - Target: < 120mA total system current
 
 ### Tasks
-- [ ] Create state enum (STARTUP, IDLE, RUNNING, CALIBRATING)
-- [ ] Implement `system_init()` to call all init functions
-- [ ] Implement state machine in main loop
-- [ ] Connect button interrupts to state changes
-- [ ] Rate-limit display updates (12Hz max)
-- [ ] Integrate all subsystems:
-  - [ ] TX generation (already running)
-  - [ ] ADC sampling with Timer3
-  - [ ] DFT processing
-  - [ ] Metal detection
-  - [ ] Display updates
-  - [ ] Buzzer feedback
-- [ ] Test complete system with signal generator
-- [ ] Verify all state transitions work correctly
+- [x] Create state enum (STATE_STARTUP, STATE_IDLE, STATE_RUNNING, STATE_CALIBRATING)
+- [x] Implement `system_init()` to call all init functions
+- [x] Implement state machine in main loop (switch/case)
+- [x] Connect button polling to state changes
+- [x] Rate-limit main loop (~20Hz with 50ms delay)
+- [x] Integrate all subsystems:
+  - [x] TX generation (Timer1)
+  - [x] ADC sampling with Timer1 Compare B (synchronized!)
+  - [x] DFT processing with IIR filter
+  - [x] Metal detection with calibration
+  - [x] Display updates (screen functions)
+  - [x] Buzzer feedback (variable pitch)
+- [x] Test complete system with signal generator
+- [x] Verify all state transitions work correctly
 
 ### Expected Results
 - Detector starts in IDLE state
@@ -755,7 +770,7 @@ Pin 11 ──[1.5kΩ]──┬── Base
                Emitter ┴─────────────┴── GND
 
 Specs:
-- Efficiency: 94%
+- Efficiency: 94\%
 - Drive current: 2.9mA from MCU
 - Coil current: ~40mA
 ```
@@ -768,7 +783,7 @@ Components:
 - 2× 100Ω gate resistors
 
 Specs:
-- Efficiency: 99.9%
+- Efficiency: 99.9\%
 - Drive current: ~0mA (capacitive gates)
 - Coil current: ~40mA
 - Requires dead-time control to prevent shoot-through
@@ -779,6 +794,7 @@ Specs:
 > **Important:** Use **0.52mm wire (AWG 24)** instead of 0.3mm for much better efficiency!
 
 **TX Coil:**
+
 | Parameter | Value | Notes |
 |-----------|-------|-------|
 | Inductance | **15 mH** | Target value |
@@ -792,6 +808,7 @@ Specs:
 | Current @ 7.5V | **39.7 mA** | Within budget ✓ |
 
 **RX Coil:**
+
 | Parameter | Value |
 |-----------|-------|
 | Diameter | 60 mm (inner) |
@@ -799,12 +816,13 @@ Specs:
 | Inductance | 12 mH |
 
 **Bucking Coil:**
+
 | Parameter | Value |
 |-----------|-------|
 | Diameter | 80 mm (middle) |
 | Turns | 15-25 (adjust for null) |
 
-> **Why 0.52mm wire?** 3× higher Q factor, 67% less power wasted as heat
+> **Why 0.52mm wire?** 3× higher Q factor, 67\% less power wasted as heat
 
 ### Tasks
 - [ ] Choose TX driver topology (NPN or MOSFET)
@@ -847,8 +865,8 @@ Specs:
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
-| TX Frequency | 2000 Hz | Timer1 CTC mode |
-| Sample Rate | 8000 Hz | Timer3 CTC mode (4× TX) |
+| TX Frequency | 2000 Hz | Timer1 CTC mode, OCR1A=3999 |
+| Sample Rate | 8000 Hz | Timer1 Compare B (phase-locked to TX!) |
 | DFT Window | 64 samples | 8ms processing window |
 | Phase Threshold | 65° | Ferrous < 65° < Non-ferrous |
 | Display Refresh | 12 Hz | 83ms update interval |
@@ -866,7 +884,7 @@ The detector can run in two modes. Choose based on your priority:
 
 | Parameter | Value |
 |-----------|-------|
-| TX Duty Cycle | 100% (continuous) |
+| TX Duty Cycle | 100\% (continuous) |
 | TX Current | 40 mA |
 | Total System Current | 120 mA |
 | Expected Runtime | ~100 min |
@@ -882,16 +900,16 @@ while (1) {
 }
 ```
 
-### Conservative Mode (20% safety margin)
+### Conservative Mode (20\% safety margin)
 > **Use when:** Want runtime safety margin, accept slightly reduced detection depth.
 
 | Parameter | Value |
 |-----------|-------|
-| TX Duty Cycle | 80% (160ms ON / 40ms OFF) |
+| TX Duty Cycle | 80\% (160ms ON / 40ms OFF) |
 | TX Current (average) | 32 mA |
 | Total System Current | ~100 mA |
 | Expected Runtime | ~120 min |
-| Detection Performance | 80% field, **93% depth** (cube-root relationship) |
+| Detection Performance | 80\% field, **93\% depth** (cube-root relationship) |
 
 ```c
 #define ACTIVE_PERIOD_MS   160   // 320 TX cycles at 2kHz
@@ -947,38 +965,48 @@ Code/src/
 
 ## Progress Checklist
 
-### Phase 1: TX Verification
-- [ ] Upload code and verify 2kHz on scope
+### Phase 1: TX Verification ✅
+- [x] Upload code and verify 2kHz on scope
 
-### Phase 2: Display Foundation
-- [ ] OLED wired and showing text
+### Phase 2: Display Foundation ✅
+- [x] OLED wired and showing text
+- [x] display_init(), display_clear(), display_text(), display_number() working
 
-### Phase 3: ADC Input Chain
-- [ ] ADC reading displayed on OLED
+### Phase 3: ADC Input Chain ✅
+- [x] ADC reading displayed on OLED
+- [x] Polling-based adc_read() verified
 
-### Phase 4: 8kHz Sampling
-- [ ] Timer3 ISR running at 8kHz
-- [ ] 64-sample buffer filling correctly
+### Phase 4: Synchronized Sampling ✅
+- [x] Timer1 Compare B triggering ADC (phase-locked!)
+- [x] 64-sample buffer filling correctly
+- [x] OCF1B flag clearing for continuous operation
 
-### Phase 5: DFT Processing
-- [ ] Magnitude calculation working
-- [ ] Phase calculation working
+### Phase 5: DFT Processing ✅
+- [x] Magnitude calculation working (integer sqrt)
+- [x] Phase calculation working (integer atan2)
+- [x] IIR low-pass filter for stable readings
 
-### Phase 6: Detector Logic
-- [ ] Calibration implemented
-- [ ] Metal classification working
+### Phase 6: Detector Logic ✅
+- [x] Calibration implemented (baseline storage)
+- [x] Metal classification working (phase threshold 65°)
+- [x] Hysteresis to prevent rapid switching
+- [x] Positive-only detection (signal above baseline)
 
-### Phase 7: User Interface
-- [ ] Start/Stop button working
-- [ ] Calibrate button working
-- [ ] Buzzer feedback working
+### Phase 7: User Interface ✅
+- [x] Start/Stop button working (Pin 2)
+- [x] Calibrate button working (Pin 3)
+- [x] Buzzer feedback working (Pin 8, variable pitch)
 
-### Phase 8: Display Screens
-- [ ] All screens implemented
+### Phase 8: Display Screens ✅
+- [x] Splash screen implemented
+- [x] Calibration screen implemented
+- [x] Idle screen implemented
+- [x] Detection screen with solid bar graph
 
-### Phase 9: Integration
-- [ ] State machine working
-- [ ] Full system test passed
+### Phase 9: Integration ✅
+- [x] State machine working (STARTUP → CALIBRATING → IDLE ⇄ RUNNING)
+- [x] system_init() consolidates all initialization
+- [x] Full system test passed with signal generator
 
 ### Phase 10: Hardware Build
 - [ ] TX driver built and tested

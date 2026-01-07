@@ -1,10 +1,10 @@
 /*
  * rx.h
- * ADC sampling for RX signal
+ * ADC sampling til RX signal
  *
- * Uses Timer1 Compare Match B to trigger ADC (phase-locked to TX)
- * 4 samples per TX cycle = 8kHz sampling
- * Fills 64-sample buffer, sets flag when ready
+ * Bruger Timer1 Compare Match B til at trigge ADC (faselåst til TX)
+ * 4 samples per TX cyklus = 8kHz sampling
+ * Fylder 64-sample buffer, sætter flag når klar
  */
 
 #ifndef RX_H
@@ -12,21 +12,22 @@
 
 #include <stdint.h>
 
+/* Buffer størrelse: 64 samples = 16 TX cykler */
 #define ADC_BUFFER_SIZE 64
 
-/* Sample buffer - filled by ISR */
+/* Sample buffer - fyldes af ISR */
 extern volatile uint16_t adc_buffer[ADC_BUFFER_SIZE];
 
-/* Flag: 1 = buffer ready for processing, clear after use */
+/* Flag: 1 = buffer klar til behandling, nulstil efter brug */
 extern volatile uint8_t buffer_ready;
 
-/* Initialize ADC with Timer1 Compare B auto-trigger */
+/* Initialiser ADC med Timer1 Compare B auto-trigger */
 void adc_init(void);
 
-/* Start sampling (enable ADC interrupt) */
+/* Start sampling (aktiver ADC interrupt) */
 void sampling_start(void);
 
-/* Stop sampling (disable ADC interrupt) */
+/* Stop sampling (deaktiver ADC interrupt) */
 void sampling_stop(void);
 
 #endif

@@ -1,6 +1,7 @@
 # Search Coil Design
 
-> **Purpose:** Design TX and RX coils for the VLF metal detector in both Concentric and Double-D configurations.
+> [!abstract] Purpose
+> Design TX and RX coils for the VLF metal detector in both **Concentric** and **Double-D** configurations.
 >
 > See: [[Power Budget Analysis]], [[TX Driver and Tank Circuit Design]], [[Coil Basics.pdf]]
 
@@ -88,9 +89,10 @@
 
 ### 2.3 Selection Rationale
 
-> **Primary design: Concentric** — Easier construction, better pinpointing, sufficient for non-mineralized soil (Denmark).
+> [!tip] Primary Design: Concentric
+> Easier construction, better pinpointing, sufficient for non-mineralized soil (Denmark).
 >
-> **Alternative design: Double-D** — For future testing or if ground conditions require it.
+> **Alternative:** Double-D — For future testing or if ground conditions require it.
 
 ---
 
@@ -117,10 +119,11 @@ $$R_{wire} = \frac{\rho_{Cu}}{A} = \frac{1.68 \times 10^{-8}\ \Omega \cdot m}{2.
 
 ### 3.3 Advantages of 0.52 mm Wire
 
-1. **Lower DC resistance** → Less power lost as heat
-2. **Higher Q factor** → Sharper resonance (if using tank circuit)
-3. **Easier to handle** → Less fragile during winding
-4. **Better current capacity** → Margin for future upgrades
+> [!success] Wire Selection Benefits
+> 1. **Lower DC resistance** → Less power lost as heat
+> 2. **Higher Q factor** → Sharper resonance (if using tank circuit)
+> 3. **Easier to handle** → Less fragile during winding
+> 4. **Better current capacity** → Margin for future upgrades
 
 ---
 
@@ -298,12 +301,13 @@ Position and turns adjusted empirically to achieve null (induction balance).
 
 ### 4.7 Induction Balance Procedure
 
-1. Connect TX + Bucking coils in series (opposite polarity)
-2. Drive with 2 kHz signal
-3. Measure voltage at RX coil with oscilloscope
-4. Adjust bucking coil turns (add/remove) until RX voltage is minimized
-5. Fine-tune with single turn adjustments
-6. Final null should be < 1 mV (ideally < 0.1 mV)
+> [!note] Balancing Steps
+> 1. Connect TX + Bucking coils in series (opposite polarity)
+> 2. Drive with 2 kHz signal
+> 3. Measure voltage at RX coil with oscilloscope
+> 4. Adjust bucking coil turns (add/remove) until RX voltage is minimized
+> 5. Fine-tune with single turn adjustments
+> 6. Final null should be < 1 mV (ideally < 0.1 mV)
 
 **Null adjustment wire:**
 
@@ -439,7 +443,8 @@ Unlike concentric, Double-D balance is adjusted by:
                            └─────────────────┘
 ```
 
-**Note:** No bucking coil needed — geometry provides null!
+> [!info] Key Advantage
+> No bucking coil needed — geometry provides null!
 
 ---
 
@@ -572,10 +577,11 @@ Unlike concentric, Double-D balance is adjusted by:
 | Ground rejection | Moderate | Excellent |
 | Pinpointing | Excellent | Good |
 
-**Note:** Double-D draws more TX current! May need to:
-- Add series resistor (47 Ω) to limit current
-- Reduce TX turns
-- Accept higher current (still within budget if optimizations applied)
+> [!warning] Double-D Current Draw
+> Double-D draws more TX current! May need to:
+> - Add series resistor (47 Ω) to limit current
+> - Reduce TX turns
+> - Accept higher current (still within budget if optimizations applied)
 
 ---
 
@@ -669,6 +675,7 @@ Unlike concentric, Double-D balance is adjusted by:
 | **Simplest construction** | Concentric |
 | **Beach/salt water** | Double-D |
 
+> [!tip] Recommendation
 > **Start with Concentric** for the first prototype. It's easier to build and debug. Build Double-D as a second coil head for comparison testing.
 
 ---

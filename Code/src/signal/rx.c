@@ -1,90 +1,115 @@
 /*
  * rx.c
- * ADC sampling for RX signal
+ * ADC sampling til RX signal
  *
- * Timer1 Compare Match B triggers ADC (phase-locked to TX)
- * Timer1 counts 0-3999 at 16MHz = 4kHz cycle rate
- * We need 8kHz sampling = 2 samples per timer cycle
- * OCR1B alternates between 999 and 2999 for even spacing
+ * Timer1 Compare Match B trigger ADC (faselåst til TX)
+ * Timer1 tæller 0-3999 ved 16MHz = 4kHz cyklus rate
+ * Vi behøver 8kHz sampling = 2 samples per timer cyklus
+ * OCR1B skifter mellem 999 og 2999 for jævn fordeling
  */
 
 #include "rx.h"
+#include "dsp.h"
+#include "../app/debug.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-/* Sample buffer */
+/* Sample buffer (beholdt til debugging) */
 volatile uint16_t adc_buffer[ADC_BUFFER_SIZE];
 
-/* Buffer ready flag */
+/* Buffer klar flag */
 volatile uint8_t buffer_ready = 0;
 
-/* Current position in buffer (0-63) */
+/* Nuværende position i buffer (0-63) */
 static volatile uint8_t sample_index = 0;
 
-/* Sample points within Timer1 cycle (0-3999) */
-/* Two samples per cycle: at 1/4 and 3/4 points */
+/* Sample punkter inden for Timer1 cyklus (0-3999) */
+/* To samples per cyklus: ved 1/4 og 3/4 punkter */
 #define SAMPLE_POINT_A  999
 #define SAMPLE_POINT_B  2999
 
+/*
+ * adc_init
+ * Konfigurerer ADC med Timer1 Compare B som trigger
+ */
 void adc_init(void)
 {
-    /* Reference = AVCC (5V), channel 0 */
+    /* Reference = AVCC (5V), kanal 0 (A0) */
     ADMUX = (1 << REFS0);
 
     /*
-     * ADC Control:
-     * ADEN  = Enable ADC
-     * ADIE  = Enable ADC interrupt
-     * ADATE = Enable auto-trigger
+     * ADC Kontrol:
+     * ADEN  = Aktiver ADC
+     * ADIE  = Aktiver ADC interrupt
+     * ADATE = Aktiver auto-trigger
      * ADPS  = Prescaler 128 (125kHz ADC clock)
      */
     ADCSRA = (1 << ADEN) | (1 << ADIE) | (1 << ADATE)
            | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 
-    /* Auto-trigger source = Timer1 Compare Match B */
+    /* Auto-trigger kilde = Timer1 Compare Match B */
     ADCSRB = (1 << ADTS2) | (1 << ADTS0);
 
-    /* Set initial compare point */
+    /* Sæt første compare punkt */
     OCR1B = SAMPLE_POINT_A;
 }
 
+/*
+ * sampling_start
+ * Starter ADC sampling loop
+ */
 void sampling_start(void)
 {
     sample_index = 0;
     buffer_ready = 0;
     OCR1B = SAMPLE_POINT_A;
 
-    /* Enable global interrupts */
+    /* Aktiver globale interrupts */
     sei();
 
-    /* Start first conversion */
+    /* Start første konvertering */
     ADCSRA |= (1 << ADSC);
 }
 
+/*
+ * sampling_stop
+ * Stopper ADC sampling
+ */
 void sampling_stop(void)
 {
-    /* Disable ADC interrupt */
+    /* Deaktiver ADC interrupt */
     ADCSRA &= ~(1 << ADIE);
 }
 
 /*
  * ADC Conversion Complete ISR
- * Stores sample, updates OCR1B for next trigger point
+ * Sender sample til DFT, opdaterer OCR1B til næste trigger
  */
 ISR(ADC_vect)
 {
-    if (!buffer_ready) {
-        /* Store sample */
-        adc_buffer[sample_index] = ADC;
-        sample_index++;
+    /* Toggle debug pin for oscilloskop timing verification */
+    debug_pin_toggle();
 
-        if (sample_index >= ADC_BUFFER_SIZE) {
-            sample_index = 0;
-            buffer_ready = 1;
-        }
+    uint16_t sample = ADC;
+
+    /* Log til debug system */
+    debug_log_adc_sample(sample);
+
+    /* Ryd Timer1 Compare B flag (skriv 1 for at rydde) */
+    TIFR1 = (1 << OCF1B);
+
+    /* Gem i buffer til debugging */
+    adc_buffer[sample_index] = sample;
+    sample_index++;
+    if (sample_index >= ADC_BUFFER_SIZE) {
+        sample_index = 0;
+        buffer_ready = 1;
     }
 
-    /* Alternate trigger point for next sample */
+    /* Send til DFT akkumulator */
+    DFT_sum(sample);
+
+    /* Skift trigger punkt til næste sample */
     if (OCR1B == SAMPLE_POINT_A) {
         OCR1B = SAMPLE_POINT_B;
     } else {
