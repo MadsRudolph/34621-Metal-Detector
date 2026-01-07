@@ -573,7 +573,29 @@ $$P_{TX} = V_{supply} \times I_{TX}$$
 
 ## 7. TX Coil Design Calculations
 
-### 7.1 Electrical Model of Inductor
+> **Detailed coil designs:** See [[Search Coil Design]]
+
+### 7.1 Wire Specification
+
+|Parameter|Value|Notes|
+|---|---|---|
+|**Wire diameter**|**0.52 mm**|AWG 24 equivalent|
+|Wire type|Enameled copper|Magnet wire|
+|Resistance per meter|**0.079 Ω/m**||
+|Current capacity|1.2 A|Well above 40 mA|
+
+### 7.2 Wire Comparison
+
+|Diameter|AWG|R (Ω/m)|61m coil R_dc|Q factor|
+|---|---|---|---|---|
+|0.30 mm|28|0.24|14.6 Ω|12.9|
+|0.40 mm|26|0.14|8.5 Ω|22.1|
+|**0.52 mm**|**24**|**0.079**|**4.8 Ω**|**39.2**|
+|0.65 mm|22|0.05|3.1 Ω|60.8|
+
+**Selected: 0.52 mm** — Best balance of low resistance, reasonable coil size, and ease of handling.
+
+### 7.3 Electrical Model of Inductor
 
 A real inductor is modeled as:
 
@@ -595,87 +617,102 @@ $$Z = R_{dc} + j\omega L = R_{dc} + j2\pi f L$$
 
 **Magnitude:**
 
-$$|Z| = \sqrt{R_{dc}^2 + (2\pi f L)^2}$$
+$$\lvert Z \rvert = \sqrt{R_{dc}^2 + (2\pi f L)^2}$$
 
 **Phase:**
 
 $$\phi = \arctan\left(\frac{2\pi f L}{R_{dc}}\right)$$
 
-### 7.2 Required Impedance Calculation
+### 7.4 Required Impedance Calculation
 
 For target current $I_{coil}$ at supply voltage $V$:
 
-$$|Z_{coil}| = \frac{V_{supply}}{I_{coil}}$$
+$$\lvert Z_{coil} \rvert = \frac{V_{supply}}{I_{coil}}$$
 
-| $V_{supply}$ | $I_{coil}$ | $|Z|$ | |--------------|------------|-------| | 9.0 V | 40 mA | 225 Ω | | 7.5 V | 40 mA | 187.5 Ω | | 6.0 V | 40 mA | 150 Ω |
+|$V_{supply}$|$I_{coil}$|$\lvert Z \rvert$|
+|---|---|---|
+|9.0 V|40 mA|225 Ω|
+|7.5 V|40 mA|187.5 Ω|
+|6.0 V|40 mA|150 Ω|
 
-**Design target: $|Z| \approx 190\ \Omega$** (for mid-life battery voltage)
+**Design target: $\lvert Z \rvert \approx 190\ \Omega$** (for mid-life battery voltage)
 
-### 7.3 Inductance Calculation
+### 7.5 Inductance Calculation
 
 At 2 kHz, assuming $R_{dc} \ll X_L$:
 
-$$|Z| \approx X_L = 2\pi f L$$
+$$\lvert Z \rvert \approx X_L = 2\pi f L$$
 
-$$L = \frac{|Z|}{2\pi f} = \frac{190}{2\pi \times 2000} = \frac{190}{12566} = 15.1\ \text{mH}$$
+$$L = \frac{\lvert Z \rvert}{2\pi f} = \frac{190}{2\pi \times 2000} = \frac{190}{12566} = 15.1\ \text{mH}$$
 
 **Target TX coil inductance: L = 15 mH**
 
-### 7.4 Verification of $R_{dc} \ll X_L$ Assumption
-
-**Wire resistance per length:**
-
-For 0.3 mm diameter (AWG 28-29) enameled copper wire:
-
-$$\rho_{Cu} = 1.68 \times 10^{-8}\ \Omega\cdot m$$
-
-$$R_{wire} = \frac{\rho \cdot l}{A} = \frac{1.68 \times 10^{-8} \times l}{\pi (0.15\times10^{-3})^2}$$
-
-$$R_{wire} = 0.238\ \Omega/m \approx 0.24\ \Omega/m$$
-
-**Estimating turns for 15 mH coil:**
-
-Using empirical formula for single-layer solenoid:
-
-$$L = \frac{\mu_0 N^2 A}{l}$$
-
-For a coil with diameter 150 mm, solving for N to get 15 mH:
-
-$$N = \sqrt{\frac{L \times l}{\mu_0 \times A}} \approx 130\ \text{turns}$$
-
-**Wire length for 130 turns:**
-
-- Circumference per turn: $C = \pi \times D = \pi \times 0.15 = 0.471$ m
-- Total length: $l_{wire} = N \times C = 130 \times 0.471 = 61$ m
-
-**DC Resistance:**
-
-$$R_{dc} = 0.24\ \Omega/m \times 61\ m = 14.6\ \Omega$$
-
-**Verification:**
-
-$$\frac{X_L}{R_{dc}} = \frac{2\pi \times 2000 \times 0.015}{14.6} = \frac{188}{14.6} = 12.9$$
-
-Since $X_L$ is 13× larger than $R_{dc}$, the approximation $|Z| \approx X_L$ is reasonable (error ~3%).
-
-**Actual impedance:**
-
-$$|Z| = \sqrt{14.6^2 + 188^2} = \sqrt{213 + 35344} = 188.6\ \Omega$$
-
-### 7.5 Coil Design Summary
+### 7.6 Concentric Coil Design (Primary)
 
 |Parameter|Value|Notes|
 |---|---|---|
-|Target inductance|15 mH||
-|Coil diameter|150 mm|Typical for handheld detector|
-|Number of turns|~130|Estimated|
-|Wire gauge|0.3 mm (AWG 28)|Enameled copper|
-|Wire length|~61 m||
-|DC resistance|~15 Ω||
-|Reactance @ 2kHz|188 Ω|$X_L = 2\pi fL$|
-|Total impedance|~189 Ω||
-|Current @ 7.5V|39.7 mA|$I = V/Z$|
-|Power @ 7.5V|298 mW|$P = V^2/Z$|
+|Coil type|Concentric (3-coil)|TX + Bucking + RX|
+|TX diameter|150 mm|Outer coil|
+|TX turns|**130**||
+|TX wire length|59 m||
+|TX DC resistance|**4.7 Ω**|0.52 mm wire|
+|TX inductance|**15 mH**||
+|TX reactance @ 2kHz|188 Ω|$X_L = 2\pi fL$|
+|TX impedance|**189 Ω**|$\sqrt{R^2 + X_L^2}$|
+|TX Q factor|**40**|High Q with 0.52 mm wire|
+|TX current @ 7.5V|**39.7 mA**|Within budget ✓|
+
+**RX Coil:**
+
+|Parameter|Value|
+|---|---|
+|Diameter|60 mm|
+|Turns|180|
+|Inductance|12 mH|
+|R_dc|2.4 Ω|
+
+**Bucking Coil:**
+
+|Parameter|Value|
+|---|---|
+|Diameter|80 mm|
+|Turns|15-25 (adjusted for null)|
+
+### 7.7 Double-D Coil Design (Alternative)
+
+|Parameter|TX Coil|RX Coil|
+|---|---|---|
+|Shape|D (80×150 mm)|D (80×150 mm)|
+|Turns|100|120|
+|Wire length|37 m|44 m|
+|DC resistance|2.9 Ω|3.5 Ω|
+|Inductance|11 mH|12 mH|
+|Impedance @ 2kHz|**140 Ω**|—|
+|Current @ 7.5V|**54 mA** ⚠️|—|
+
+**⚠️ Double-D Issue:** Lower impedance means higher current (54 mA vs 40 mA budget).
+
+**Solutions for Double-D:**
+
+1. Add 47 Ω series resistor → limits to 40 mA
+2. Reduce TX turns to ~75 → increases impedance
+3. Accept 54 mA if optimizations free up headroom
+
+### 7.8 Coil Configuration Comparison
+
+|Parameter|Concentric|Double-D|
+|---|---|---|
+|TX inductance|15 mH|11 mH|
+|TX impedance @ 2 kHz|189 Ω|140 Ω|
+|TX current @ 7.5V|**40 mA ✓**|54 mA ⚠️|
+|TX DC resistance|4.7 Ω|2.9 Ω|
+|TX Q factor|40|48|
+|Power in R_dc|7.5 mW|8.5 mW|
+|Ground rejection|Moderate|Excellent|
+|Pinpointing|Excellent|Good|
+|Construction|Easier|Harder|
+
+> **Recommendation:** Start with **Concentric** — fits power budget perfectly.
 
 ---
 
@@ -685,159 +722,76 @@ $$|Z| = \sqrt{14.6^2 + 188^2} = \sqrt{213 + 35344} = 188.6\ \Omega$$
 
 ### 8.1 Amplifier Topology Selection
 
-Two main options were considered for driving the TX coil:
-
 |Aspect|Class D (Switching)|Class AB (Linear)|
 |---|---|---|
-|**Efficiency**|90-95%|50-70%|
-|**Heat dissipation**|Very low (~8 mW)|High (~140 mW)|
+|**Efficiency**|90-99%|50-70%|
+|**Heat dissipation**|Very low|High (~140 mW)|
 |**Power to coil**|~340 mW|~220 mW|
-|**Complexity**|Low (3 components)|Medium (4-8 components)|
-|**Waveform**|Square (filtered by coil)|Sine capable|
+|**Complexity**|Low-Medium|Low|
 
-**Efficiency comparison at 40 mA, 9V:**
+> **Selected: Class D (Switching)** — Higher efficiency critical for battery life.
 
-**Class D:** $$\eta_D = \frac{P_{coil}}{P_{total}} = \frac{360 - 8}{360} = 97.8\%$$
+### 8.2 Driver Options
 
-**Class AB:** $$\eta_{AB} \approx 65\% \Rightarrow P_{wasted} = 126\ \text{mW as heat}$$
+|Option|Components|Efficiency|Drive Current|
+|---|---|---|---|
+|Simple NPN|2N2222A + 1N4148|94%|2.9 mA|
+|BJT Half-Bridge|2×NPN + 2×PNP|82%|6 mA|
+|**MOSFET Half-Bridge**|Si2301 + Si2302|**99.9%**|**~0 mA**|
 
-> **Selected: Class D (Switching)** — Higher efficiency means more power to coil and better detection range.
+> **Recommended: MOSFET Half-Bridge** — Saves 6 mA, virtually zero losses.
 
-### 8.2 NPN Transistor Switch Design
-
-**Circuit topology:**
+### 8.3 MOSFET Half-Bridge Design
 
 ```
                               V_bat (6-9V)
                                  │
                             ┌────┴────┐
-                            │ TX Coil │
-                            │ L=15mH  │
-                            │ R=15Ω   │
-                            └────┬────┘
-                                 │
-                            ┌────┴────┐
-                            │   D1    │  1N4148 (Flyback)
-                            └────┬────┘
-                                 │
-                                 ▼ Collector
-                           ┌──────────┐
-    Pin 11 ────[R_b]──────►│   Q1     │
-    (2 kHz)                │ 2N2222A  │
-                           └────┬─────┘
-                                │ Emitter
-                                ▼
-                               GND
+                            │   Q1    │
+                            │ Si2301  │  P-channel
+    Pin 11 ────[100Ω]───────┤G   S   D├───┐
+                            └─────────┘   │
+                                          │
+                                     ┌────┴────┐
+                                     │ TX Coil │
+                                     │  15 mH  │
+                                     └────┬────┘
+                                          │
+                            ┌─────────────┘
+                            │
+                       ┌────┴────┐
+                       │   Q2    │
+    Pin 12 ────[100Ω]──┤G  D    S├───► GND
+                       │ Si2302  │  N-channel
+                       └─────────┘
 ```
 
-### 8.3 Transistor Selection: 2N2222A
-
-|Parameter|Value|Requirement|
-|---|---|---|
-|$I_C$ (max)|800 mA|> 40 mA ✓|
-|$V_{CEO}$|40 V|> 9V ✓|
-|$h_{FE}$ (β)|75-300|Used for base calc|
-|$V_{CE(sat)}$|0.3 V @ 150mA|Low saturation|
-|$f_T$|300 MHz|>> 2 kHz ✓|
-|$P_D$|625 mW|>> 8 mW ✓|
-
-### 8.4 Base Resistor Calculation
-
-**Step 1: Minimum base current for saturation**
-
-$$I_{B,min} = \frac{I_C}{\beta_{min}} = \frac{40\ \text{mA}}{75} = 0.53\ \text{mA}$$
-
-**Step 2: Design base current with overdrive factor**
-
-For fast switching and guaranteed saturation, use 5× overdrive:
-
-$$I_B = 5 \times I_{B,min} = 5 \times 0.53 = 2.67\ \text{mA}$$
-
-**Step 3: Calculate base resistor**
-
-$$R_B = \frac{V_{pin} - V_{BE}}{I_B} = \frac{5V - 0.7V}{2.67\ \text{mA}} = 1610\ \Omega$$
-
-**Step 4: Select standard value**
-
-Use **$R_B = 1.5\ k\Omega$** (E24 series)
-
-**Verify:**
-
-$$I_B = \frac{5V - 0.7V}{1500\ \Omega} = 2.87\ \text{mA}$$
-
-This is well under Arduino's 20 mA limit ✓
-
-### 8.5 Flyback Diode Analysis
-
-**Problem:** When transistor turns off, inductor current cannot change instantaneously.
-
-$$V_L = L \frac{di}{dt}$$
-
-**Without protection, worst case** (turn-off in 100 ns):
-
-$$V_{spike} = L \frac{\Delta i}{\Delta t} = 15\ \text{mH} \times \frac{40\ \text{mA}}{100\ \text{ns}} = 6000\ V$$
-
-This would destroy the transistor!
-
-**With flyback diode (1N4148):**
-
-The diode clamps the voltage to $V_{bat} + V_f \approx 9 + 0.7 = 9.7$ V
-
-### 8.6 Power Dissipation Analysis
-
-**Transistor dissipation in saturation:** $V_{CE(sat)} \approx 0.2$ V
-
-$$P_Q = V_{CE} \times I_C = 0.2V \times 40\ \text{mA} = 8\ \text{mW}$$
-
-Well under 625 mW rating ✓ No heatsink required.
-
-**Base resistor dissipation:**
-
-$$P_{R_B} = I_B^2 \times R_B = (2.87\ \text{mA})^2 \times 1500\ \Omega = 12.4\ \text{mW}$$
-
-Standard 1/8W (125 mW) resistor is adequate ✓
-
-### 8.7 Driver Efficiency Summary
+### 8.4 Driver Efficiency Summary
 
 |Parameter|Value|
 |---|---|
 |Input power (from battery)|$9V \times 40mA = 360$ mW|
-|Transistor loss|8 mW|
-|Base resistor loss|12 mW|
-|**Total driver loss**|**20 mW**|
-|Power to coil|340 mW|
-|**Driver efficiency**|**94.4%**|
+|MOSFET conduction loss|0.24 mW|
+|Switching loss|0.007 mW|
+|Gate drive loss|0.1 mW|
+|**Total driver loss**|**0.35 mW**|
+|Power to coil|**359.65 mW**|
+|**Driver efficiency**|**99.9%**|
 
-### 8.8 Optional: Resonant Tank Circuit
-
-For sine wave output (lower EMI), add LC tank circuit:
-
-```
-    V_bat ──► [R_lim 180Ω] ──► [C 470nF] ──► [TX Coil] ──► Transistor ──► GND
-```
-
-**Resonant frequency:**
-
-$$f_0 = \frac{1}{2\pi\sqrt{LC}} = \frac{1}{2\pi\sqrt{0.015 \times 470 \times 10^{-9}}} = 1897\ \text{Hz}$$
-
-Adjust Timer1 OCR1A = 4215 for 1897 Hz to match.
-
-See [[TX Driver and Tank Circuit Design]] for full tank circuit analysis.
-
-### 8.9 Complete Driver BOM
-
-|Component|Value|Package|Qty|Notes|
-|---|---|---|---|---|
-|Q1|2N2222A|TO-92|1|Or BC547, 2N3904|
-|$R_B$|1.5 kΩ|0805|1|1/8W minimum|
-|D1|1N4148|DO-35|1|Fast recovery flyback|
-
-**Optional for tank circuit:**
+### 8.5 Complete Driver BOM
 
 |Component|Value|Package|Notes|
 |---|---|---|---|
-|C1|470 nF|Film|50V min, polyester|
-|R_lim|180 Ω|0805|Current limiting|
+|Q1|Si2301|SOT-23|P-channel high-side|
+|Q2|Si2302|SOT-23|N-channel low-side|
+|R_g1|100 Ω|0805|Gate resistor|
+|R_g2|100 Ω|0805|Gate resistor|
+
+**Optional for tank circuit:**
+
+|Component|Value|Notes|
+|---|---|---|
+|C1|470 nF|Film, **250V** (high Q = high voltage!)|
 
 ---
 
@@ -849,7 +803,7 @@ A circular coil carrying current I can be modeled as a magnetic dipole:
 
 $$m = N \times I \times A = N \times I \times \pi r^2$$
 
-**For our TX coil:**
+**For our TX coil (Concentric):**
 
 $$m = 130 \times 0.040 \times \pi \times 0.075^2 = 0.092\ A \cdot m^2$$
 
@@ -885,18 +839,23 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 
 ## 10. Complete Power Budget Summary
 
+### 10.1 Option A: Maximum Power Mode (Recommended)
+
+> **Philosophy:** Use all available power for maximum detection depth. Runtime exactly meets requirement.
+
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                     COMPLETE POWER BUDGET                            │
+│               POWER BUDGET - MAXIMUM POWER MODE                      │
+│                   (Concentric Coil, 0.52mm Wire)                     │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  BATTERY: Duracell MN1604 @ 100mA load → ~350 mAh to 6V             │
-│  REQUIRED RUNTIME: 100 min = 1.67 hours                             │
-│  MAXIMUM CURRENT: 120 mA (with derating)                            │
+│  BATTERY: Duracell MN1604 → ~350 mAh to 6V @ 120mA                  │
+│  TARGET RUNTIME: 100 min (requirement)                               │
+│  TX DUTY CYCLE: 100% (continuous)                                    │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  ELECTRONICS (Measured + Calculated)                     80 mA      │
+│  ELECTRONICS                                             80 mA      │
 │  ├─ Arduino Mega 2560 Board                              62 mA      │
 │  │   ├─ ATmega2560 (active, all peripherals)   25 mA               │
 │  │   ├─ ATmega16U2 (USB interface)             12 mA               │
@@ -906,57 +865,375 @@ With 100× amplification: ~30 mV (6 LSB with 10-bit ADC)
 │  │   └─ PCB leakage, decoupling                10 mA               │
 │  ├─ SSD1306 OLED Display                                 18 mA      │
 │  └─ DSP Overhead                                        0.5 mA      │
-│      ├─ Timer1 + Timer3                        0.2 mA              │
-│      └─ ADC conversions                        0.3 mA              │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  TX COIL SYSTEM (Class D Driver)                         40 mA      │
-│  ├─ TX Coil (L=15mH, Z=189Ω @ 7.5V)                      39 mA      │
-│  ├─ Driver transistor loss                              <0.5 mA     │
-│  └─ Base resistor (1.5kΩ, 50% duty)                      ~1 mA      │
-│                                                                      │
-│  Driver Efficiency: 94.4%                                           │
-│  Power to coil: 340 mW (of 360 mW input)                           │
+│  TX COIL SYSTEM (100% duty cycle)                        40 mA      │
+│  ├─ TX Coil (L=15mH, Z=189Ω @ 7.5V)                      40 mA      │
+│  ├─ Coil DC resistance loss (R=4.7Ω)                    7.5 mW      │
+│  └─ Driver losses (MOSFET)                             <0.5 mW      │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │  TOTAL SYSTEM CURRENT                                   120 mA      │
-│  MARGIN                                                   0 mA      │
+│  EXPECTED RUNTIME                                      ~100 min     │
 │                                                                      │
-│  STATUS: ⚠️  TIGHT - Consider optimizations                         │
+│  DETECTION PERFORMANCE                                  MAXIMUM     │
+│  MAGNETIC FIELD STRENGTH                                  100%      │
+│                                                                      │
+│  STATUS: ✅ MEETS REQUIREMENT - Maximum detection depth!            │
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
+### 10.2 Option B: Conservative Mode (20% Margin)
+
+> **Philosophy:** Trade 20% detection performance for 20% runtime safety margin.
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│               POWER BUDGET - CONSERVATIVE MODE                       │
+│                   (Concentric Coil, 0.52mm Wire)                     │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  BATTERY: Duracell MN1604 → ~400 mAh to 6V @ 100mA                  │
+│  TARGET RUNTIME: 120 min (100 min + 20% margin)                      │
+│  TX DUTY CYCLE: 80% (160ms ON / 40ms OFF)                           │
+│                                                                      │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ELECTRONICS (with 80% duty cycle)                       69 mA      │
+│  ├─ ATmega2560 (80% active, 20% idle)                   21.1 mA     │
+│  ├─ ATmega16U2 (always on)                               12 mA      │
+│  ├─ Power LED                                             8 mA      │
+│  ├─ Regulators + 3.3V                                     9 mA      │
+│  ├─ PCB leakage                                           5 mA      │
+│  └─ SSD1306 OLED (80% active)                           14.4 mA     │
+│                                                                      │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  TX COIL SYSTEM (80% duty cycle)                         32 mA      │
+│  ├─ TX Coil (40mA × 80%)                                 32 mA      │
+│  └─ Driver losses                                       ~0 mA       │
+│                                                                      │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  AVERAGE SYSTEM CURRENT                                 ~100 mA     │
+│  EXPECTED RUNTIME                                      ~120 min     │
+│                                                                      │
+│  DETECTION PERFORMANCE                                     80%      │
+│  MAGNETIC FIELD STRENGTH                                   80%      │
+│  RUNTIME MARGIN                                        +20 min      │
+│                                                                      │
+│  STATUS: ✅ SAFE - Good balance of performance and margin           │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### 10.3 Mode Comparison
+
+|Parameter|Maximum Power|Conservative|
+|---|---|---|
+|TX duty cycle|100%|80%|
+|Average TX current|40 mA|32 mA|
+|Total current|120 mA|100 mA|
+|Runtime|~100 min|~120 min|
+|**Magnetic field**|**100%**|**80%**|
+|**Detection depth**|**100%**|**~93%**|
+|Safety margin|0 min|+20 min|
+
+> **Detection depth scales as cube root of power:** 80% field ≈ 93% depth
+
+### 10.4 With LED Removed (Best Performance)
+
+Removing the power LED frees 8 mA for either more margin or more TX power:
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│            POWER BUDGET - MAXIMUM POWER + LED REMOVED                │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Total current:                                         112 mA      │
+│  Expected runtime:                                     ~110 min     │
+│  Margin over requirement:                               +10 min     │
+│                                                                      │
+│  DETECTION PERFORMANCE                                  MAXIMUM     │
+│                                                                      │
+│  STATUS: ✅ BEST OPTION - Max power + small safety margin           │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### 10.5 Double-D Configuration Feasibility
+
+|Mode|Concentric (40mA TX)|Double-D (54mA TX)|
+|---|---|---|
+|Maximum Power|120 mA → 100 min ✅|134 mA → 85 min ⚠️|
+|Conservative (80%)|100 mA → 120 min ✅|109 mA → 105 min ✅|
+|With LED removed|112 mA → 110 min ✅|126 mA → 95 min ⚠️|
+
+> **Double-D requires Conservative mode** to meet 100 min requirement, OR add 47Ω series resistor to limit TX current.
+
 ---
 
-## 11. Optimization Options
+## 11. Power Management Strategy
+
+### 11.0 Design Philosophy: Maximize Detection Power
+
+> **Goal:** Maximum TX power (= maximum detection depth) while meeting 100 min runtime requirement.
+> 
+> We want to **use** the available power budget, not save it unnecessarily!
+
+The requirement is 100 minutes runtime. Running for 200+ minutes means we're leaving detection performance on the table.
+
+### 11.1 Current Budget Analysis
+
+**Target runtime:** 100 min (requirement) to 120 min (with 20% margin)
+
+From battery discharge curves:
+
+- 100 min runtime → ~120 mA average current
+- 120 min runtime → ~100 mA average current
+
+**Fixed overhead (always on):**
+
+|Component|Current|Notes|
+|---|---|---|
+|ATmega16U2|12 mA|USB chip, always powered|
+|Power LED|8 mA|Can be removed|
+|Regulators|7 mA|Quiescent current|
+|PCB/misc|5 mA|Leakage, decoupling|
+|**Fixed total**|**32 mA**|Cannot be duty-cycled|
+
+**Variable overhead (scales with duty cycle X):**
+
+|Component|Active|Sleep|Formula|
+|---|---|---|---|
+|ATmega2560|25 mA|5.5 mA|$5.5 + 19.5X$ mA|
+|OLED|18 mA|~0 mA|$18X$ mA|
+|TX Coil|40 mA|0 mA|$40X$ mA|
+
+**Total average current:**
+
+$$I_{avg} = 32 + 5.5 + (19.5 + 18 + 40) \times X = 37.5 + 77.5X\ \text{mA}$$
+
+### 11.2 Optimal Duty Cycle Calculation
+
+**For 120 min runtime (conservative, 20% margin):**
+
+Target $I_{avg} = 100$ mA:
+
+$$100 = 37.5 + 77.5X$$ $$X = \frac{62.5}{77.5} = 80.6\%$$
+
+**For 100 min runtime (maximum power):**
+
+Target $I_{avg} = 120$ mA:
+
+$$120 = 37.5 + 77.5X$$ $$X = \frac{82.5}{77.5} = 106\% \rightarrow 100\%$$
+
+> **Result:** We can run at **100% duty cycle** and still meet the 100 min requirement!
+
+### 11.3 Operating Mode Options
+
+|Mode|Duty Cycle|TX Average|Relative Field|Runtime|
+|---|---|---|---|---|
+|Maximum Power|**100%**|**40 mA**|**100%**|**~100 min**|
+|Conservative|80%|32 mA|80%|~120 min|
+|Battery Saver|50%|20 mA|50%|~160 min|
+|Ultra Saver|25%|10 mA|25%|~210 min|
+
+### 11.4 Recommended Configuration
+
+#### Option A: Maximum Power Mode (Recommended)
+
+**Use when:** Detection depth is priority, runtime exactly meets requirement.
+
+```
+    TX: ████████████████████████████████████████████████
+        ├──────────────── Continuous ─────────────────►
+        
+        100% duty cycle = Maximum magnetic field
+```
+
+|Parameter|Value|
+|---|---|
+|TX duty cycle|100%|
+|Average TX current|40 mA|
+|Total system current|120 mA|
+|Expected runtime|~100 min|
+|Detection performance|**Maximum**|
+
+**No duty cycling needed!** The continuous design already meets requirements.
+
+#### Option B: Conservative Mode (Recommended for reliability)
+
+**Use when:** Want 20% safety margin on runtime.
+
+```
+         ┌────────────────────────┐     ┌────────────────
+    TX:  │          ON            │     │       ON
+         ┘                        └─────┘
+         ├────────160ms───────────┤─40ms┤
+         
+              Sample + DFT          Sleep
+```
+
+|Parameter|Value|
+|---|---|
+|TX duty cycle|80%|
+|Active period|160 ms (320 TX cycles)|
+|Sleep period|40 ms|
+|Update rate|5 Hz|
+|Average TX current|32 mA|
+|Total system current|~100 mA|
+|Expected runtime|~120 min|
+|Detection performance|**80% of maximum**|
+
+**Benefits of 80% mode:**
+
+- 20% runtime safety margin
+- Still captures 320 cycles per measurement (excellent SNR)
+- 5 Hz update rate (faster than human sweep speed)
+- Allows for battery variation/aging
+
+### 11.5 Why Duty Cycling Below 80% Wastes Performance
+
+|Duty Cycle|TX Field|Runtime|Wasted Potential|
+|---|---|---|---|
+|100%|100%|100 min|None|
+|80%|80%|120 min|Acceptable margin|
+|50%|50%|160 min|60 min unused!|
+|25%|25%|210 min|**110 min unused!**|
+
+Every 1% reduction in duty cycle:
+
+- Reduces magnetic field by 1%
+- Reduces detection depth by ~0.3% (cube root relationship)
+- Gains ~1.3 min of unnecessary runtime
+
+### 11.6 Physical Constraints (Why Updates > 5 Hz Don't Help)
+
+|Parameter|Value|Notes|
+|---|---|---|
+|Typical sweep speed|0.5 m/s|Walking pace|
+|Coil diameter|150 mm||
+|Target traverse time|300 ms|Time for object to cross coil|
+|Nyquist update rate|3.3 Hz|Minimum to not miss targets|
+|Chosen update rate|5 Hz|50% margin|
+
+At 5 Hz updates with 0.5 m/s sweep:
+
+- Sample spacing: 100 mm
+- Guaranteed overlap with 150 mm coil ✓
+
+### 11.7 Implementation: Conservative Mode (80%)
+
+```c
+#define ACTIVE_PERIOD_MS   160   // 320 TX cycles at 2kHz
+#define SLEEP_PERIOD_MS    40    // Brief sleep
+#define UPDATE_RATE_HZ     5     // 200ms total period
+
+void measurement_cycle(void) {
+    // Turn on TX driver
+    enable_tx_driver();
+    
+    // Wait for coil to stabilize (~5ms)
+    _delay_ms(5);
+    
+    // Sample for 155ms (310 cycles at 2kHz)
+    start_adc_sampling();
+    _delay_ms(ACTIVE_PERIOD_MS - 5);
+    stop_adc_sampling();
+    
+    // Turn off TX driver
+    disable_tx_driver();
+    
+    // Compute DFT and update display (~10ms)
+    compute_dft();
+    update_display();
+    
+    // Enter idle sleep for remaining time
+    set_sleep_mode(SLEEP_MODE_IDLE);
+    sleep_for_ms(SLEEP_PERIOD_MS - 10);  // Account for processing
+}
+```
+
+### 11.8 Implementation: Maximum Power Mode (100%)
+
+```c
+// No duty cycling needed - continuous operation
+void main_loop(void) {
+    while (1) {
+        // Continuous sampling via ISR (Timer3 @ 8kHz)
+        // DFT computed in main loop
+        if (samples_ready) {
+            compute_dft();
+            update_display();  // ~5 Hz update rate
+            samples_ready = 0;
+        }
+    }
+}
+```
+
+---
+
+### 11.9 Additional Optimizations (If Margin Needed)
 
 **Priority 1: Remove Power LED** → saves 8 mA
 
 - Cut PWR LED jumper or desolder LED
 - Zero functional impact
+- Frees 8 mA for more TX power or longer runtime
 
-**Priority 2: Reduce OLED refresh** (12Hz → 4Hz) → saves 3-5 mA
+**With LED removed:**
 
-- Minimal user impact
+|Mode|Current|Runtime|Notes|
+|---|---|---|---|
+|Max Power|112 mA|~110 min|+10 min margin|
+|Conservative|92 mA|~130 min|+30 min margin|
 
-**After optimizations: ~12 mA margin**
+**Priority 2: Use bare ATmega2560** (future optimization)
 
-### 11.1 Why Class D Driver Matters
+- Remove Arduino board, use bare chip
+- Eliminates ATmega16U2 (12 mA) and other overhead
+- Potential savings: 20-30 mA
+- Allows even higher TX current or much longer runtime
 
-If we had chosen Class AB instead of Class D:
+### 11.10 Impact of 0.52mm Wire Choice
 
-|Parameter|Class D (chosen)|Class AB (rejected)|
+|Parameter|0.3mm Wire|0.52mm Wire|Improvement|
+|---|---|---|---|
+|DC resistance|14.6 Ω|4.7 Ω|**68% lower**|
+|Q factor|12.9|40|**3× higher**|
+|Power in R_dc|23 mW|7.5 mW|**67% less heat**|
+|Coil bandwidth|155 Hz|50 Hz|Narrower (more selective)|
+
+Lower DC resistance means more power reaches the magnetic field instead of being wasted as heat.
+
+### 11.11 Why MOSFET Driver Matters
+
+|Parameter|Simple NPN|MOSFET H-Bridge|
 |---|---|---|
-|Driver efficiency|94%|65%|
-|Power wasted as heat|20 mW|126 mW|
-|Power to coil|340 mW|234 mW|
-|Detection performance|Better|Worse|
-|Heat management|None needed|May need heatsink|
+|Drive current|2.9 mA|~0 mA|
+|Driver loss|20 mW|0.35 mW|
+|Efficiency|94%|99.9%|
 
-The Class D topology delivers **45% more power** to the coil!
+**MOSFET saves ~3 mA** — this can be redirected to more TX power or runtime margin.
+
+### 11.12 Summary: Recommended Operating Modes
+
+|Coil Type|Mode|TX Current|Total Current|Runtime|Performance|
+|---|---|---|---|---|---|
+|**Concentric**|**Max Power**|**40 mA**|**120 mA**|**100 min**|**100%**|
+|Concentric|Conservative|32 mA|100 mA|120 min|80%|
+|Concentric|Max + no LED|40 mA|112 mA|110 min|100% ✅ Best|
+|Double-D|Conservative|43 mA|109 mA|105 min|80%|
+|Double-D|Max Power|54 mA|134 mA|85 min|❌ Too short|
+
+> **Recommendation:**
+> 
+> - **Concentric:** Use Maximum Power mode (or Max + LED removed for 10 min margin)
+> - **Double-D:** Use Conservative (80%) mode to meet runtime requirement
 
 ---
 
@@ -966,20 +1243,56 @@ The Class D topology delivers **45% more power** to the coil!
 
 |Test|Setup|Pass Criteria|
 |---|---|---|
-|Arduino + OLED|AD3 @ 5V|< 85 mA|
+|Arduino + OLED|AD3 @ 9V via shunt|< 85 mA|
 |TX driver alone|Scope + DMM|35-45 mA|
 |Full electronics|Shunt + battery|< 85 mA|
-|Full system|Shunt + battery|< 125 mA|
+|Full system (Concentric)|Shunt + battery|115-125 mA|
+|Full system (Double-D)|Shunt + battery|130-140 mA|
 
-### 12.2 100-Minute Runtime Test Log
+### 12.2 Coil Verification
 
-|Time (min)|I (mA)|$V_{bat}$ (V)|Status|
+|Test|Method|Pass Criteria|
+|---|---|---|
+|TX inductance|LCR meter @ 1kHz|14-16 mH|
+|TX resistance|Multimeter|4-6 Ω|
+|RX inductance|LCR meter @ 1kHz|10-14 mH|
+|Induction balance|Oscilloscope|< 1 mV @ RX|
+
+### 12.3 Runtime Test Protocol
+
+**Test both operating modes:**
+
+#### Maximum Power Mode (100% duty cycle)
+
+|Time (min)|Target I (mA)|$V_{bat}$ (V)|Status|
 |---|---|---|---|
-|0|||Start|
-|25||||
-|50||||
-|75||||
-|**100**|||**V > 6.0V?**|
+|0|120|>9.0|Start|
+|25|120|>8.0||
+|50|120|>7.5||
+|75|120|>7.0||
+|**100**|120|**>6.0**|**PASS?**|
+
+#### Conservative Mode (80% duty cycle)
+
+|Time (min)|Target I (mA)|$V_{bat}$ (V)|Status|
+|---|---|---|---|
+|0|100|>9.0|Start|
+|30|100|>8.2||
+|60|100|>7.6||
+|90|100|>7.0||
+|**120**|100|**>6.0**|**PASS?**|
+
+### 12.4 Detection Performance Test
+
+Verify detection depth correlates with TX power:
+
+|Mode|TX Current|Expected Depth|Measured Depth|
+|---|---|---|---|
+|Maximum (100%)|40 mA|50 mm baseline||
+|Conservative (80%)|32 mA|~47 mm (93%)||
+|Battery Saver (50%)|20 mA|~40 mm (80%)||
+
+> Test target: Ø30mm × 50mm iron cylinder
 
 ---
 
@@ -988,10 +1301,12 @@ The Class D topology delivers **45% more power** to the coil!
 1. [[Literature/duracell_9volt.pdf|Duracell 9V Datasheet]]
 2. [[kravspecifikation.pdf|Kravspecifikation]]
 3. [[Coil Basics.pdf|Coil Design Fundamentals]]
-4. [[TX Driver and Tank Circuit Design]]
-5. ATmega2560 Datasheet, Microchip Technology
-6. 2N2222A Datasheet, ON Semiconductor
-7. SSD1306 Datasheet, Solomon Systech
+4. [[Search Coil Design]]
+5. [[TX Driver and Tank Circuit Design]]
+6. ATmega2560 Datasheet, Microchip Technology
+7. 2N2222A Datasheet, ON Semiconductor
+8. Si2301/Si2302 Datasheet, Vishay
+9. SSD1306 Datasheet, Solomon Systech
 
 ---
 

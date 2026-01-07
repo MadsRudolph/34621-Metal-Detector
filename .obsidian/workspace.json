@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "cd91af6cd3a45c7d",
+        "id": "177f0530fef6cb54",
         "type": "tabs",
         "children": [
           {
-            "id": "05aefcf8b5943939",
+            "id": "84d1ef613851da3e",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "Theory References.md",
+                "file": "Notes/topics/Search Coil Design.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Theory References"
+              "title": "Search Coil Design"
             }
           }
         ]
@@ -183,20 +183,30 @@
       "bases:Create new base": false
     }
   },
-  "active": "05aefcf8b5943939",
+  "active": "84d1ef613851da3e",
   "lastOpenFiles": [
-    "Docs/Maple/Coil design.mw.sav",
-    "Home.md",
+    "Notes/topics/Power Budget Analysis.md",
+    "Notes/topics/Development Roadmap.md.tmp.36740.1767790702256",
+    "Notes/topics/Development Roadmap.md",
+    "Notes/topics/Development Roadmap.md.tmp.36740.1767789161323",
+    "Notes/topics/Search Coil Design.md",
+    "Code/README.md",
+    "Code_PowerTest/src/drivers/ssd1306.h",
+    "Code_PowerTest/src/drivers/ssd1306.c",
+    "Code_PowerTest/src/drivers/I2C.h",
+    "Code_PowerTest/src/drivers/I2C.c",
+    "Code_PowerTest/src/drivers/data.h",
+    "Code_PowerTest/src/main.c",
+    "Code_PowerTest/src/drivers",
+    "Code_PowerTest/src/config.h",
     "Notes/topics/⚡ Power Budget Analysis.md",
-    "Docs/Maple/Coil design.mw",
-    "Docs/Maple",
-    "Docs",
-    "LTspice/example.op.raw",
-    "LTspice/example.log",
-    "LTspice/example.raw",
-    "LTspice/example.net",
-    "LTspice/bc337.t",
-    "LTspice/example.asc",
+    "Notes/topics/TX Driver and Tank Circuit Design.md",
+    "Notes/topics/DFT Algorithm.md",
+    "Templates/Debug Log.md",
+    "Notes/README.md",
+    "Notes/topics/Current Measurement Guide.md",
+    "Notes/topics/Coil Configuration Comparison.md",
+    "Home.md",
     "Literature/20240103_144208.jpg",
     "Literature/20240103_144158.jpg",
     "Literature/kravspecifikation.pdf.md",
@@ -204,16 +214,8 @@
     "KiCad/README.md",
     "Theory References.md",
     "README.md",
-    "Notes/topics/DFT Algorithm.md",
-    "Theory References.md",
-    "README.md",
-    "KiCad/README.md",
-    "Literature/Day_1/kravspecifikation.pdf",
-    "LTspice/README.md",
-    "Code/README.md",
     "Notes/topics/[[.md",
     "Templates/Literature Note.md",
-    "Templates/Debug Log.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
     "Literature/README.md"

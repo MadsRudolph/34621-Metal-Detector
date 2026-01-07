@@ -8,7 +8,7 @@
 
 #include "dsp.h"
 #include <avr/io.h>        // inkluderer i/o funktioner
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <stdint.h>        // inkluderer uint16_t
 
 /* TODO: Implement */
@@ -16,7 +16,7 @@
 #define Fs 8000
 #define N  64
 #define f0 2000
-#define ADC_middelværdi 512 // skal kun bruges hvis der er DC offset
+#define ADC_middelvaerdi 512 // skal kun bruges hvis der er DC offset
 
 //herunder har jeg udeladt at definere de Reelle og imaginære 
 //dele som giver 0 da de ikke er relevante
@@ -25,16 +25,16 @@
 // punkter bliver fasen skiftevis rent reel og rent Imaginær
 // phase nummeret er værdien af n
 #define RePhase1  1 //cos(0)
-#define ImPhase2  1 //sin(Pi/2) 
-#define RePhase3 -1 //cos(Pi) 
+#define ImPhase2  1 //sin(Pi/2)
+#define RePhase3 -1 //cos(Pi)
 #define ImPhase4 -1 //sin(3Pi/2)
 
 static uint8_t i = 0;
-volatile uint32_t Re = 0; 
-volatile uint32_t Re_buff = 0; 
-volatile uint32_t Im = 0; 
-volatile uint32_t Im_buff = 0; 
-volatile uint16_t xn = 0; 
+volatile uint32_t Re = 0;
+volatile uint32_t Re_buff = 0;
+volatile uint32_t Im = 0;
+volatile uint32_t Im_buff = 0;
+volatile uint16_t xn = 0;
 volatile uint8_t DFT_done;
 
 //i koden nedenfor ganger vi skiftevis Re og im på xn 
@@ -44,42 +44,42 @@ volatile uint8_t DFT_done;
 // kører kun en gang per ADC interrupt indtil vi har N = 64 samples 
 void DFT_sum(uint16_t ADC_Raw){
 
-        xn = ADC_Raw - ADC_middelværdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
-    
+        xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
+
         switch(i & 3){ // & 3 betyder at vi kun bruger de 3 nederste bits og derfor tæller 0->3 selvom i er større 
-        
+
             case 0: // cos(0)*xn = 1*xn
                 Re += RePhase1*xn;
-            break; 
+            break;
 
             case 1: // -sin(pi/2)*xn = -1*xn
                 Im += -ImPhase2*xn; //negativt fortegn da imaginærdel 
             break;
-            
+
             case 2: // cos(Pi)*xn = 1*xn
                 Re += RePhase3*xn;
-            break; 
-            
+            break;
+
             case 3: // -sin(3Pi/2)*xn = -(-1)*xn
                 Im += -ImPhase4*xn; //negativt fortegn da imaginærdel 
-            break; 
+            break;
         }
-        i++; 
+        i++;
         if(i>=N){ //hvis vi når N-1 starter vi forfra
             i = 0;
             DFT_done = 1 ;
-            
+
             Re_buff = Re; //vi overfører til en buffer inden vi resetter ellers vil vi miste sidste 
             Im_buff = Im;
-            
-            Re = 0; 
-            Im = 0; 
+
+            Re = 0;
+            Im = 0;
         }
     }
 
-//****** her skal der så indsættes en beregner der finder fasen og magnituden ****//// 
+//****** her skal der så indsættes en beregner der finder fasen og magnituden ****////
 
-DFT_Calc()
-
-
-
+void DFT_Calc(void)
+{
+    // TODO: implementer beregning af fase og magnitud
+}
