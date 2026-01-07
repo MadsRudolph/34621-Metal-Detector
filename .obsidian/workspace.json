@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/topics/Power Budget Analysis.md",
-                "mode": "preview",
+                "file": "Notes/topics/TX Driver and Tank Circuit Design.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Power Budget Analysis"
+              "title": "TX Driver and Tank Circuit Design"
             }
           }
         ]
@@ -185,11 +185,13 @@
   },
   "active": "84d1ef613851da3e",
   "lastOpenFiles": [
+    "Notes/topics/Power Budget Analysis.md",
+    "Notes/topics/TX Driver and Tank Circuit Design.md",
+    "Templates/Debug Log.md",
     "Code/src/sedHHRBeo",
     "Code/src/sed6CqfL1",
     "Notes/README.md",
     "Notes/topics/Power Budget Analysis.md.tmp.33196.1767722096594",
-    "Notes/topics/Power Budget Analysis.md",
     "Notes/topics/Current Measurement Guide.md",
     "Code/platformio.ini",
     "Code/src/dsp.h",
@@ -198,7 +200,6 @@
     "Code/src/sampling.c",
     "Code/src/tx.h",
     "Code/src/tx.c",
-    "Code/src/uart.h",
     "Notes/topics/Coil Configuration Comparison.md",
     "Notes/topics/DFT Algorithm.md",
     "Home.md",
@@ -212,7 +213,6 @@
     "Code/README.md",
     "Notes/topics/[[.md",
     "Templates/Literature Note.md",
-    "Templates/Debug Log.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
     "Literature/README.md"
