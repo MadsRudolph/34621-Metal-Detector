@@ -13,10 +13,12 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "Literature/databogMega2560.pdf"
+                "file": "Theory References.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "databogMega2560"
+              "icon": "lucide-file",
+              "title": "Theory References"
             }
           }
         ]
@@ -183,20 +185,25 @@
   },
   "active": "05aefcf8b5943939",
   "lastOpenFiles": [
+    "Docs/Maple/Coil design.mw.sav",
+    "Home.md",
     "Notes/topics/⚡ Power Budget Analysis.md",
-    "Literature/bipolar_transistor.pdf",
+    "Docs/Maple/Coil design.mw",
+    "Docs/Maple",
+    "Docs",
+    "LTspice/example.op.raw",
+    "LTspice/example.log",
+    "LTspice/example.raw",
+    "LTspice/example.net",
+    "LTspice/bc337.t",
+    "LTspice/example.asc",
     "Literature/20240103_144208.jpg",
     "Literature/20240103_144158.jpg",
-    "LTspice/example.asc",
-    "LTspice/bc337.t",
-    "Code/src/signal/tx.h",
-    "Code/src/signal/tx.c",
-    "Code/src/signal/rx.h",
-    "Code/src/signal/rx.c",
-    "Code/src/main.exe",
-    "Home.md",
-    "Literature/databogMega2560.pdf",
-    "Notes/README.md",
+    "Literature/kravspecifikation.pdf.md",
+    "LTspice/README.md",
+    "KiCad/README.md",
+    "Theory References.md",
+    "README.md",
     "Notes/topics/DFT Algorithm.md",
     "Theory References.md",
     "README.md",
