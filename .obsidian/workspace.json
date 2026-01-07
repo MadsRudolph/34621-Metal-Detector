@@ -13,11 +13,9 @@
             "state": {
               "type": "pdf",
               "state": {
-                "file": "Theory References.md",
-                "mode": "source",
-                "source": false
+                "file": "Theory References.md"
               },
-              "icon": "lucide-file",
+              "icon": "lucide-file-text",
               "title": "Theory References"
             }
           }
