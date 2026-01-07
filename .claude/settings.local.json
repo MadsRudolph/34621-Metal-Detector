@@ -5,7 +5,11 @@
       "Bash(tree:*)",
       "Bash(cat:*)",
       "Bash(printf:*)",
-      "Bash(/c/Users/Mads2/.platformio/penv/Scripts/pio.exe run:*)"
+      "Bash(/c/Users/Mads2/.platformio/penv/Scripts/pio.exe run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(where pio:*)",
+      "Bash(find:*)"
     ]
   }
 }
