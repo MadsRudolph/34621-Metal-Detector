@@ -5,9 +5,9 @@
 # -----------------------------------------------------------------------------
 # PlatformIO
 # -----------------------------------------------------------------------------
-.pio/
-.pioenvs/
-.piolibdeps/
+**/.pio/
+**/.pioenvs/
+**/.piolibdeps/
 .clang_complete
 .gcc-flags.json
 
@@ -23,11 +23,14 @@
 # -----------------------------------------------------------------------------
 # VS Code
 # -----------------------------------------------------------------------------
+# Ignore all nested .vscode folders (generated per-project by PlatformIO etc.)
+**/.vscode/
+# But keep the root .vscode with shareable configs
+!/.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
-!.vscode/extensions.json
 *.code-workspace
 
 # -----------------------------------------------------------------------------
