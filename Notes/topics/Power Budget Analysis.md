@@ -52,7 +52,7 @@ $$I_{target} = \frac{120\ \text{mA}}{1.5} = 80\ \text{mA}$$
 
 ## Power Test Firmware
 
-The power test firmware simulates realistic operating conditions to measure current consumption.
+Simple prime number calculator to measure baseline current consumption with CPU load and OLED display active.
 
 ### Code Structure (`Code/src/`)
 
@@ -60,12 +60,8 @@ The power test firmware simulates realistic operating conditions to measure curr
 Code/
 ├── platformio.ini          # PlatformIO build configuration
 └── src/
-    ├── main.c              # Main power test application
-    ├── config.h            # Pin definitions, timer values, constants
-    ├── uart.c / uart.h     # UART 9600 baud driver
-    ├── tx.c / tx.h         # Timer1 2kHz TX signal generation
-    ├── sampling.c / sampling.h  # Timer3 8kHz ISR, onboard ADC, double buffers
-    ├── dsp.c / dsp.h       # Single-bin DFT, IIR filter
+    ├── main.c              # Prime number calculator
+    ├── config.h            # CPU frequency, I2C settings
     └── drivers/
         ├── I2C.c / I2C.h   # TWI/I2C 400kHz driver
         ├── ssd1306.c / ssd1306.h  # OLED display driver
@@ -81,24 +77,15 @@ pio run
 
 # Upload to Arduino Mega
 pio run -t upload
-
-# Monitor serial output (9600 baud)
-pio device monitor -b 9600
 ```
 
 ### System Operation
 
-- **2kHz TX signal** on OC1A (Pin 11) via Timer1 CTC mode
-- **8kHz sampling ISR** via Timer3 with onboard ADC (10-bit, ADC0/Pin A0)
-- **Single-bin DFT** at 2kHz with IIR filtering (alpha=0.1)
-- **SSD1306 OLED** display via 400kHz I2C (~12 fps)
-- **Serial output** at 9600 baud (every 1 second)
-
-### Serial Output Format
-
-```
-[Power Test] Mag: XX.X% | Phase: XXX.X deg | DFT rate: XXX Hz | OLED: XX fps
-```
+- **Prime calculation** - CPU continuously calculates prime numbers (simulates processing load)
+- **SSD1306 OLED** - Display updates every 500ms showing:
+  - Current prime number found
+  - Total count of primes
+  - Square of current prime
 
 ---
 
@@ -113,10 +100,6 @@ pio device monitor -b 9600
 | GND | GND | - | |
 | SDA | Pin 20 | PD1 | I2C Data |
 | SCL | Pin 21 | PD0 | I2C Clock |
-| **ADC Input** ||||
-| Signal In | A0 | PF0 | RX coil signal (0-5V) |
-| **TX Output** ||||
-| TX Signal | Pin 11 | PB5 (OC1A) | 2kHz square wave |
 
 ### Wiring Diagram
 
@@ -129,10 +112,6 @@ Arduino Mega 2560
 │                │     │              │
 │  20 (SDA) ●────┼─────┼──────┐       │
 │  21 (SCL) ●────┼─────┼────┐ │       │
-│                │     │    │ │       │
-│  A0 ●──────────┼─────┼────┼─┼───○ RX Signal In
-│                │     │    │ │       │
-│  11 (TX) ●─────┼─────┼────┼─┼───○ TX Output (optional scope)
 │                │     │    │ │       │
 └─────────────────────────────────────┘
                  │     │    │ │
@@ -538,19 +517,15 @@ Example with 30mA available at 9V: $$P_{coil} = 9V \times 30mA = 270mW$$
 |-----------|-----------------|
 | Arduino Mega (running) | 50-80 mA |
 | SSD1306 OLED | 10-20 mA |
-| DSP overhead (DFT, IIR, timers) | 3-8 mA |
-| **Electronics subtotal** | **65-105 mA** |
-| TX coil driver + coil | 20-50 mA (design dependent) |
-| **Full system** | **85-150 mA** |
+| CPU load (prime calculations) | 0-5 mA |
+| **Test program total** | **60-105 mA** |
 
 ### Power Budget Check
 
 | Budget Item | Value |
 |-------------|-------|
 | Maximum for 100 min runtime | 120 mA |
-| Your measured electronics | ______ mA |
-| Remaining for TX coil | ______ mA |
-| Your measured full system | ______ mA |
+| Your measured current | ______ mA |
 | **Margin** | ______ mA |
 
 ---
@@ -561,16 +536,14 @@ Options to reduce power consumption:
 
 ### Software
 
-- [ ] Reduce OLED refresh rate (currently 12Hz)
+- [ ] Increase delay between display updates (currently 500ms)
 - [ ] Dim OLED display
-- [ ] Sleep MCU between measurements
-- [ ] Reduce sampling rate (affects performance)
+- [ ] Sleep MCU between calculations
 
 ### Hardware
 
 - [ ] Use Arduino Pro Mini (3.3V, 8MHz) - ~5mA
 - [ ] Use ATmega328P standalone (no USB chip) - ~15mA
-- [ ] Lower TX coil current (trade detection range)
 - [ ] Use more efficient voltage regulator
 
 ### Measured Savings

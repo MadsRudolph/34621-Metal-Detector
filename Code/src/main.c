@@ -1,180 +1,112 @@
 /**
- * main.c - Power Test with debug
+ * main.c - Prime Number Calculator Test
+ * Simple test program that calculates prime numbers and displays them on OLED
  */
 
 #include "config.h"
-#include "uart.h"
-#include "tx.h"
-#include "sampling.h"
-#include "dsp.h"
 #include "I2C.h"
 #include "ssd1306.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdlib.h>
+#include <string.h>
 
-static volatile uint32_t millis_counter = 0;
-
-static void timer0_init(void)
+/* Check if a number is prime */
+static uint8_t is_prime(uint16_t n)
 {
-    TCCR0A = (1 << WGM01);
-    TCCR0B = (1 << CS01) | (1 << CS00);
-    OCR0A = 249;
-    TIMSK0 = (1 << OCIE0A);
-}
+    if (n < 2) return 0;
+    if (n == 2) return 1;
+    if (n % 2 == 0) return 0;
 
-ISR(TIMER0_COMPA_vect) { millis_counter++; }
-
-static uint32_t millis(void)
-{
-    uint32_t ms;
-    cli();
-    ms = millis_counter;
-    sei();
-    return ms;
-}
-
-static void power_save_init(void)
-{
-    PRR0 |= (1 << PRUSART1);
-    PRR1 |= (1 << PRUSART2) | (1 << PRUSART3);
-    PRR1 |= (1 << PRTIM4) | (1 << PRTIM5);
-    PRR0 |= (1 << PRSPI);
-}
-
-static volatile uint32_t dft_count = 0;
-static volatile uint32_t oled_count = 0;
-static volatile uint32_t last_stats_time = 0;
-
-static void display_update(float magnitude, float phase_deg)
-{
-    uint8_t mag_cols = (uint8_t)(magnitude * 16.0f / 100.0f);
-    if (mag_cols > 16) mag_cols = 16;
-    uint8_t phase_cols = (uint8_t)(phase_deg * 16.0f / 360.0f);
-    if (phase_cols > 16) phase_cols = 16;
-
-    setXY(0, 0);
-    for (uint8_t col = 0; col < 16; col++) {
-        for (uint8_t i = 0; i < 8; i++) {
-            SendChar(col < mag_cols ? 0xFF : 0x00);
-        }
+    for (uint16_t i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return 0;
     }
-    setXY(2, 0);
-    for (uint8_t col = 0; col < 16; col++) {
-        for (uint8_t i = 0; i < 8; i++) {
-            SendChar(col < phase_cols ? 0xFF : 0x00);
-        }
+    return 1;
+}
+
+/* Convert number to string */
+static void uint_to_str(uint16_t n, char *buf)
+{
+    char tmp[8];
+    uint8_t i = 0;
+
+    if (n == 0) {
+        buf[0] = '0';
+        buf[1] = '\0';
+        return;
     }
+
+    while (n > 0) {
+        tmp[i++] = '0' + (n % 10);
+        n /= 10;
+    }
+
+    /* Reverse */
+    uint8_t j = 0;
+    while (i > 0) {
+        buf[j++] = tmp[--i];
+    }
+    buf[j] = '\0';
 }
 
 int main(void)
 {
-    uart_init();
-    uart_puts("\n\n=== Power Test Debug ===\n\n");
-
-    power_save_init();
-    adc_init();
-    
-    uart_puts("ADC regs: ADMUX=");
-    uart_print_uint(ADMUX);
-    uart_puts(" ADCSRA=");
-    uart_print_uint(ADCSRA);
-    uart_puts("\n");
-
+    /* Initialize I2C and OLED display */
     I2C_Init();
     InitializeDisplay();
     clear_display();
 
-    uart_puts("After OLED: ADMUX=");
-    uart_print_uint(ADMUX);
-    uart_puts(" ADCSRA=");
-    uart_print_uint(ADCSRA);
-    uart_puts("\n");
+    /* Show title */
+    sendStrXY("Prime Numbers", 0, 0);
+    sendStrXY("Calculator", 1, 0);
+    _delay_ms(2000);
 
-    timer0_init();
-    tx_init();
-    sampling_timer_init();
-    dsp_init();
-    sei();
-
-    tx_start();
-    sampling_start();
-
-    uart_puts("Running. Checking first buffer...\n");
-    _delay_ms(100);
-
-    if (sampling_buffer_ready()) {
-        volatile uint16_t *buf = sampling_get_buffer();
-        uart_puts("Buffer[0-7]: ");
-        for (uint8_t i = 0; i < 8; i++) {
-            uart_print_uint(buf[i]);
-            uart_puts(" ");
-        }
-        uart_puts("\n");
-        
-        /* Process and show result */
-        dsp_process(buf, SAMPLE_BUFFER_SIZE);
-        const dsp_result_t *r = dsp_get_result();
-        uart_puts("DSP result: Mag=");
-        uart_print_fixed1((int32_t)(r->magnitude * 10.0f));
-        uart_puts(" Phase=");
-        uart_print_fixed1((int32_t)(r->phase_deg * 10.0f));
-        uart_puts("\n\n");
-    } else {
-        uart_puts("ERROR: No buffer!\n");
-    }
-
-    uint32_t last_oled_update = millis();
-    last_stats_time = millis();
+    uint16_t current_num = 2;
+    uint16_t prime_count = 0;
+    char num_str[8];
+    char count_str[8];
+    char line_buf[22];
 
     while (1) {
-        uint32_t now = millis();
-
-        if (sampling_buffer_ready()) {
-            volatile uint16_t *buffer = sampling_get_buffer();
-            
-            /* Debug: show samples once per second */
-            if (dft_count == 0) {
-                uart_puts("[");
-                for (uint8_t i = 0; i < 4; i++) {
-                    uart_print_uint(buffer[i]);
-                    uart_puts(" ");
-                }
-                uart_puts("]\n");
-            }
-            
-            dsp_process(buffer, SAMPLE_BUFFER_SIZE);
-            dft_count++;
+        /* Find next prime */
+        while (!is_prime(current_num)) {
+            current_num++;
         }
 
-        if (now - last_oled_update >= OLED_UPDATE_MS) {
-            last_oled_update = now;
-            const dsp_result_t *result = dsp_get_result();
-            display_update(result->magnitude, result->phase_deg);
-            oled_count++;
-        }
+        prime_count++;
 
-        if (now - last_stats_time >= SERIAL_UPDATE_MS) {
-            uint32_t elapsed = now - last_stats_time;
-            uint32_t dft_rate = (dft_count * 1000) / elapsed;
-            uint32_t oled_fps = (oled_count * 1000) / elapsed;
-            const dsp_result_t *result = dsp_get_result();
+        /* Clear and display results */
+        clear_display();
 
-            uart_puts("Mag:");
-            uart_print_fixed1((int32_t)(result->magnitude * 10.0f));
-            uart_puts(" Ph:");
-            uart_print_fixed1((int32_t)(result->phase_deg * 10.0f));
-            uart_puts(" DFT:");
-            uart_print_uint(dft_rate);
-            uart_puts(" OLED:");
-            uart_print_uint(oled_fps);
-            uart_puts("\n");
+        /* Line 0: Title */
+        sendStrXY("=== PRIMES ===", 0, 0);
 
-            dft_count = 0;
-            oled_count = 0;
-            last_stats_time = now;
-        }
+        /* Line 2: Current prime */
+        uint_to_str(current_num, num_str);
+        strcpy(line_buf, "Prime: ");
+        strcat(line_buf, num_str);
+        sendStrXY(line_buf, 2, 0);
+
+        /* Line 4: Count */
+        uint_to_str(prime_count, count_str);
+        strcpy(line_buf, "Count: ");
+        strcat(line_buf, count_str);
+        sendStrXY(line_buf, 4, 0);
+
+        /* Line 6: Show some calculation activity */
+        uint_to_str(current_num * current_num, num_str);
+        strcpy(line_buf, "Square: ");
+        strcat(line_buf, num_str);
+        sendStrXY(line_buf, 6, 0);
+
+        /* Move to next number */
+        current_num++;
+
+        /* Delay so we can see the display */
+        _delay_ms(500);
     }
+
     return 0;
 }
