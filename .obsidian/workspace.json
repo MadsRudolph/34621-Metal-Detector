@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/topics/Search Coil Design.md",
+                "file": "Notes/topics/Development Roadmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Search Coil Design"
+              "title": "Development Roadmap"
             }
           }
         ]
@@ -186,22 +186,22 @@
   "active": "84d1ef613851da3e",
   "lastOpenFiles": [
     "Notes/topics/Power Budget Analysis.md",
-    "Notes/topics/Development Roadmap.md.tmp.36740.1767790702256",
     "Notes/topics/Development Roadmap.md",
-    "Notes/topics/Development Roadmap.md.tmp.36740.1767789161323",
+    "Notes/topics/TX Driver and Tank Circuit Design.md",
     "Notes/topics/Search Coil Design.md",
-    "Code/README.md",
-    "Code_PowerTest/src/drivers/ssd1306.h",
+    "Notes/topics/DFT Algorithm.md",
     "Code_PowerTest/src/drivers/ssd1306.c",
+    "Code_PowerTest/src/drivers/ssd1306.h",
     "Code_PowerTest/src/drivers/I2C.h",
     "Code_PowerTest/src/drivers/I2C.c",
     "Code_PowerTest/src/drivers/data.h",
     "Code_PowerTest/src/main.c",
     "Code_PowerTest/src/drivers",
     "Code_PowerTest/src/config.h",
+    "Code_PowerTest/src",
+    "Code_PowerTest/platformio.ini",
     "Notes/topics/⚡ Power Budget Analysis.md",
-    "Notes/topics/TX Driver and Tank Circuit Design.md",
-    "Notes/topics/DFT Algorithm.md",
+    "Code/README.md",
     "Templates/Debug Log.md",
     "Notes/README.md",
     "Notes/topics/Current Measurement Guide.md",

@@ -93,11 +93,11 @@ Timer1 is configured in CTC (Clear Timer on Compare) mode:
 3. Set scope to: 500µs/div horizontal, 2V/div vertical, DC coupling
 
 ### Tasks
-- [ ] Upload current code to Arduino Mega
-- [ ] Connect oscilloscope to Pin 11
-- [ ] Verify 2kHz square wave (period = 500µs)
-- [ ] Verify amplitude is 0-5V (full CMOS swing)
-- [ ] Verify duty cycle is 50%
+- [x] Upload current code to Arduino Mega
+- [x] Connect oscilloscope to Pin 11
+- [x] Verify 2kHz square wave (period = 500µs)
+- [x] Verify amplitude is 0-5V (full CMOS swing)
+- [x] Verify duty cycle is 50%
 
 ### Expected Results
 - Frequency: 2000 Hz ± 20 Hz
@@ -149,14 +149,14 @@ The existing `ssd1306.c` driver provides:
 4. Connect SSD1306 SCL to Pin 21
 
 ### Tasks
-- [ ] Wire OLED display to Arduino Mega (I2C pins 20, 21)
-- [ ] Add `I2C_Init()` call to main.c
-- [ ] Add `SSD1306_Init()` call to main.c
-- [ ] Add `SSD1306_Clear()` call to main.c
-- [ ] Display "Metal Detector" text on screen
-- [ ] Create `display_init()` wrapper in display.c
-- [ ] Create `display_clear()` wrapper in display.c
-- [ ] Create `display_text(x, y, string)` wrapper in display.c
+- [x] Wire OLED display to Arduino Mega (I2C pins 20, 21)
+- [x] Add `I2C_Init()` call to main.c
+- [x] Add `SSD1306_Init()` call to main.c
+- [x] Add `SSD1306_Clear()` call to main.c
+- [x] Display "Metal Detector" text on screen
+- [x] Create `display_init()` wrapper in display.c
+- [x] Create `display_clear()` wrapper in display.c
+- [x] Create `display_text(x, y, string)` wrapper in display.c
 
 ### Expected Results
 - Display shows "Metal Detector" text clearly
@@ -204,13 +204,13 @@ ADC Configuration:
 4. **Important:** Never exceed 5V on ADC input!
 
 ### Tasks
-- [ ] Add pin definitions to `config.h` (ADC_PIN, etc.)
-- [ ] Implement `adc_init()` function in rx.c
-- [ ] Implement `adc_read()` function in rx.c (single conversion)
-- [ ] Call `adc_init()` from main.c
-- [ ] Read ADC value in main loop
-- [ ] Display ADC value on OLED (update every 100ms)
-- [ ] Test with signal generator DC output (0-5V range)
+- [x] Add pin definitions to `config.h` (ADC_PIN, etc.)
+- [x] Implement `adc_init()` function in rx.c
+- [x] Implement `adc_read()` function in rx.c (single conversion)
+- [x] Call `adc_init()` from main.c
+- [x] Read ADC value in main loop
+- [x] Display ADC value on OLED (update every 100ms)
+- [x] Test with signal generator DC output (0-5V range)
 
 ### Expected Results
 - Display shows value 0-1023 corresponding to input voltage
