@@ -18,9 +18,10 @@ uint16_t ADC_Raw = 0;
 void timer1_init() {
 // vi vælger mode 4 som er CTC for 
     DDRB |=(1<<PB1); 
-    TCCR1B |= (1<<WGM12) | (1<<CS10);  //CTC (WGM)  og ingen prescaler (CS10) side 86
-    OCR1A = 999;  // med formel: f_OCnA = fclk/(2*N*(1+OCRnA)) = 999 ticks med prescaler på 1
-    TIMSK1 = (1<<TOIE1);          //Enabler Timer1 Overflow interrupt
+    TCCR0A |= (1<<WGM01); //CTC mode - side 86
+    TCCR0B |= (1<<CS01);  //Prescaler på 8 - side 86
+    OCR0A = 124;  // med formel: f_OCnA = fclk/(2*N*(1+OCRnA)) = 124 ticks med prescaler på 8
+    TIMSK0 = (1<< TOIE0);          //Enabler Timer2 Overflow interrupt
 }
 
 void adc_init(){
@@ -35,13 +36,13 @@ void adc_init(){
      */
     ADCSRA = (1 << ADEN) | (1 << ADIE) | (1 << ADATE)
            | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //denne linje er prescaler på 128
-    /* Auto-trigger kilde = Timer1 Overflow */
-    ADCSRB = (1 << ADTS2) | (1 << ADTS1);
+    /* Auto-trigger kilde = Timer0 Overflow */
+    ADCSRB |= (1 << ADTS2);
 
        /* Start første konvertering */
     ADCSRA |= (1 << ADSC);
 }
-ISR(OVF1_vect){
+ISR(TIMER0_OVF_vect){
     if(i >= 1 ){
         PORTB ^=(1<<PB1); 
         i = 0;
