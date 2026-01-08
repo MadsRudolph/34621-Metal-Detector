@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/topics/Search Coil Design.md",
+                "file": "Meeting/Referat af møde 6-1-2026.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Search Coil Design"
+              "title": "Referat af møde 6-1-2026"
             }
           }
         ]
@@ -183,41 +183,36 @@
       "bases:Create new base": false
     }
   },
-  "active": "84d1ef613851da3e",
+  "active": "file-explorer",
   "lastOpenFiles": [
-    "Notes/topics/Power Budget Analysis.md",
-    "Notes/topics/Development Roadmap.md.tmp.36740.1767790702256",
-    "Notes/topics/Development Roadmap.md",
-    "Notes/topics/Development Roadmap.md.tmp.36740.1767789161323",
-    "Notes/topics/Search Coil Design.md",
-    "Code/README.md",
-    "Code_PowerTest/src/drivers/ssd1306.h",
-    "Code_PowerTest/src/drivers/ssd1306.c",
-    "Code_PowerTest/src/drivers/I2C.h",
-    "Code_PowerTest/src/drivers/I2C.c",
-    "Code_PowerTest/src/drivers/data.h",
-    "Code_PowerTest/src/main.c",
-    "Code_PowerTest/src/drivers",
-    "Code_PowerTest/src/config.h",
+    "QSPICE/Hbro_sim.fft.qraw",
+    "QSPICE/Hbro_sim.qopraw",
+    "QSPICE/Hbro_sim.qraw",
+    "QSPICE/Hbro_sim.qsch",
+    "QSPICE/Hbro_amp.qraw",
+    "KiCad/Metaldetector/Metaldetector-backups/Metaldetector-2026-01-07_153658.zip",
+    "KiCad/Metaldetector/Metaldetector-backups",
+    "LTspice/example.net",
+    "KiCad/Metaldetector/#auto_saved_files#",
+    "KiCad/Metaldetector/_autosave-Metaldetector.kicad_sch",
+    "KiCad/Metaldetector/~Metaldetector.kicad_sch.lck",
     "Notes/topics/⚡ Power Budget Analysis.md",
-    "Notes/topics/TX Driver and Tank Circuit Design.md",
-    "Notes/topics/DFT Algorithm.md",
-    "Templates/Debug Log.md",
-    "Notes/README.md",
-    "Notes/topics/Current Measurement Guide.md",
-    "Notes/topics/Coil Configuration Comparison.md",
-    "Home.md",
+    "Meeting/Referat af møde 6-1-2026.md",
     "Literature/20240103_144208.jpg",
     "Literature/20240103_144158.jpg",
     "Literature/kravspecifikation.pdf.md",
     "LTspice/README.md",
     "KiCad/README.md",
     "Theory References.md",
+    "Home.md",
     "README.md",
+    "Notes/topics/DFT Algorithm.md",
+    "Code/README.md",
     "Notes/topics/[[.md",
     "Templates/Literature Note.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
+    "Notes/README.md",
     "Literature/README.md"
   ]
 }
