@@ -1,21 +1,23 @@
 /**
  * I2C.c
- * I2C (TWI) driver implementation for ATmega2560
+ * I2C (TWI) driver implementation
+ * Supports ATmega2560 (Mega) and ATmega328P (Nano)
  *
  * ATTRIBUTION:
  * ============
  * Original Author: osch
  * Adapted from: AVR freaks
  *
- * Hardware Connection (Arduino Mega 2560 - ATmega2560):
- * - SDA: Pin 20 (PD1)
- * - SCL: Pin 21 (PD0)
+ * Hardware Connection:
+ *   ATmega2560 (Mega): SDA=Pin 20 (PD1), SCL=Pin 21 (PD0)
+ *   ATmega328P (Nano): SDA=A4 (PC4), SCL=A5 (PC5)
  *
  * Integration: Mads Rudolph, Andreas Skaaning, Jonas Beck & Sigurd Hestbech
  * (DTU 34621 Metal Detector Project)
  */
 
 #include "I2C.h"
+#include "../config.h"
 #include <avr/io.h>
 #include <util/delay.h>
 
@@ -24,18 +26,20 @@ char write_address;
 char read_addres;
 
 /**
- * Initialize I2C with SCL set to 100kHz
+ * Initialize I2C with SCL set to ~400kHz
  *
- * ATmega328P TWI Registers:
+ * TWI Registers (same on ATmega2560 and ATmega328P):
  * - TWBR: TWI Bit Rate Register
  * - TWSR: TWI Status Register
  * - TWCR: TWI Control Register
  */
 void I2C_Init(void)
 {
-    /* Startup delay pin (PA0 on ATmega2560) */
-    DDRA |= (1 << DDA0);
-    PORTA |= (1 << PA0);
+#if I2C_HAS_STARTUP_PIN
+    /* Startup delay pin (PA0 on ATmega2560 only) */
+    I2C_STARTUP_DDR |= (1 << I2C_STARTUP_BIT);
+    I2C_STARTUP_PORT |= (1 << I2C_STARTUP_BIT);
+#endif
 
     _delay_ms(1000);        /* Startup delay for display */
 

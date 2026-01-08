@@ -116,10 +116,13 @@ int16_t fast_atan2_deg(int32_t y, int32_t x);
 
 /* ===== Debug Pin Configuration ===== */
 
-/* Pin 13 (PB7) bruges til timing verifikation med oscilloskop */
-#define DEBUG_PIN_PORT  PORTB
-#define DEBUG_PIN_DDR   DDRB
-#define DEBUG_PIN_BIT   PB7
+/*
+ * Debug pin til timing verifikation med oscilloskop
+ * Pin definitions are in config.h:
+ *   - ATmega2560: Pin 13 (PB7)
+ *   - ATmega328P: Pin 8 (PB0)
+ */
+#include "../config.h"
 
 /*
  * debug_pin_init

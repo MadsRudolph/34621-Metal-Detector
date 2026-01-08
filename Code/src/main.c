@@ -3,11 +3,13 @@
  * Metal Detektor - Komplet System
  *
  * State machine med alle komponenter integreret
+ * Supports both ATmega2560 (Mega) and ATmega328P (Nano)
  */
 
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "config.h"
 #include "signal/tx.h"
 #include "signal/rx.h"
 #include "signal/dsp.h"
@@ -103,14 +105,14 @@ int main(void)
          * Læser pin status direkte (aktiv lav med pull-up)
          */
         if (state == STATE_IDLE) {
-            uint8_t start_held = !(PINE & (1 << PE4));
-            uint8_t calib_held = !(PINE & (1 << PE5));
+            uint8_t start_held = !(BTN_PIN & (1 << BTN_START_BIT));
+            uint8_t calib_held = !(BTN_PIN & (1 << BTN_CALIB_BIT));
 
             if (start_held && calib_held) {
                 /* Vent lidt og tjek igen (debounce) */
                 _delay_ms(100);
-                start_held = !(PINE & (1 << PE4));
-                calib_held = !(PINE & (1 << PE5));
+                start_held = !(BTN_PIN & (1 << BTN_START_BIT));
+                calib_held = !(BTN_PIN & (1 << BTN_CALIB_BIT));
 
                 if (start_held && calib_held) {
                     /* Begge holdes stadig - gå i debug mode */
@@ -123,7 +125,7 @@ int main(void)
                     buzzer_beep(50);
 
                     /* Vent til knapper slippes */
-                    while (!(PINE & (1 << PE4)) || !(PINE & (1 << PE5))) {
+                    while (!(BTN_PIN & (1 << BTN_START_BIT)) || !(BTN_PIN & (1 << BTN_CALIB_BIT))) {
                         _delay_ms(10);
                     }
                 }

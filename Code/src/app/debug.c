@@ -11,6 +11,7 @@
 
 #include "debug.h"
 #include "display.h"
+#include "../config.h"
 #include "../drivers/ssd1306.h"
 #include <avr/io.h>
 #include <string.h>
