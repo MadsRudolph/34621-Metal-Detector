@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "cd91af6cd3a45c7d",
+        "id": "177f0530fef6cb54",
         "type": "tabs",
         "children": [
           {
-            "id": "05aefcf8b5943939",
+            "id": "84d1ef613851da3e",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -210,7 +210,6 @@
     "Code/README.md",
     "Notes/topics/[[.md",
     "Templates/Literature Note.md",
-    "Templates/Debug Log.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
     "Notes/README.md",
