@@ -3,6 +3,4 @@
 
 #include <avr/io.h>
 
-void timer1_init(void);
-
 #endif
