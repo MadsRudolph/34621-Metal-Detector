@@ -11,14 +11,14 @@
             "id": "05aefcf8b5943939",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "Theory References.md",
+                "file": "Meeting/Referat af møde 6-1-2026.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Theory References"
+              "title": "Referat af møde 6-1-2026"
             }
           }
         ]
@@ -183,39 +183,37 @@
       "bases:Create new base": false
     }
   },
-  "active": "05aefcf8b5943939",
+  "active": "file-explorer",
   "lastOpenFiles": [
-    "Docs/Maple/Coil design.mw.sav",
-    "Home.md",
-    "Notes/topics/⚡ Power Budget Analysis.md",
+    "QSPICE/Hbro_amp.qraw",
+    "KiCad/Metaldetector/Metaldetector-backups/Metaldetector-2026-01-07_153658.zip",
+    "KiCad/Metaldetector/Metaldetector-backups",
+    "LTspice/example.net",
+    "KiCad/Metaldetector/#auto_saved_files#",
+    "KiCad/Metaldetector/_autosave-Metaldetector.kicad_sch",
+    "KiCad/Metaldetector/~Metaldetector.kicad_sch.lck",
+    "KiCad/Metaldetector/~Metaldetector.kicad_pro.lck",
     "Docs/Maple/Coil design.mw",
     "Docs/Maple",
     "Docs",
-    "LTspice/example.op.raw",
-    "LTspice/example.log",
-    "LTspice/example.raw",
-    "LTspice/example.net",
-    "LTspice/bc337.t",
-    "LTspice/example.asc",
+    "Notes/topics/⚡ Power Budget Analysis.md",
+    "Meeting/Referat af møde 6-1-2026.md",
     "Literature/20240103_144208.jpg",
     "Literature/20240103_144158.jpg",
     "Literature/kravspecifikation.pdf.md",
     "LTspice/README.md",
     "KiCad/README.md",
     "Theory References.md",
+    "Home.md",
     "README.md",
     "Notes/topics/DFT Algorithm.md",
-    "Theory References.md",
-    "README.md",
-    "KiCad/README.md",
-    "Literature/Day_1/kravspecifikation.pdf",
-    "LTspice/README.md",
     "Code/README.md",
     "Notes/topics/[[.md",
     "Templates/Literature Note.md",
     "Templates/Debug Log.md",
     "Templates/Daily Note.md",
     "Templates/Circuit Note.md",
+    "Notes/README.md",
     "Literature/README.md"
   ]
 }
