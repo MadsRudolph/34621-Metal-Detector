@@ -1,17 +1,25 @@
 /*
  * debug.c
- * Debug og diagnostik system til metal detektor
+ * Debug og diagnostik system til metal detektor for Arduino Nano (ATmega328P)
  *
  * Fire debug skærme:
  * 1. ADC: Rå værdier, min/max, sample count
  * 2. DFT Akkumulator: Re, Im, completion count
  * 3. DFT Resultat: Magnitude, fase, klassifikation
  * 4. Timing: Frekvenser, ISR count, sync status
+ *
+ * ÆNDRING: Fjernet config.h - pin definitioner er i debug.h
+ *
+ * ATmega328P Datasheet Reference (Rev. 7810D–AVR–01/15):
+ * ======================================================
+ * I/O Ports:
+ *   - DDRB:        Section 13.4.3, Page 72
+ *   - PORTB:       Section 13.4.2, Page 72
+ *   - Pin toggle:  Section 13.2.2, Page 60
  */
 
 #include "debug.h"
 #include "display.h"
-#include "../config.h"
 #include "../drivers/ssd1306.h"
 #include <avr/io.h>
 #include <string.h>
@@ -352,8 +360,8 @@ static void draw_screen_timing(void)
         sendStrXY("CHECK ", 5, 6);
     }
 
-    /* Debug pin info */
-    sendStrXY("Pin13: Toggle", 6, 0);
+    /* Debug pin info (Pin 8 på Nano) */
+    sendStrXY("Pin8: Toggle", 6, 0);
     sendStrXY("Scope: 4kHz", 7, 0);
 }
 
@@ -387,12 +395,16 @@ void debug_init(void)
 
 /*
  * debug_pin_init
- * Konfigurer Pin 13 (PB7) som output for timing verifikation
+ * Konfigurer Pin 8 (PB0) som output for timing verifikation
+ *
+ * Datasheet: Section 13.2.1, Page 59 - Configuring the Pin
+ * Datasheet: Section 13.4.3, Page 72 - DDRB register
+ * Datasheet: Section 13.4.2, Page 72 - PORTB register
  */
 void debug_pin_init(void)
 {
-    DEBUG_PIN_DDR |= (1 << DEBUG_PIN_BIT);
-    DEBUG_PIN_PORT &= ~(1 << DEBUG_PIN_BIT);
+    DDRB |= (1 << PB0);     /* Pin 8 som output */
+    PORTB &= ~(1 << PB0);   /* Start lav */
 }
 
 /*

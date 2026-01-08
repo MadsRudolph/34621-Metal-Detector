@@ -1,19 +1,45 @@
 /*
  * ui.c
- * Knapper og buzzer
+ * Knapper og buzzer for Arduino Nano (ATmega328P)
  *
- * Knapper bruger polling med software debounce
- * Buzzer bruger:
- *   - ATmega2560: Timer4 PWM on Pin 8 (OC4C)
- *   - ATmega328P: Timer2 PWM on Pin 3 (OC2B)
+ * Knapper: Pin 2 (Start/Stop), Pin 4 (Calibrate) - polling med software debounce
+ * Buzzer:  Pin 3 (Timer2 PWM via OC2B)
+ *
+ * ÆNDRING: Fjernet config.h og ATmega2560 kode - kun Nano support.
+ *
+ * ATmega328P Datasheet Reference (Rev. 7810D–AVR–01/15):
+ * ======================================================
+ * Timer/Counter2:
+ *   - TCCR2A:      Section 17.11.1, Page 127
+ *   - TCCR2B:      Section 17.11.2, Page 130
+ *   - OCR2B:       Section 17.11.5, Page 131
+ *   - Fast PWM:    Section 17.7.3, Page 122
+ *   - COM2B bits:  Section 17.11.1, Page 129, Tables 17-5/6/7
+ *   - CS2 bits:    Table 17-9, Page 131
+ *
+ * I/O Ports:
+ *   - DDRD:        Section 13.4.9, Page 73
+ *   - PORTD:       Section 13.4.8, Page 73
+ *   - PIND:        Section 13.4.10, Page 73
+ *   - Pull-up:     Section 13.2.1, Page 59
  */
 
 #include "ui.h"
-#include "../config.h"
 #include <avr/io.h>
 #include <util/delay.h>
 
-/* Knap events */
+/*
+ * PIN OVERSIGT - Arduino Nano (ATmega328P)
+ *
+ * Knapper (Port D, aktiv lav med pull-up):
+ *   Pin 2 (PD2) = Start/Stop
+ *   Pin 4 (PD4) = Calibrate
+ *
+ * Buzzer (Port D, Timer2 PWM):
+ *   Pin 3 (PD3) = OC2B
+ */
+
+/* Knap events - eksporteret til main.c */
 volatile uint8_t btn_start_pressed = 0;
 volatile uint8_t btn_calibrate_pressed = 0;
 
@@ -24,50 +50,43 @@ static uint8_t last_calibrate = 1;
 /*
  * ui_init
  * Konfigurer knapper som input med pull-up
- * Konfigurer Timer for buzzer PWM
+ * Konfigurer Timer2 for buzzer PWM
  */
 void ui_init(void)
 {
     /*
      * Knapper - input med intern pull-up (aktiv lav)
-     * Uses config.h definitions for portability
+     * Datasheet: Section 13.2.1, Page 59 - Configuring the Pin
+     * Datasheet: Section 13.4.9, Page 73 - DDRD register
+     * Datasheet: Section 13.4.8, Page 73 - PORTD register (pull-up)
      */
-    BTN_DDR &= ~((1 << BTN_START_BIT) | (1 << BTN_CALIB_BIT));   /* Input */
-    BTN_PORT |= (1 << BTN_START_BIT) | (1 << BTN_CALIB_BIT);     /* Pull-up */
+    DDRD &= ~((1 << PD2) | (1 << PD4));   /* Pin 2 og 4 som input */
+    PORTD |= (1 << PD2) | (1 << PD4);     /* Pull-up aktiveret */
+
+    /* Buzzer output - Pin 3 (PD3)
+     * Datasheet: Section 13.4.9, Page 73 - DDRD register */
+    DDRD |= (1 << PD3);
 
     /*
-     * Buzzer output
-     */
-    BUZZER_DDR |= (1 << BUZZER_BIT);
-
-#if defined(BUZZER_USE_TIMER4)
-    /*
-     * ATmega2560: Timer4 Fast PWM, TOP = ICR4
-     * Pin 8 (PH5/OC4C)
-     */
-    TCCR4A = (1 << WGM41);
-    TCCR4B = (1 << WGM43) | (1 << WGM42) | (1 << CS41);  /* Prescaler 8 */
-
-    /* Sæt frekvens: 16MHz / 8 / 4000 = 500Hz */
-    ICR4 = 3999;
-
-    /* Start med buzzer slukket */
-    OCR4C = 0;
-
-#elif defined(BUZZER_USE_TIMER2)
-    /*
-     * ATmega328P: Timer2 Fast PWM, TOP = OCR2A (mode 7)
-     * Pin 3 (PD3/OC2B)
+     * Timer2 Fast PWM til buzzer
      *
-     * For variable frequency, we use mode 7 (Fast PWM with OCR2A as TOP)
-     * This limits resolution but allows frequency control
+     * FJERNET: #if defined(BUZZER_USE_TIMER4) ... #elif ... kode
+     * Nu kun Timer2 kode for Nano.
+     *
+     * Timer2 Fast PWM mode 3 (TOP = 0xFF)
+     * Prescaler 64: 16MHz / 64 / 256 = ~977 Hz
+     *
+     * Datasheet: Section 17.11.1, Page 127 - TCCR2A register
+     * Datasheet: Table 17-8, Page 130 - Waveform Generation Mode
+     * Datasheet: Section 17.11.2, Page 130 - TCCR2B register
+     * Datasheet: Table 17-9, Page 131 - Clock Select Bit Description
      */
-    TCCR2A = (1 << WGM21) | (1 << WGM20);  /* Fast PWM mode 3 (TOP=0xFF) */
-    TCCR2B = (1 << CS22);                   /* Prescaler 64: 16MHz/64 = 250kHz */
+    TCCR2A = (1 << WGM21) | (1 << WGM20);  /* Fast PWM mode 3 */
+    TCCR2B = (1 << CS22);                   /* Prescaler 64 */
 
-    /* Start med buzzer slukket */
+    /* Start med buzzer slukket
+     * Datasheet: Section 17.11.5, Page 131 - OCR2B register */
     OCR2B = 0;
-#endif
 }
 
 /*
@@ -77,20 +96,20 @@ void ui_init(void)
  */
 void ui_poll_buttons(void)
 {
-    uint8_t start_now = (BTN_PIN & (1 << BTN_START_BIT)) ? 1 : 0;
-    uint8_t calibrate_now = (BTN_PIN & (1 << BTN_CALIB_BIT)) ? 1 : 0;
+    uint8_t start_now = (PIND & (1 << PD2)) ? 1 : 0;
+    uint8_t calibrate_now = (PIND & (1 << PD4)) ? 1 : 0;
 
-    /* Detect falling edge (knap trykket) */
+    /* Detect falling edge (knap trykket - aktiv lav) */
     if (last_start == 1 && start_now == 0) {
-        _delay_ms(DEBOUNCE_MS);
-        if (!(BTN_PIN & (1 << BTN_START_BIT))) {
+        _delay_ms(50);  /* Debounce 50ms */
+        if (!(PIND & (1 << PD2))) {
             btn_start_pressed = 1;
         }
     }
 
     if (last_calibrate == 1 && calibrate_now == 0) {
-        _delay_ms(DEBOUNCE_MS);
-        if (!(BTN_PIN & (1 << BTN_CALIB_BIT))) {
+        _delay_ms(50);  /* Debounce 50ms */
+        if (!(PIND & (1 << PD4))) {
             btn_calibrate_pressed = 1;
         }
     }
@@ -105,30 +124,27 @@ void ui_poll_buttons(void)
  */
 void buzzer_on(void)
 {
-#if defined(BUZZER_USE_TIMER4)
-    TCCR4A |= (1 << COM4C1);  /* Enable PWM output */
-    OCR4C = 3999 / 2;         /* 50% duty */
-
-#elif defined(BUZZER_USE_TIMER2)
-    TCCR2A |= (1 << COM2B1);  /* Enable PWM output on OC2B */
+    /*
+     * FJERNET: #if defined(BUZZER_USE_TIMER4) Mega kode
+     * Nu kun Timer2 for Nano
+     *
+     * Datasheet: Section 17.11.1, Page 127 - TCCR2A COM2B bits
+     * Datasheet: Tables 17-5/6/7, Page 129 - Compare Output Mode (Fast PWM)
+     */
+    TCCR2A |= (1 << COM2B1);  /* Enable PWM output on OC2B (Pin 3) */
     OCR2B = 127;              /* 50% duty (TOP=255) */
-#endif
 }
 
 /*
  * buzzer_off
  * Sluk buzzer
+ *
+ * Datasheet: Section 17.11.1, Page 127 - COM2B1:0 = 00 disconnects OC2B
  */
 void buzzer_off(void)
 {
-#if defined(BUZZER_USE_TIMER4)
-    TCCR4A &= ~(1 << COM4C1);  /* Disable PWM output */
-    OCR4C = 0;
-
-#elif defined(BUZZER_USE_TIMER2)
     TCCR2A &= ~(1 << COM2B1);  /* Disable PWM output */
     OCR2B = 0;
-#endif
 }
 
 /*
@@ -147,8 +163,10 @@ void buzzer_beep(uint16_t duration_ms)
 
 /*
  * buzzer_update
- * Opdater buzzer frekvens baseret på signal styrke
- * Højere styrke = højere tone (humming)
+ * Opdater buzzer baseret på signal styrke
+ * Højere styrke = højere tone og højere volume
+ *
+ * FJERNET: Al Timer4 (Mega) kode - nu kun Timer2 for Nano
  */
 void buzzer_update(uint8_t strength)
 {
@@ -157,45 +175,26 @@ void buzzer_update(uint8_t strength)
         return;
     }
 
-#if defined(BUZZER_USE_TIMER4)
     /*
-     * ATmega2560: Full 16-bit timer range
-     * Frekvens baseret på styrke:
-     * styrke 1   = lav tone  (~200 Hz, TOP = 10000)
-     * styrke 100 = høj tone  (~2000 Hz, TOP = 1000)
+     * Timer2 er kun 8-bit, så vi har begrænset frekvens range.
      *
-     * TOP = 10000 - (strength * 90)
-     */
-    uint16_t top = 10000 - ((uint16_t)strength * 90);
-
-    ICR4 = top;
-    OCR4C = top / 2;  /* 50% duty */
-    TCCR4A |= (1 << COM4C1);  /* Enable output */
-
-#elif defined(BUZZER_USE_TIMER2)
-    /*
-     * ATmega328P: 8-bit timer, limited frequency range
-     * With prescaler 64 and TOP=255: freq = 250kHz/256 = ~977 Hz
-     * With prescaler 256 and TOP=255: freq = 62.5kHz/256 = ~244 Hz
+     * Strategi:
+     * - Lav styrke (1-50):  Prescaler 64 = ~245 Hz base tone
+     * - Høj styrke (51-100): Prescaler 32 = ~490 Hz højere tone
+     * - Duty cycle varierer med styrke for perceived loudness
      *
-     * We vary duty cycle to create perceived loudness change
-     * and use prescaler switching for frequency range
-     *
-     * Low strength = low duty, high strength = high duty
-     * Map strength (1-100) to duty (32-224)
+     * Map strength (1-100) til duty (32-224)
      */
     uint8_t duty = 32 + ((uint16_t)strength * 192 / 100);
 
-    /* Higher strength = faster prescaler = higher pitch */
     if (strength > 50) {
-        /* Prescaler 32: ~490 Hz base */
+        /* Høj styrke: hurtigere prescaler = højere pitch */
         TCCR2B = (1 << CS21) | (1 << CS20);  /* Prescaler 32 */
     } else {
-        /* Prescaler 64: ~245 Hz base */
+        /* Lav styrke: langsommere prescaler = lavere pitch */
         TCCR2B = (1 << CS22);  /* Prescaler 64 */
     }
 
     OCR2B = duty;
     TCCR2A |= (1 << COM2B1);  /* Enable output */
-#endif
 }

@@ -114,26 +114,22 @@ uint16_t isqrt(uint32_t n);
  */
 int16_t fast_atan2_deg(int32_t y, int32_t x);
 
-/* ===== Debug Pin Configuration ===== */
+/* ===== Debug Pin ===== */
 
 /*
  * Debug pin til timing verifikation med oscilloskop
- * Pin definitions are in config.h:
- *   - ATmega2560: Pin 13 (PB7)
- *   - ATmega328P: Pin 8 (PB0)
+ * Pin 8 (PB0) på Arduino Nano
+ *
+ * ATmega328P Datasheet Reference (Rev. 7810D–AVR–01/15):
+ * - Section 13.2.2, Page 60 - Toggling the Pin
+ * - Section 13.4.2, Page 72 - PORTB register
  */
-#include "../config.h"
+#include <avr/io.h>
 
-/*
- * debug_pin_init
- * Konfigurer debug pin som output
- */
 void debug_pin_init(void);
 
-/*
- * debug_pin_toggle
- * Toggle debug pin (til oscilloskop måling)
- */
-#define debug_pin_toggle() (DEBUG_PIN_PORT ^= (1 << DEBUG_PIN_BIT))
+/* Toggle debug pin - Pin 8 (PB0)
+ * Datasheet: Section 13.2.2, Page 60 - Writing 1 to PINx toggles PORTx */
+#define debug_pin_toggle() (PINB = (1 << PB0))
 
 #endif /* DEBUG_H */
