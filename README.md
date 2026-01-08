@@ -4,7 +4,7 @@
 
 **Electromagnetic Sensors & Digital Signal Processing**
 
-[![Status](https://img.shields.io/badge/Status-Under%20Construction-yellow?style=for-the-badge)](https://github.com)
+[![Status](https://img.shields.io/badge/Status-In%20Progress-green?style=for-the-badge)](https://github.com)
 [![Course](https://img.shields.io/badge/DTU-34621-red?style=for-the-badge)](https://www.dtu.dk)
 [![Platform](https://img.shields.io/badge/Platform-Arduino%20Mega-00979D?style=for-the-badge&logo=arduino)](https://www.arduino.cc/)
 [![License](https://img.shields.io/badge/License-Educational-blue?style=for-the-badge)](LICENSE)
@@ -20,7 +20,7 @@
 </div>
 
 > [!NOTE]
-> This project is in **early development**. Hardware designs are being simulated, firmware is partially implemented, and documentation is evolving.
+> This project is in **active development**. Coil design is finalized (Ø200mm), circuit simulations are validated (~90% efficiency), and firmware is being prepared for hardware testing.
 
 <br>
 
@@ -113,11 +113,13 @@
 
 | Parameter | Value | Notes |
 |:----------|:-----:|:------|
+| Coil Diameter | `200 mm` | Concentric design |
 | TX Frequency | `2 kHz` | PWM generated |
 | Sample Rate | `8 kHz` | 4× oversampling |
 | DFT Window | `64 samples` | ~8 ms |
 | Phase Threshold | `65°` | Fe vs Non-Fe |
 | Min Inductance | `10 mH` | RX coil requirement |
+| H-bridge Efficiency | `~90%` | QSPICE validated |
 | Runtime | `100 min` | @ 9V battery |
 
 <br>
@@ -125,18 +127,22 @@
 ## 📁 Repository Structure
 
 ```
-📦 34621-EM-Sensors-DSP
-├── 📂 Code/                  # Firmware (PlatformIO)
+📦 34621-Metal-Detector
+├── 📂 Code/                  # Main firmware (PlatformIO)
 │   ├── 📂 src/
 │   │   ├── 📄 main.c
-│   │   ├── 📂 signal/        # ADC, DFT, filtering
+│   │   ├── 📂 signal/        # TX, RX, DFT, filtering
 │   │   ├── 📂 app/           # Detection, UI, display
 │   │   └── 📂 drivers/       # I2C, SSD1306
 │   └── 📄 platformio.ini
-├── 📂 KiCad/                 # PCB design
-├── 📂 LTspice/               # Circuit simulations
+├── 📂 Code_PowerTest/        # Power consumption testing firmware
+├── 📂 KiCad/                 # PCB schematic & layout
+├── 📂 LTspice/               # LTspice circuit simulations
+├── 📂 QSPICE/                # QSPICE simulations (H-bridge driver)
+├── 📂 Docs/                  # Generated documentation
 ├── 📂 Literature/            # Datasheets & references
-├── 📂 Notes/                 # Documentation
+├── 📂 Notes/                 # Design notes & calculations
+├── 📂 Meeting/               # Meeting minutes
 └── 📄 README.md
 ```
 
@@ -154,8 +160,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/34621-EM-Sensors-DSP.git
-cd 34621-EM-Sensors-DSP/Code
+git clone https://github.com/MadsRudolph/34621-Metal-Detector.git
+cd 34621-Metal-Detector/Code
 
 # Build
 pio run
@@ -194,15 +200,18 @@ pio device monitor
 | Phase | Status | Progress |
 |:------|:------:|:---------|
 | Requirements & Planning | ✅ Done | ████████████ 100% |
-| Circuit Design | 🔄 Active | ████████░░░░ 65% |
-| LTspice Simulations | 🔄 Active | ██████░░░░░░ 50% |
-| Firmware Development | 🔄 Active | ████████░░░░ 70% |
-| PCB Layout | ⏳ Pending | ░░░░░░░░░░░░ 0% |
+| Coil Design | ✅ Done | ████████████ 100% |
+| Circuit Design | 🔄 Active | ██████████░░ 85% |
+| QSPICE Simulations | ✅ Done | ████████████ 100% |
+| Firmware Development | 🔄 Active | ██████████░░ 85% |
+| PCB Schematic | 🔄 Active | ██████░░░░░░ 50% |
 | Hardware Build | ⏳ Pending | ░░░░░░░░░░░░ 0% |
 | Testing & Calibration | ⏳ Pending | ░░░░░░░░░░░░ 0% |
-| Final Report | ⏳ Pending | ░░░░░░░░░░░░ 0% |
+| Final Report | 🔄 Active | ████░░░░░░░░ 30% |
 
 > **Deadline:** January 23, 2026
+>
+> **Next milestone:** Prototype software ready for testing (Week 2), Full hardware testing (Week 3)
 
 <br>
 
