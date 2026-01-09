@@ -54,8 +54,12 @@ volatile int32_t Im = 0;
 volatile int32_t Im_buff = 0;
 volatile int16_t xn = 0; //det fourrier transformerede tidssignal (nu i frekvensdomænet)
 volatile uint8_t DFT_done;
-volatile uint16_t mag = 0; 
-volatile uint8_t ang =0; 
+volatile uint16_t mag = 0;
+volatile int16_t ang = 0;  // Fase i grader (-180 til +180)
+
+/* ============ FUNCTION PROTOTYPES ============ */
+void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
+
 /* ============ HARDWARE INIT ============ */
 
 //timer init 
@@ -63,9 +67,8 @@ void timer0_init() {
 // vi vælger mode 4 som er CTC for 
     DDRB |=(1<<PB1); 
     TCCR0A |= (1<<WGM01); //CTC mode - side 86
-    TCCR0B |= (1<<CS01);  //Prescaler på 8 - side 86
-    OCR0A = 124;  // med formel: f_OCnA = fclk/(2*N*(1+OCRnA)) = 124 ticks med prescaler på 8
-    /****************CHAT SIGER AT OVENSTÅENDE GIVER 16 KHZ WTFFFFFFF*************/
+    TCCR0B |= (1<<CS01);  // Prescaler 8: CS01=1, CS00=0
+    OCR0A = 249;          // 16MHz / 8 / 250 = 8kHz interrupt → 2kHz TX
     TIMSK0 = (1<< OCIE0A);    //Enabler Timer0 Compare match interrupt
 }
 
@@ -98,24 +101,57 @@ void init_button(void) {
 
 /* ============ INTERRUPTS ============ */
 
-// Timer0 interrupt - kører 8000 gange per sekund
+/*
+ * Timer0 Compare Match A Interrupt
+ *
+ * Denne ISR kører med 8kHz (16MHz / 8 prescaler / 250 = 8000 Hz)
+ *
+ * Formål:
+ *   1. Generere 2kHz TX signal til sendespolen
+ *   2. Sætte flag når TX går høj (rising edge) for at synkronisere DFT
+ *
+ * Timing:
+ *   - ISR kører hver 125µs (8kHz)
+ *   - Vi toggler TX pin hver 2. gang = 250µs mellem toggles
+ *   - 250µs HIGH + 250µs LOW = 500µs periode = 2kHz firkantbølge
+ *
+ * rising_edge_Flag bruges til at starte DFT sampling præcis når TX går høj,
+ * så DFT'en er synkroniseret med TX signalet (fase 0° ved TX rising edge)
+ */
 ISR(TIMER0_COMPA_vect){
-    if(i >= 1 ){    //vi sikrer at vi toggler med 4kHz som giver 2kHz firkant pulser
-        PORTB ^=(1<<PB1); //toggler PB1 som er tx 
-        i = 0; //resetter counter hvis vi har togglet
-    if(PORTB &=(1<<PB1)){
-        rising_edge_Flag = 1;
-    }
-    }
-    i++; //ittererer tæller
-}
-// ADC interrupt - kører hver gang en ADC conversion er færdig (8kHz)
-ISR(ADC_vect){
-    ADC_Raw = ADC; // buffer til at holde ADC værdi
-      if(rising_edge_Flag == 1){
-        DFT_sum(ADC_Raw); //DFT 
+    i++;                        // Tæl antal interrupts
+    if(i >= 2){                 // Hver 2. interrupt (4kHz toggle rate)
+        PORTB ^=(1<<PB1);       // Toggle TX pin (XOR flipper bit)
+        i = 0;                  // Nulstil tæller
+
+        // Tjek om TX lige gik høj (rising edge)
+        if(PORTB & (1<<PB1)){
+            rising_edge_Flag = 1;  // Signal til ADC ISR: start ny DFT periode
         }
     }
+}
+
+/*
+ * ADC Conversion Complete Interrupt
+ *
+ * Denne ISR kører automatisk når ADC er færdig med en konvertering.
+ * ADC'en er sat op til auto-trigger fra Timer0 Compare Match A,
+ * så den sampler med samme 8kHz rate som Timer0.
+ *
+ * Formål:
+ *   1. Læse ADC værdien (0-1023, 10-bit)
+ *   2. Føde samples til DFT når rising_edge_Flag er sat
+ *
+ * Vi sampler kun til DFT når rising_edge_Flag == 1, hvilket sikrer
+ * at DFT'en starter synkroniseret med TX rising edge.
+ */
+ISR(ADC_vect){
+    ADC_Raw = ADC;              // Gem ADC værdi (10-bit, 0-1023)
+
+    if(rising_edge_Flag == 1){
+        DFT_sum(ADC_Raw);       // Send sample til DFT akkumulator
+    }
+}
 
    
 
@@ -123,7 +159,7 @@ ISR(ADC_vect){
 
 
 /* ============ DFT BEREGNING ============ */
-void DFT_sum(ADC_Raw){
+void DFT_sum(int16_t ADC_Raw){
         
         xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
 
@@ -159,11 +195,8 @@ void DFT_sum(ADC_Raw){
     }
 
 void DFT_Calc(){
-    // TODO: implementer beregning af fase og magnitude
-
-    mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff)/N;//vi vil kun have magnituden i heltal derfor ingen float
-    ang = atan2(Im_buff, Re_buff)*57.2957795131; //vi vil kun have fasen i heltal derfor ingen float
-
+    mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff)/N;
+    ang = atan2(Im_buff, Re_buff)*57.2957795131;
 }
 
 /* ============ DISPLAY ============ */
@@ -180,7 +213,7 @@ void display_dft(void) {
     sprintf(buf, "Im:   %-9ld", Im_buff);
     sendStrXY(buf, 3, 0);
 
-    sprintf(buf, "Mag:  %-9u", mag);
+    sprintf(buf, "Mag:  %d", mag);
     sendStrXY(buf, 5, 0);
 
     sprintf(buf, "Fase: %d", ang);
@@ -221,6 +254,7 @@ int main(void) {
         // Når DFT vindue er færdigt, beregn og vis resultater
         if (DFT_done) {
             DFT_done = 0;
+            DFT_Calc();  // Beregn magnitude og fase fra Re_buff/Im_buff
 
             if (show_debug)
                 display_debug();
