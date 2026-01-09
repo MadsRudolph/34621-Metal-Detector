@@ -46,16 +46,19 @@ char write_address;
 char read_addres;
 
 /**
- * Initialize I2C with SCL set to ~400kHz
+ * Initialize the TWI (I2C) hardware for Arduino Nano (ATmega328P) with SCL ≈308 kHz.
  *
- * TWI Registers (ATmega328P):
- * - TWBR: TWI Bit Rate Register
- * - TWSR: TWI Status Register
- * - TWCR: TWI Control Register
+ * Configures the TWI bit rate and prescaler, enables the TWI peripheral and TWI interrupt,
+ * and performs a 1000 ms startup delay.
  *
- * I2C Pins på Nano:
- *   A4 (PC4) = SDA
- *   A5 (PC5) = SCL
+ * Hardware effects:
+ * - Sets TWBR = 18 and prescaler = 1 (TWSR prescaler bits cleared) producing SCL ≈ 16000000 / (16 + 2*18) ≈ 308 kHz.
+ * - Enables TWI and TWI interrupt (TWEN and TWIE).
+ * - Waits 1000 ms to allow display/startup circuitry to settle.
+ *
+ * I2C pins on Nano (ATmega328P):
+ * - SDA: A4 (PC4)
+ * - SCL: A5 (PC5)
  */
 void I2C_Init(void)
 {
@@ -104,16 +107,15 @@ void I2C_Init(void)
 }
 
 /**
- * I2C start function
+ * Generate an I2C START condition and send the SLA+W byte to the slave.
  *
- * Returns:
- *   0 = start condition fail
- *   1 = ack received
- *   2 = nack received
- *   3 = SLA+W failed
+ * Sends a START (or repeated START) on the TWI bus, transmits the provided
+ * SLA+W byte, and returns the resulting bus status code interpreted for
+ * master-transmitter write initiation.
  *
- * Datasheet: Section 21.7.1, Page 186 - Master Transmitter Mode
- * Datasheet: Table 21-3, Page 186 - Status Codes (Master Transmitter)
+ * @param write_address SLA+W byte to transmit (slave address with the write bit).
+ * @returns `0` if START condition was not transmitted; `1` if SLA+W was transmitted and ACK received;
+ *          `2` if SLA+W was transmitted and NACK received; `3` if SLA+W transmission resulted in an unexpected status. 
  */
 uint8_t I2C_Start(char write_address)
 {

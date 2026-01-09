@@ -62,7 +62,13 @@ void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
 
 /* ============ HARDWARE INIT ============ */
 
-//timer init 
+/**
+ * Initialize Timer0 to generate periodic compare-match interrupts and configure the TX pin.
+ *
+ * Configures PB1 as an output, sets Timer0 to CTC mode with a prescaler of 8, sets OCR0A
+ * to produce compare-match interrupts at 8 kHz, and enables the Timer0 Compare Match A interrupt.
+ *
+ */
 void timer0_init() {
 // vi vælger mode 4 som er CTC for 
     DDRB |=(1<<PB1); 
@@ -72,7 +78,18 @@ void timer0_init() {
     TIMSK0 = (1<< OCIE0A);    //Enabler Timer0 Compare match interrupt
 }
 
-//adc init 
+/**
+ * Initialize the ADC to use AVcc as reference, enable the ADC with interrupt-driven
+ * conversions triggered by Timer0 Compare Match A, set the clock prescaler to 64,
+ * and start the first conversion.
+ *
+ * Configured behavior:
+ * - Reference selection: AVcc (REFS0).
+ * - ADC enabled and ADC Conversion Complete interrupt enabled.
+ * - Auto-triggering enabled with trigger source = Timer0 Compare Match A.
+ * - ADC clock prescaler set to 64 (ADPS2|ADPS1).
+ * - Starts the first ADC conversion.
+ */
 void adc_init(){
     /* Reference = AVCC (5V taget fra 5V pin til vores REF pin) */
     ADMUX = (1 << REFS0);
@@ -92,6 +109,12 @@ void adc_init(){
     ADCSRA |= (1 << ADSC);
 }
 
+/**
+ * Configure PD4 as an input with the internal pull-up enabled for an active-low button.
+ *
+ * Sets the DDRD bit for PD4 to input and enables PORTD pull-up so the button can be
+ * wired to ground (press pulls the pin low).
+ */
 void init_button(void) {
     // Pin D4 som input
     DDRD &= ~(1 << PD4);
@@ -101,22 +124,19 @@ void init_button(void) {
 
 /* ============ INTERRUPTS ============ */
 
-/*
- * Timer0 Compare Match A Interrupt
+/**
+ * Timer0 Compare Match A interrupt handler that generates the TX waveform and
+ * signals DFT window synchronization.
  *
- * Denne ISR kører med 8kHz (16MHz / 8 prescaler / 250 = 8000 Hz)
+ * This ISR runs at 8 kHz and toggles the TX output pin (PB1) every second
+ * interrupt to produce a 2 kHz square wave. It increments the internal
+ * interrupt counter and sets `rising_edge_Flag` when the TX pin transitions
+ * from low to high to indicate the start of a DFT sampling window.
  *
- * Formål:
- *   1. Generere 2kHz TX signal til sendespolen
- *   2. Sætte flag når TX går høj (rising edge) for at synkronisere DFT
- *
- * Timing:
- *   - ISR kører hver 125µs (8kHz)
- *   - Vi toggler TX pin hver 2. gang = 250µs mellem toggles
- *   - 250µs HIGH + 250µs LOW = 500µs periode = 2kHz firkantbølge
- *
- * rising_edge_Flag bruges til at starte DFT sampling præcis når TX går høj,
- * så DFT'en er synkroniseret med TX signalet (fase 0° ved TX rising edge)
+ * Side effects:
+ *   - Toggles PORTB PB1 (TX output).
+ *   - Modifies the global interrupt counter `i`.
+ *   - Sets `rising_edge_Flag` when a rising edge on TX is detected.
  */
 ISR(TIMER0_COMPA_vect){
     i++;                        // Tæl antal interrupts
@@ -131,19 +151,13 @@ ISR(TIMER0_COMPA_vect){
     }
 }
 
-/*
- * ADC Conversion Complete Interrupt
+/**
+ * Handle ADC conversion completion and forward samples for DFT accumulation.
  *
- * Denne ISR kører automatisk når ADC er færdig med en konvertering.
- * ADC'en er sat op til auto-trigger fra Timer0 Compare Match A,
- * så den sampler med samme 8kHz rate som Timer0.
- *
- * Formål:
- *   1. Læse ADC værdien (0-1023, 10-bit)
- *   2. Føde samples til DFT når rising_edge_Flag er sat
- *
- * Vi sampler kun til DFT når rising_edge_Flag == 1, hvilket sikrer
- * at DFT'en starter synkroniseret med TX rising edge.
+ * Invoked on ADC conversion complete (ADC_vect). Reads the 10-bit ADC result into the global
+ * `ADC_Raw` variable and, if `rising_edge_Flag` is set, forwards the sample to `DFT_sum`
+ * for accumulation. The ADC is expected to be auto-triggered (Timer0 Compare Match A) so
+ * this ISR effectively services the 8 kHz sampling rate used by the DFT.
  */
 ISR(ADC_vect){
     ADC_Raw = ADC;              // Gem ADC værdi (10-bit, 0-1023)
@@ -158,7 +172,15 @@ ISR(ADC_vect){
     
 
 
-/* ============ DFT BEREGNING ============ */
+/**
+     * Accumulates a single ADC sample into the N-point DFT accumulators and finalizes the DFT buffer when the window completes.
+     *
+     * The provided raw ADC sample has its DC offset removed (using ADC_middelvaerdi) before being added to the real and imaginary accumulators
+     * according to the current phase step. Advances the sample index and, when N samples have been accumulated, copies accumulators to
+     * Re_buff/Im_buff, sets DFT_done, resets Re and Im and the sample index, and clears the rising_edge_Flag.
+     *
+     * @param ADC_Raw Raw ADC sample (0–1023) to be incorporated into the DFT accumulation.
+     */
 void DFT_sum(int16_t ADC_Raw){
         
         xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
@@ -194,6 +216,13 @@ void DFT_sum(int16_t ADC_Raw){
         }
     }
 
+/**
+ * Compute magnitude and phase from the buffered DFT accumulators.
+ *
+ * Reads Re_buff and Im_buff, computes magnitude as sqrt(Re^2 + Im^2) divided by N,
+ * and computes phase in degrees using atan2(Im_buff, Re_buff). Results are stored
+ * in the global variables `mag` (magnitude) and `ang` (angle in degrees).
+ */
 void DFT_Calc(){
     mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff)/N;
     ang = atan2(Im_buff, Re_buff)*57.2957795131;
@@ -204,6 +233,12 @@ void DFT_Calc(){
 static char buf[20];
 static uint8_t show_debug = 0;
 
+/**
+ * Display the latest DFT results on the OLED.
+ *
+ * Shows buffered real and imaginary components, computed magnitude, and phase
+ * at fixed positions on the screen.
+ */
 void display_dft(void) {
     sendStrXY("=== DFT ===     ", 0, 0);
 
@@ -220,6 +255,12 @@ void display_dft(void) {
     sendStrXY(buf, 6, 0);
 }
 
+/**
+ * Render a debug screen on the OLED showing a header and the current raw ADC sample.
+ *
+ * Writes a static "=== DEBUG ===" header and a formatted "ADC: <value>" line using the global
+ * `ADC_Raw` value and the shared string buffer `buf`, positioned on the display.
+ */
 void display_debug(void) {
     sendStrXY("=== DEBUG ===   ", 0, 0);
 
@@ -227,7 +268,15 @@ void display_debug(void) {
     sendStrXY(buf, 2, 0);
 }
 
-/* ============ MAIN ============ */
+/**
+ * Initialize peripherals, enable interrupts, and run the main processing loop that handles DFT completion and display mode toggling.
+ *
+ * Initializes I2C and OLED, configures Timer0, ADC, and the user button, then enables global interrupts. Shows a brief startup message and enters an infinite loop that:
+ * - processes completed DFT windows (computes magnitude/phase and updates the OLED), and
+ * - monitors the button (PD4) for falling-edge presses to toggle between DFT and debug displays with debounce.
+ *
+ * @returns Program exit status (not used; main does not return in normal embedded operation).
+ */
 
 int main(void) {
     // Initialiser hardware
