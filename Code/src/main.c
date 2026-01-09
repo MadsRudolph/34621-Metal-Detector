@@ -196,7 +196,7 @@ void DFT_sum(int16_t ADC_Raw){
 
 void DFT_Calc(){
     mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff)/N;
-    ang = atan2(Im_buff, Re_buff)*57.2957795131;
+    ang = (atan2(Im_buff, Re_buff))*57.2957795131;
 }
 
 /* ============ DISPLAY ============ */
