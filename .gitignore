@@ -5,33 +5,25 @@
 # -----------------------------------------------------------------------------
 # PlatformIO
 # -----------------------------------------------------------------------------
-**/.pio/
-**/.pioenvs/
-**/.piolibdeps/
+.pio/
+.pioenvs/
+.piolibdeps/
 .clang_complete
 .gcc-flags.json
 
 # -----------------------------------------------------------------------------
-# Obsidian
+# Obsidian - ignore local state, keep shared config
 # -----------------------------------------------------------------------------
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/graph.json
-.obsidian/cache
+.obsidian/cache/
 .trash/
 
 # -----------------------------------------------------------------------------
-# VS Code
+# VS Code - ignore all
 # -----------------------------------------------------------------------------
-# Ignore all nested .vscode folders (generated per-project by PlatformIO etc.)
-**/.vscode/
-# But keep the root .vscode with shareable configs
-!/.vscode/
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-*.code-workspace
+.vscode/
 
 # -----------------------------------------------------------------------------
 # Claude Code
@@ -41,27 +33,28 @@
 # -----------------------------------------------------------------------------
 # KiCad
 # -----------------------------------------------------------------------------
-# Backup files
 *.kicad_sch-bak
 *.kicad_pcb-bak
 *-backups/
 *_autosave-*
 fp-info-cache
-
-# Lock files
 *.lck
 
-# Netlist and BOM exports (regenerate as needed)
-# *.net
-# *.xml
-
 # -----------------------------------------------------------------------------
-# LTspice
+# LTspice / QSPICE
 # -----------------------------------------------------------------------------
 *.raw
 *.log
 *.op.raw
-*.net
+*.qraw
+*.qopraw
+*.fft.qraw
+
+# -----------------------------------------------------------------------------
+# MATLAB
+# -----------------------------------------------------------------------------
+*.asv
+*.m~
 
 # -----------------------------------------------------------------------------
 # Build artifacts
@@ -74,16 +67,12 @@ fp-info-cache
 *.map
 *.lst
 *.sym
+*.exe
 
 # -----------------------------------------------------------------------------
 # OS generated
 # -----------------------------------------------------------------------------
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 desktop.ini
 
@@ -98,16 +87,9 @@ desktop.ini
 *.temp
 
 # -----------------------------------------------------------------------------
-# Python (if using scripts)
+# Python
 # -----------------------------------------------------------------------------
 __pycache__/
 *.py[cod]
-*$py.class
-.Python
 venv/
 .env
-
-# -----------------------------------------------------------------------------
-# Large files (keep in Literature/ but consider Git LFS)
-# -----------------------------------------------------------------------------
-# *.pdf
