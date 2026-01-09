@@ -19,6 +19,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -35,13 +36,15 @@
 #define ImPhase2  1 //sin(Pi/2)
 #define RePhase3 -1 //cos(Pi)
 #define ImPhase4 -1 //sin(3Pi/2)
+#define ADC_middelvaerdi 512 // skal kun bruges hvis der er DC offset
+
 /* ============ GLOBALE VARIABLE ============ */
 
 
 //tx og rx variabler
 static uint8_t i = 0;
 int16_t ADC_Raw = 0; // signed ADCRAW værdi 
-extern volatile uint8_t rising_edge_Flag = 0; // flag der indikerer at en DFT er kørt
+volatile uint8_t rising_edge_Flag = 0; // flag der indikerer at en DFT er kørt
 
 //dft variabler
 volatile uint8_t j = 0;
@@ -51,8 +54,8 @@ volatile int32_t Im = 0;
 volatile int32_t Im_buff = 0;
 volatile int16_t xn = 0; //det fourrier transformerede tidssignal (nu i frekvensdomænet)
 volatile uint8_t DFT_done;
-
-
+volatile uint16_t mag = 0; 
+volatile uint8_t ang =0; 
 /* ============ HARDWARE INIT ============ */
 
 //timer init 
@@ -120,7 +123,7 @@ ISR(ADC_vect){
 
 
 /* ============ DFT BEREGNING ============ */
-void DFT_sum(int16_t ADC_Raw){
+void DFT_sum(ADC_Raw){
         
         xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
 
@@ -143,6 +146,7 @@ void DFT_sum(int16_t ADC_Raw){
             break;
         }
         j++;
+
         if(j>=N){ //hvis vi når N-1 starter vi forfra og gemmer i buffer 
             j = 0;
             Re_buff = Re; //vi overfører til en buffer inden vi resetter ellers vil vi miste sidste 
@@ -157,11 +161,9 @@ void DFT_sum(int16_t ADC_Raw){
 void DFT_Calc(){
     // TODO: implementer beregning af fase og magnitude
 
-    uint16_t mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff);//vi vil kun have magnituden i heltal derfor ingen float
-    uint8_t ang = (atan2(Im_buff, Re_buff)*180)/3.14159265; //vi vil kun have fasen i heltal derfor ingen float
-   
-    // nu skal vi lave IDFT
-    uint16_t Xk = mag/N;  
+    mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff)/N;//vi vil kun have magnituden i heltal derfor ingen float
+    ang = atan2(Im_buff, Re_buff)*57.2957795131; //vi vil kun have fasen i heltal derfor ingen float
+
 }
 
 /* ============ DISPLAY ============ */
@@ -172,33 +174,24 @@ static uint8_t show_debug = 0;
 void display_dft(void) {
     sendStrXY("=== DFT ===     ", 0, 0);
 
-    sprintf(buf, "Re:   %-9ld", Re_result);
+    sprintf(buf, "Re:   %-9ld", Re_buff);
     sendStrXY(buf, 2, 0);
-
-    sprintf(buf, "Im:   %-9ld", Im_result);
+    
+    sprintf(buf, "Im:   %-9ld", Im_buff);
     sendStrXY(buf, 3, 0);
 
-    sprintf(buf, "Mag:  %-9u", magnitude);
+    sprintf(buf, "Mag:  %-9u", mag);
     sendStrXY(buf, 5, 0);
 
-    sprintf(buf, "Fase: %d", phase_deg);
+    sprintf(buf, "Fase: %d", ang);
     sendStrXY(buf, 6, 0);
 }
 
 void display_debug(void) {
     sendStrXY("=== DEBUG ===   ", 0, 0);
 
-    sprintf(buf, "ADC:  %-9u", adc_value);
+    sprintf(buf, "ADC:  %-9u", ADC_Raw);
     sendStrXY(buf, 2, 0);
-
-    sprintf(buf, "Min:  %-9u", adc_min);
-    sendStrXY(buf, 3, 0);
-
-    sprintf(buf, "Max:  %-9u", adc_max);
-    sendStrXY(buf, 4, 0);
-
-    sprintf(buf, "Vpp:  %-9u", adc_max - adc_min);
-    sendStrXY(buf, 5, 0);
 }
 
 /* ============ MAIN ============ */
@@ -208,8 +201,8 @@ int main(void) {
     I2C_Init();
     InitializeDisplay();
     clear_display();
-    init_tx();
-    init_adc();
+    timer0_init();
+    adc_init();
     init_button();
 
     // VIGTIGT: Aktiver globale interrupts!
@@ -226,9 +219,8 @@ int main(void) {
     // Hovedløkke
     while (1) {
         // Når DFT vindue er færdigt, beregn og vis resultater
-        if (DFT_ready) {
-            calc_magnitude_phase();
-            DFT_ready = 0;
+        if (DFT_done) {
+            DFT_done = 0;
 
             if (show_debug)
                 display_debug();
