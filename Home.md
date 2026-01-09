@@ -1,31 +1,41 @@
-# 🔍 DTU 34621 - Metal Detector Project
+# DTU 34621 - Metal Detector Project
 
-> **Course:** 34621 Electromagnetic Sensors and Digital Signal Processing  
-> **Institution:** DTU Diplom  
-> **Project:** VLF Metal Detector  
+> **Course:** 34621 Electromagnetic Sensors and Digital Signal Processing
+> **Institution:** DTU Diplom
+> **Project:** VLF Metal Detector
 > **Team:** Mads Rudolph, Andreas Skaaning, Jonas Beck & Sigurd Hestbech
 
 ---
 
-## 📚 Theory
+## Documentation
 
-See [[Theory References]] for links to DSP and EM course materials from my DTU vault.
+### Guides
+| Document | Description |
+|----------|-------------|
+| [[Docs/Guides/Code_Review\|Code Review]] | Firmware arkitektur og kode gennemgang |
+| [[Docs/Guides/Assembly_Guide\|Assembly Guide]] | Hardware opsætning og wiring |
+| [[Docs/Guides/Test_Guide_AD3\|Test Guide (AD3)]] | Test med Analog Discovery 3 |
+
+### Theory
+| Document | Description |
+|----------|-------------|
+| [[Docs/Theory/DFT Algorithm\|DFT Algorithm]] | 4x oversampling DFT forklaring |
+| [[Docs/Theory/Coil Design\|Coil Design]] | Spole specifikationer (MATLAB-verificeret) |
+| [[Docs/Theory/Coil Configuration Comparison\|Coil Configurations]] | Concentric vs Double-D sammenligning |
+| [[Docs/Theory/TX Driver and Tank Circuit Design\|TX Driver Design]] | Driver kredsløb og tank circuit |
+| [[Docs/Theory/Power Budget Analysis\|Power Budget]] | Strømforbrug analyse |
+| [[Docs/Theory/Theory References\|Theory References]] | Links til DTU kursusmateriale |
+
+### Other
+| Section | Description |
+|---------|-------------|
+| [[Code/README\|Code]] | Arduino Nano firmware |
+| [[Docs/Meetings\|Meetings]] | Mødereferater |
+| [[Literature/README\|Literature]] | Datasheets og kursusmateriale |
 
 ---
 
-## 📋 Quick Links
-
-| Section                              | Description                             |
-| ------------------------------------ | --------------------------------------- |
-| [[Code/README\|💻 Code]]             | Arduino firmware and DSP implementation |
-| [[LTspice/README\|⚡ LTspice]]        | Circuit simulations                     |
-| [[KiCad/README\|🔧 KiCad]]           | PCB schematics and layout               |
-| [[Literature/README\|📚 Literature]] | Course materials and datasheets         |
-| [[Notes/README\|📝 Notes]]           | Personal notes and documentation        |
-
----
-
-## 🎯 Project Requirements (Kravspecifikation)
+## Project Requirements (Kravspecifikation)
 
 ### Priority 1 (Must Have)
 - [ ] **1.** Amplitude/phase detection
@@ -40,95 +50,66 @@ See [[Theory References]] for links to DSP and EM course materials from my DTU v
 - [ ] **9a.** Start/stop button
 - [ ] **9b.** Calibration button (zero when no metal)
 - [ ] **10.** VLF detection principle
-- [ ] **11.** Sampling frequency 8 kHz ± 100 Hz
-- [ ] **12.** Detection frequency 2 kHz ± 100 Hz
-- [ ] **16.** RX coil inductance ≥ 10 mH
+- [ ] **11.** Sampling frequency 8 kHz
+- [ ] **12.** Detection frequency 2 kHz
+- [ ] **16.** RX coil inductance >= 10 mH
 
 ### Priority 2 (Should Have)
 - [ ] **7.** Timer interrupt ADC control
-- [ ] **8c.** FIR/IIR filter for display smoothing
-- [ ] **13.** 3D-printed/wood/plastic enclosure
-- [ ] **14.** 3D-printed/laser-cut coil mount
+- [ ] **8c.** IIR filter for display smoothing
+- [ ] **13.** Enclosure
+- [ ] **14.** Coil mount
 - [ ] **15.** Centered coil design (TX outer, RX inner)
 
 ---
 
-## 📅 Project Phases
-
-### Phase 1: Design & Analysis
-- [ ] Working and report plans
-- [ ] Top-level block schematics
-- [ ] Detailed circuit diagrams
-- [ ] Calculations and simulations
-
-### Phase 2: Implementation
-- [ ] Build hardware in lab
-- [ ] Test and debug
-- [ ] Integrate all subsystems
-
-### Phase 3: Finalization
-- [ ] Re-calculate / re-design as needed
-- [ ] Update documentation
-- [ ] Final report (due 23/1-2026)
-
----
-
-## 🏗️ System Architecture
+## System Architecture
 
 ```
-                            TX PATH
-┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│   MCU   │───▶│ Op-Amp  │───▶│ AA Filt │───▶│ TX Coil │
-│ 2kHz PWM│    │ (drive) │    │  (LPF)  │    │         │
-└─────────┘    └─────────┘    └─────────┘    └────┬────┘
-     ▲                                            │
-     │                                       [Metal]
-     │                                            │
-     │                          RX PATH           ▼
-┌────┴────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│ MCP3208 │◀───│ LP Filt │◀───│ Op-Amp  │◀───│ RX Coil │
-│ 12b ADC │    │         │    │ (amp)   │    │         │
-└────┬────┘    └─────────┘    └─────────┘    └─────────┘
+                          TX PATH
+┌─────────┐    ┌─────────┐    ┌─────────┐
+│  Timer0 │───>│  Pin 9  │───>│ TX Coil │
+│  8kHz   │    │  2kHz   │    │  15mH   │
+└─────────┘    └─────────┘    └────┬────┘
+     │                             │
+     │                        [Metal]
+     │                             │
+     │              RX PATH        v
+┌────┴────┐    ┌─────────┐    ┌─────────┐
+│   ADC   │<───│  Pin A0 │<───│ RX Coil │
+│  10-bit │    │  8kHz   │    │  10mH   │
+└────┬────┘    └─────────┘    └─────────┘
      │
-     ▼
-┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│   MCU   │───▶│   IIR   │───▶│Classify │───▶│ Display │
-│   DFT   │    │ Filter  │    │         │    │ Buzzer  │
-└─────────┘    └─────────┘    └─────────┘    └─────────┘
+     v
+┌─────────┐    ┌─────────┐    ┌─────────┐
+│   DFT   │───>│  Mag/   │───>│  OLED   │
+│ 64 samp │    │  Phase  │    │ Display │
+└─────────┘    └─────────┘    └─────────┘
 ```
 
 ---
 
-## 📊 Key Parameters
+## Key Parameters
 
 | Parameter | Value | Notes |
 |-----------|-------|-------|
-| TX Frequency | 2 kHz | PWM generated |
-| Sample Rate | 8 kHz | 4× oversampling |
-| ADC Resolution | 12-bit | MCP3208 SPI |
-| DFT Buffer | 64 samples | ~8ms window |
-| Phase Threshold | 65° | Ferrous/non-ferrous |
-| Detection Threshold | 0.2% | Minimum amplitude |
+| MCU | ATmega328P | Arduino Nano |
+| TX Frequency | 2 kHz | Timer0 generated |
+| Sample Rate | 8 kHz | 4x oversampling |
+| ADC Resolution | 10-bit | Internal ADC |
+| DFT Window | 64 samples | 8ms window |
+| Phase Threshold | 65 deg | Ferrous/non-ferrous |
 
 ---
 
-## 🔗 External Resources
+## External Resources
 
-- [[databogMega2560.pdf]]
-- [MCP3208 Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/21298e.pdf)
-- [SSD1306 Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
-
----
-
-## 📝 Recent Notes
-
-```dataview
-TABLE file.mtime as "Modified"
-FROM "Notes"
-SORT file.mtime DESC
-LIMIT 5
-```
+- [[Literature/Automotive-Microcontrollers-ATmega328P_Datasheet.pdf|ATmega328P Datasheet]]
+- [SSD1306 OLED Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
 
 ---
 
-*Last updated: {{date}}*
+## Timeline
+
+- **Final report deadline:** 23/1-2026
+
