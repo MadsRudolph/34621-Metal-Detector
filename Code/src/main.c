@@ -26,69 +26,63 @@
 #include "drivers/ssd1306.h"
 
 /* ============ INDSTILLINGER ============ */
-
+//dft indstillinger
 #define F_SAMPLE 8000       // Sample frekvens (Hz) - skal være 4x signal frekvens
 #define F_SIGNAL 2000       // TX/RX signal frekvens (Hz)
 #define N 64                // Antal samples per DFT vindue (flere = mere præcist, men langsommere)
 
+#define RePhase1  1 //cos(0)
+#define ImPhase2  1 //sin(Pi/2)
+#define RePhase3 -1 //cos(Pi)
+#define ImPhase4 -1 //sin(3Pi/2)
 /* ============ GLOBALE VARIABLE ============ */
 
-// DFT akkumulatorer - bruges i interrupt til at summere samples
-volatile int32_t Re = 0, Im = 0;
 
-// DFT resultater - kopieres fra akkumulatorer når vindue er færdigt
-volatile int32_t Re_result = 0, Im_result = 0;
+//tx og rx variabler
+static uint8_t i = 0;
+int16_t ADC_Raw = 0; // signed ADCRAW værdi 
+extern volatile uint8_t rising_edge_Flag = 0; // flag der indikerer at en DFT er kørt
 
-// Sample tæller - holder styr på hvor vi er i DFT vinduet
-volatile uint8_t sample_index = 0;
+//dft variabler
+volatile uint8_t j = 0;
+volatile int32_t Re = 0;
+volatile int32_t Re_buff = 0;
+volatile int32_t Im = 0;
+volatile int32_t Im_buff = 0;
+volatile int16_t xn = 0; //det fourrier transformerede tidssignal (nu i frekvensdomænet)
+volatile uint8_t DFT_done;
 
-// Flag der sættes når DFT vindue er færdigt og klar til beregning
-volatile uint8_t DFT_ready = 0;
-
-// Beregnede resultater
-uint16_t magnitude = 0;     // Styrke af signalet
-int16_t phase_deg = 0;      // Fase i grader (-180 til +180)
-
-// Debug variable - til at tjekke ADC værdier
-volatile uint16_t adc_value = 0;
-volatile uint16_t adc_min = 1023, adc_max = 0;
 
 /* ============ HARDWARE INIT ============ */
 
-void init_tx(void) {
-    // Sæt Pin 9 (PB1) som output til TX signal
-    DDRB |= (1 << PB1);
-
-    // Timer0 i CTC mode - tæller op til OCR0A og resetter
-    TCCR0A = (1 << WGM01);
-
-    // Prescaler 8: 16MHz / 8 = 2MHz timer clock
-    TCCR0B = (1 << CS01);
-
-    // Interrupt ved 250 ticks: 2MHz / 250 = 8kHz interrupt rate
-    OCR0A = 249;
-
-    // Aktiver Timer0 Compare Match A interrupt
-    TIMSK0 = (1 << OCIE0A);
+//timer init 
+void timer0_init() {
+// vi vælger mode 4 som er CTC for 
+    DDRB |=(1<<PB1); 
+    TCCR0A |= (1<<WGM01); //CTC mode - side 86
+    TCCR0B |= (1<<CS01);  //Prescaler på 8 - side 86
+    OCR0A = 124;  // med formel: f_OCnA = fclk/(2*N*(1+OCRnA)) = 124 ticks med prescaler på 8
+    /****************CHAT SIGER AT OVENSTÅENDE GIVER 16 KHZ WTFFFFFFF*************/
+    TIMSK0 = (1<< OCIE0A);    //Enabler Timer0 Compare match interrupt
 }
 
-void init_adc(void) {
-    // Vælg AVCC (5V) som reference og ADC kanal 0 (pin A0)
+//adc init 
+void adc_init(){
+    /* Reference = AVCC (5V taget fra 5V pin til vores REF pin) */
     ADMUX = (1 << REFS0);
-
-    // ADC indstillinger:
-    // ADEN  = Aktiver ADC
-    // ADIE  = Aktiver ADC interrupt når conversion er færdig
-    // ADATE = Auto-trigger mode (starter automatisk ved trigger event)
-    // ADPS  = Prescaler 128 (16MHz / 128 = 125kHz ADC clock)
+    /*
+     * ADC Kontrol:
+     * ADEN  = Aktiver ADC
+     * ADIE  = Aktiver ADC interrupt
+     * ADATE = Aktiver auto-trigger
+     * ADPS  = Prescaler 128 (125kHz ADC clock)
+     */
     ADCSRA = (1 << ADEN) | (1 << ADIE) | (1 << ADATE)
-           | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+           | (1 << ADPS2) | (1 << ADPS1); //denne linje er prescaler på 64 ** denne skal genovervejes**
+    /* Auto-trigger kilde = Timer0 compare match A */
+    ADCSRB |=  (1<<ADTS1)|(1<<ADTS0); // Starter en ADC konvertering på Compare match A
 
-    // Trigger source = Timer0 Compare Match A
-    // ADC starter automatisk hver gang Timer0 matcher OCR0A
-    ADCSRB = (1 << ADTS1) | (1 << ADTS0);
-
-    // Start første conversion (derefter kører det automatisk)
+       /* Start første konvertering */
     ADCSRA |= (1 << ADSC);
 }
 
@@ -101,72 +95,73 @@ void init_button(void) {
 
 /* ============ INTERRUPTS ============ */
 
-// TX tæller - bruges til at toggle TX pin hver 2. interrupt
-static uint8_t tx_counter = 0;
-
 // Timer0 interrupt - kører 8000 gange per sekund
-ISR(TIMER0_COMPA_vect) {
-    tx_counter++;
-    if (tx_counter >= 2) {
-        // Toggle TX pin hver 2. interrupt = 4000 toggles/sek = 2kHz firkantbølge
-        PORTB ^= (1 << PB1);
-        tx_counter = 0;
+ISR(TIMER0_COMPA_vect){
+    if(i >= 1 ){    //vi sikrer at vi toggler med 4kHz som giver 2kHz firkant pulser
+        PORTB ^=(1<<PB1); //toggler PB1 som er tx 
+        i = 0; //resetter counter hvis vi har togglet
+    if(PORTB &=(1<<PB1)){
+        rising_edge_Flag = 1;
     }
+    }
+    i++; //ittererer tæller
 }
-
 // ADC interrupt - kører hver gang en ADC conversion er færdig (8kHz)
-ISR(ADC_vect) {
-    // Læs ADC værdi (0-1023) og fjern DC offset (512 = midtpunkt)
-    // Dette giver en signed værdi fra -512 til +511
-    int16_t sample = ADC - 512;
-
-    // Debug: gem ADC værdier til debug skærm
-    adc_value = ADC;
-    if (ADC < adc_min) adc_min = ADC;
-    if (ADC > adc_max) adc_max = ADC;
-
-    /*
-     * DFT BEREGNING - dette er kernen i metal detektoren!
-     *
-     * Vi sampler 4 gange per TX periode (8kHz / 2kHz = 4).
-     * Ved 4x oversampling bliver DFT koefficienterne simple:
-     *
-     *   Sample 0: fase =   0° → cos = +1, sin =  0 → Re += sample
-     *   Sample 1: fase =  90° → cos =  0, sin = +1 → Im -= sample
-     *   Sample 2: fase = 180° → cos = -1, sin =  0 → Re -= sample
-     *   Sample 3: fase = 270° → cos =  0, sin = -1 → Im += sample
-     *
-     * Efter N samples har vi akkumuleret Re og Im komponenterne.
-     * Disse bruges til at beregne magnitude og fase.
-     */
-    switch (sample_index % 4) {
-        case 0: Re += sample; break;
-        case 1: Im -= sample; break;
-        case 2: Re -= sample; break;
-        case 3: Im += sample; break;
+ISR(ADC_vect){
+    ADC_Raw = ADC; // buffer til at holde ADC værdi
+      if(rising_edge_Flag == 1){
+        DFT_sum(ADC_Raw); //DFT 
+        }
     }
 
-    sample_index++;
+   
 
-    // Når vi har samlet N samples, er DFT vinduet færdigt
-    if (sample_index >= N) {
-        Re_result = Re;
-        Im_result = Im;
-        DFT_ready = 1;
-        Re = 0;
-        Im = 0;
-        sample_index = 0;
-    }
-}
+    
+
 
 /* ============ DFT BEREGNING ============ */
+void DFT_sum(int16_t ADC_Raw){
+        
+        xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
 
-void calc_magnitude_phase(void) {
-    double re = (double)Re_result;
-    double im = (double)Im_result;
+        switch(j & 3){ // & 3 betyder at vi kun bruger de 3 nederste bits og derfor tæller 0->3 selvom "i" er større 
 
-    magnitude = (uint16_t)(sqrt(re*re + im*im) / 16.0);
-    phase_deg = (int16_t)(atan2(im, re) * 57.2957795131);
+            case 0: // cos(0)*xn = 1*xn
+                Re += RePhase1*xn;
+            break;
+
+            case 1: // -sin(pi/2)*xn = -1*xn
+                Im += -ImPhase2*xn; //negativt fortegn da imaginærdel 
+            break;
+
+            case 2: // cos(Pi)*xn = 1*xn
+                Re += RePhase3*xn;
+            break;
+
+            case 3: // -sin(3Pi/2)*xn = -(-1)*xn
+                Im += -ImPhase4*xn; //negativt fortegn da imaginærdel 
+            break;
+        }
+        j++;
+        if(j>=N){ //hvis vi når N-1 starter vi forfra og gemmer i buffer 
+            j = 0;
+            Re_buff = Re; //vi overfører til en buffer inden vi resetter ellers vil vi miste sidste 
+            Im_buff = Im;
+            DFT_done = 1 ;
+            Re = 0;
+            Im = 0;
+            rising_edge_Flag = 0; //resetter flag efter DFT er kørt
+        }
+    }
+
+void DFT_Calc(){
+    // TODO: implementer beregning af fase og magnitude
+
+    uint16_t mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff);//vi vil kun have magnituden i heltal derfor ingen float
+    uint8_t ang = (atan2(Im_buff, Re_buff)*180)/3.14159265; //vi vil kun have fasen i heltal derfor ingen float
+   
+    // nu skal vi lave IDFT
+    uint16_t Xk = mag/N;  
 }
 
 /* ============ DISPLAY ============ */
