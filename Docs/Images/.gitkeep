@@ -1,0 +1,11 @@
+# MATLAB Generated Images
+
+Dette directory indeholder grafer genereret af MATLAB scriptet `Docs/Matlab/Coil_Design_Multilayer.m`.
+
+## Forventede filer:
+- `tx_turns_vs_inductance.png` - TX vindinger vs induktans kurve
+- `tx_current_vs_inductance.png` - TX strøm vs induktans kurve
+- `nano_vs_mega.png` - Arduino Nano vs Mega sammenligning
+
+## Generer grafer:
+Kør `Coil_Design_Multilayer.m` i MATLAB for at generere/opdatere graferne.

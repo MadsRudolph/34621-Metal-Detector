@@ -1,91 +1,95 @@
-# 🔄 Coil Configuration: Concentric vs Double-D
+# Spole Konfiguration: Koncentrisk vs Double-D
 
-> Comparison of coil configurations for VLF metal detector design.
-> 
-> 📚 **Theory:** [Coil_Basics.pdf](obsidian://open?vault=Obsidian&file=..%2FLiterature%2FCoil_Basics) | [Advanced_Instrumentation](obsidian://open?vault=Obsidian&file=..%2FLiterature%2FAdvanced_Instrumentation_for_Polyharmonic_Metal_Detectors)
-
----
-
-## Quick Comparison
-
-| Aspect | Concentric | Double-D (DD) |
-|--------|------------|---------------|
-| **Construction** | Easier (circular coils) | Harder (D-shaped, precise overlap) |
-| **Sensitivity** | ✅ Better (non-mineralized soil) | Slightly less |
-| **Ground Rejection** | ❌ Poor in mineralized soil | ✅ Excellent |
-| **Pinpointing** | ✅ Best (center-focused) | Good (blade pattern) |
-| **Discrimination** | ✅ Better | Good |
-| **Coverage per Sweep** | Cone pattern | ✅ Wider blade pattern |
-| **Depth** | Good | ✅ Better in bad ground |
-| **Detection Pattern** | Cone (circular) | Blade (line) |
+> [!abstract] Dokumentformål
+> Sammenligning af spolekonfigurationer til VLF metaldetektor design.
+> Begrundelse for valg af koncentrisk konfiguration.
 
 ---
 
-## Detection Field Patterns
+## 1. Hurtig Sammenligning
 
-### Concentric
+| Aspekt | Koncentrisk | Double-D (DD) |
+|--------|-------------|---------------|
+| **Konstruktion** | Nemmere (cirkulære spoler) | Sværere (D-formet, præcis overlap) |
+| **Følsomhed** | Bedre (ikke-mineraliseret jord) | Lidt mindre |
+| **Jordafvisning** | Dårlig i mineraliseret jord | Fremragende |
+| **Pinpointing** | Bedst (center-fokuseret) | God (klinge-mønster) |
+| **Diskriminering** | Bedre | God |
+| **Dækning per sweep** | Kegle-mønster | Bredere klinge-mønster |
+| **Dybde** | God | Bedre i dårlig jord |
+| **Detektionsmønster** | Kegle (cirkulær) | Klinge (linje) |
+
+---
+
+## 2. Detektionsfelt Mønstre
+
+### 2.1 Koncentrisk
+
 ```
-        Top View              Side View (Cross-section)
+        Set Ovenfra              Tværsnit (Side)
       ┌─────────┐                    ╱╲
      ╱    RX    ╲                   ╱  ╲
     │   ┌───┐    │                 ╱    ╲
-    │   │ ● │    │  TX            ╱ CONE ╲
+    │   │ B │    │  TX            ╱ KEGLE ╲
     │   └───┘    │               ╱        ╲
      ╲          ╱               ▼──────────▼
-      └─────────┘              Best detection at center
+      └─────────┘              Bedst detektion i center
 ```
-- **Pattern:** Cone-shaped, strongest at center
-- **Pinpointing:** Excellent — target is directly below center
-- **Sweep:** Requires more overlap between sweeps
 
-### Double-D
+- **Mønster:** Kegleformet, stærkest i centrum
+- **Pinpointing:** Fremragende - mål er direkte under center
+- **Sweep:** Kræver mere overlap mellem sweeps
+
+### 2.2 Double-D
+
 ```
-        Top View              Side View (Cross-section)
-      ┌─────────┐                    
+        Set Ovenfra              Tværsnit (Side)
+      ┌─────────┐
      ╱ D     D  ╲                 │        │
     │   ╲   ╱    │               ╱│        │╲
-    │    ╲ ╱     │              ╱ │ BLADE  │ ╲
+    │    ╲ ╱     │              ╱ │ KLINGE │ ╲
     │    ╱ ╲     │             ╱  │        │  ╲
      ╲  ╱   ╲   ╱             ▼───┴────────┴───▼
-      └─────────┘              Detection along center line
+      └─────────┘              Detektion langs centerlinje
          ▲
     Overlap zone
-   (detection area)
+   (detektionsområde)
 ```
-- **Pattern:** Blade-shaped along the overlap line
-- **Pinpointing:** Good — target is below the center line
-- **Sweep:** Better ground coverage per pass
+
+- **Mønster:** Klingeformet langs overlap-linjen
+- **Pinpointing:** God - mål er under centerlinjen
+- **Sweep:** Bedre jorddækning per passage
 
 ---
 
-## Hardware Comparison
+## 3. Hardware Sammenligning
 
-### Concentric Configuration
+### 3.1 Koncentrisk Konfiguration (Vores Design)
 
-From your course materials (slide 37):
 ```
 ┌──────────────────────────────────────┐
-│            TX Coil (outer)           │  Green - Transmit
+│            TX Spole (ydre)           │  200 mm - Sender
 │   ┌────────────────────────────┐     │
-│   │      Feedback/Bucking      │     │  Red - Bucking
+│   │      Bucking Spole         │     │  120 mm - Ophævning
 │   │   ┌────────────────────┐   │     │
-│   │   │     RX Coil        │   │     │  Blue - Receive
+│   │   │     RX Spole       │   │     │  80 mm - Modtager
 │   │   │                    │   │     │
 │   │   └────────────────────┘   │     │
 │   └────────────────────────────┘     │
 └──────────────────────────────────────┘
 ```
 
-**Components needed:**
-| Component | Purpose | Notes |
-|-----------|---------|-------|
-| TX Coil | Transmit 2 kHz field | Outer, largest diameter |
-| Bucking/Feedback Coil | Cancel TX coupling to RX | Wired in opposition to TX |
-| RX Coil | Receive reflected signal | Inner, L ≥ 10 mH per kravspec |
+**Komponenter:**
 
-**Balancing:** The feedback coil cancels the direct TX→RX coupling so only the metal reflection is detected.
+| Komponent | Formål | Specifikationer |
+|-----------|--------|-----------------|
+| TX Spole | Sender 2 kHz felt | 200 mm, 68 vind., 6.33 mH |
+| Bucking Spole | Ophæver TX kobling til RX | 120 mm, ~35 vind. |
+| RX Spole | Modtager reflekteret signal | 80 mm, ~170 vind., ≥10 mH |
 
-### Double-D Configuration
+**Balancering:** Bucking spolen ophæver den direkte TX→RX kobling, så kun metalrefleksionen detekteres.
+
+### 3.2 Double-D Konfiguration
 
 ```
 ┌─────────────────────────────────────┐
@@ -101,32 +105,33 @@ From your course materials (slide 37):
         ▲           ▲
         └─────┬─────┘
          Overlap zone
-      (induction balanced)
+      (induktionsbalanceret)
 ```
 
-**Components needed:**
-| Component | Purpose | Notes |
-|-----------|---------|-------|
-| TX Coil (D-shaped) | Transmit field | One half |
-| RX Coil (D-shaped) | Receive signal | Other half, overlaps TX |
+**Komponenter:**
 
-**Balancing:** The overlap geometry naturally creates a null zone where TX coupling cancels.
+| Komponent | Formål | Noter |
+|-----------|--------|-------|
+| TX Spole (D-formet) | Sender felt | Halvdel |
+| RX Spole (D-formet) | Modtager signal | Anden halvdel, overlapper TX |
+
+**Balancering:** Overlap-geometrien skaber naturligt en nulzone hvor TX kobling ophæves.
 
 ---
 
-## Electrical Parameters
+## 4. Elektriske Parametre
 
-### Typical Values (from ATMID detector in literature)
+### 4.1 Vores Koncentriske Design (Arduino Nano)
 
-| Parameter | Concentric (estimated) | Double-D (measured) |
-|-----------|------------------------|---------------------|
-| TX Resistance | ~1-2 Ω | 1.2 Ω |
-| TX Inductance | ~0.5-1 mH | 0.774 mH |
-| RX Resistance | ~100-200 Ω | 182 Ω |
-| RX Inductance | ≥10 mH (per kravspec) | 3.35 mH |
-| Mutual Inductance | Minimized by bucking | 0.1 µH |
+| Parameter | TX Spole | RX Spole | Bucking |
+|-----------|----------|----------|---------|
+| Diameter | 200 mm | 80 mm | 120 mm |
+| Induktans | 6.33 mH | ~12 mH | ~3 mH |
+| DC Modstand | ~3.5 Ω | ~9 Ω | ~1 Ω |
+| Vindinger | 68 | ~170 | ~35 |
+| Resonans C | 1.0 µF | 470 nF | - |
 
-### Equivalent Circuit (Both types)
+### 4.2 Ækvivalent Kredsløb (Begge typer)
 
 ```
 TX Side                    RX Side
@@ -138,179 +143,177 @@ TX Side                    RX Side
   │ │ L_tx                   │ │ L_rx
   └┬┘                        └┬┘
    │                          │
-   └──────── M (mutual) ──────┘
+   └──────── M (gensidig) ────┘
 ```
 
 ---
 
-## Software/DSP Differences
+## 5. Software/DSP Forskelle
 
-### What Stays the Same ✅
+### 5.1 Hvad Forbliver Ens
 
-| Component | Notes |
+| Komponent | Noter |
 |-----------|-------|
-| DFT calculation | Same single-bin at 2 kHz |
-| IIR filtering | Same smoothing algorithm |
-| Phase detection | Same ferrous/non-ferrous threshold (~65°) |
-| Sampling rate | Same 8 kHz |
-| Timer configuration | Same hardware PWM |
+| DFT beregning | Samme single-bin ved 2 kHz |
+| IIR filtrering | Samme udjævningsalgoritme |
+| Fasedetektion | Samme ferro/ikke-ferro tærskel |
+| Samplingsrate | Samme 8 kHz |
+| Timer konfiguration | Samme hardware PWM |
 
-### What May Need Adjustment ⚠️
+### 5.2 Hvad Kan Kræve Justering
 
-| Parameter | Concentric | Double-D | Code Impact |
-|-----------|------------|----------|-------------|
-| Signal amplitude | Higher | Lower | Adjust `DFT_NORMALIZATION_FACTOR` |
-| Calibration values | Different | Different | Re-run calibration routine |
-| Detection threshold | May differ | May differ | Adjust `DETECTION_THRESHOLD_PERCENT` |
-| Phase offset | May differ | May differ | Adjust calibration offset |
-| Amplifier gain | May need less | May need more | Hardware change |
+| Parameter | Koncentrisk | Double-D | Kode Påvirkning |
+|-----------|-------------|----------|-----------------|
+| Signal amplitude | Højere | Lavere | Juster normalisering |
+| Kalibreringsværdier | Forskellige | Forskellige | Genkør kalibrering |
+| Detektionstærskel | Kan variere | Kan variere | Juster tærskel |
+| Faseoffset | Kan variere | Kan variere | Juster kalibrering |
+| Forstærker gain | Mindre behov | Mere behov | Hardware ændring |
 
-### Code Changes Required
-
-```c
-// hw_config.h - May need different values for each coil type
-
-#ifdef COIL_CONCENTRIC
-    #define DFT_NORMALIZATION_FACTOR  (100.0f / (16 * 4095 * 141.0f))
-    #define DETECTION_THRESHOLD_PERCENT 0.2f
-    #define AMPLIFIER_GAIN 10  // Lower gain needed
-#endif
-
-#ifdef COIL_DOUBLE_D
-    #define DFT_NORMALIZATION_FACTOR  (100.0f / (16 * 4095 * 100.0f))  // Adjusted
-    #define DETECTION_THRESHOLD_PERCENT 0.15f  // More sensitive threshold
-    #define AMPLIFIER_GAIN 20  // Higher gain needed
-#endif
-```
-
-**Bottom line:** The coils are largely interchangeable in software — only calibration constants change.
+**Konklusion:** Spolerne er stort set udskiftelige i software - kun kalibreringskonstanter ændres.
 
 ---
 
-## Construction Complexity
+## 6. Konstruktionskompleksitet
 
-### Concentric
+### 6.1 Koncentrisk
 
-**Difficulty:** ⭐⭐ Medium
+**Sværhedsgrad:** Medium
 
-1. Wind circular TX coil (easy)
-2. Wind circular bucking coil (easy)
-3. Wind circular RX coil (easy)
-4. **Critical:** Position bucking coil to achieve null balance
-5. Fine-tune with single wire loop
-6. Pot in epoxy
+1. Vikl cirkulær TX spole (nemt)
+2. Vikl cirkulær bucking spole (nemt)
+3. Vikl cirkulær RX spole (nemt)
+4. **Kritisk:** Positioner bucking spole for nulbalance
+5. Finjuster med enkelt trådløkke
+6. Støb i epoxy
 
-**Challenges:**
-- Getting exact bucking coil position
-- Maintaining balance after potting
+**Udfordringer:**
+- Opnå præcis bucking spole position
+- Oprethold balance efter støbning
 
-### Double-D
+### 6.2 Double-D
 
-**Difficulty:** ⭐⭐⭐ Hard
+**Sværhedsgrad:** Svær
 
-1. Create D-shaped forms (need 3D print or laser cut)
-2. Wind D-shaped TX coil (harder to wind evenly)
-3. Wind D-shaped RX coil (harder to wind evenly)
-4. **Critical:** Precise overlap positioning for null
-5. Pot in epoxy
+1. Lav D-formede forme (kræver 3D print eller laserskæring)
+2. Vikl D-formet TX spole (sværere at vikle jævnt)
+3. Vikl D-formet RX spole (sværere at vikle jævnt)
+4. **Kritisk:** Præcis overlap-positionering for nul
+5. Støb i epoxy
 
-**Challenges:**
-- D-shaped winding is tricky
-- Overlap geometry must be precise
-- Mechanical tolerances are strict
+**Udfordringer:**
+- D-formet vikling er vanskelig
+- Overlap-geometri skal være præcis
+- Mekaniske tolerancer er stramme
 
 ---
 
-## Ground Balancing Performance
+## 7. Jordbalanceringsydelse
 
-### Why DD is Better in Mineralized Soil
+### 7.1 Hvorfor DD er Bedre i Mineraliseret Jord
 
 ```
-Concentric in mineralized soil:
-┌────────────────────────────┐
-│  TX field gets compressed  │
-│  unevenly by soil minerals │
-│                            │
-│    ╱──────╲   Squashed     │
-│   ╱   RX   ╲  field        │
-│  │  ┌───┐   │ creates      │
-│   ╲ └───┘  ╱  imbalance    │
-│    ╲──────╱                │
-└────────────────────────────┘
-Result: False signals from ground
+Koncentrisk i mineraliseret jord:
+┌────────────────────────────────┐
+│  TX felt komprimeres           │
+│  ujævnt af jordmineraler       │
+│                                │
+│    ╱──────╲   Trykket          │
+│   ╱   RX   ╲  felt             │
+│  │  ┌───┐   │ skaber           │
+│   ╲ └───┘  ╱  ubalance         │
+│    ╲──────╱                    │
+└────────────────────────────────┘
+Resultat: Falske signaler fra jord
 
-Double-D in mineralized soil:
-┌────────────────────────────┐
-│  TX compression affects    │
-│  both halves equally       │
-│                            │
-│   ┌───┐╲╱┌───┐            │
-│   │ T │╱╲│ R │ Balance     │
-│   └───┘  └───┘ maintained  │
-│                            │
-└────────────────────────────┘
-Result: Ground effect cancels out
+Double-D i mineraliseret jord:
+┌────────────────────────────────┐
+│  TX komprimering påvirker      │
+│  begge halvdele ens            │
+│                                │
+│   ┌───┐╲╱┌───┐                │
+│   │ T │╱╲│ R │ Balance        │
+│   └───┘  └───┘ opretholdes    │
+│                                │
+└────────────────────────────────┘
+Resultat: Jordeffekt ophæves
 ```
 
 ---
 
-## Recommendation for Your Project
+## 8. Anbefaling for Projektet
 
-### Consider Concentric If:
-- ✅ First time building coils
-- ✅ Testing in lab environment (low mineralization)
-- ✅ Want easier construction
-- ✅ Need best pinpointing accuracy
-- ✅ Time is limited
+### 8.1 Vælg Koncentrisk Hvis:
 
-### Consider Double-D If:
-- ✅ Have access to 3D printer for D-forms
-- ✅ Want best real-world performance
-- ✅ Planning to test outdoors in Denmark (moderate mineralization)
-- ✅ Team has some coil-winding experience
-- ✅ Want the learning experience
+- Første gang med spolebyggeri
+- Test i laboratorium (lav mineralisering)
+- Ønsker nemmere konstruktion
+- Behov for bedste pinpointing nøjagtighed
+- Begrænset tid
 
-### Hybrid Approach (Recommended)
+### 8.2 Vælg Double-D Hvis:
 
-1. **Start with Concentric** — get the electronics and DSP working
-2. **Build DD later** — as an upgrade if time permits
-3. **Compare both** — great content for the report!
+- Har adgang til 3D printer til D-forme
+- Ønsker bedste ydelse i felten
+- Planlægger at teste udendørs (moderat mineralisering)
+- Teamet har erfaring med spolevinding
+- Ønsker læringsoplevelsen
 
-The same PCB and code work for both — just swap coils and recalibrate.
+### 8.3 Vores Valg: Koncentrisk
 
----
-
-## Parts List Comparison
-
-### Concentric
-
-| Part | Quantity | Notes |
-|------|----------|-------|
-| Magnet wire (0.3-0.5mm) | ~50m | For all three coils |
-| Circular form (large) | 1 | TX coil, ~150-200mm diameter |
-| Circular form (medium) | 1 | Bucking coil |
-| Circular form (small) | 1 | RX coil, for L ≥ 10mH |
-| Epoxy/potting compound | ~200ml | |
-| Fine wire for tuning | 1m | Single strand for balance trim |
-
-### Double-D
-
-| Part | Quantity | Notes |
-|------|----------|-------|
-| Magnet wire (0.3-0.5mm) | ~40m | For both D coils |
-| D-shaped form | 2 | 3D printed, ~150-200mm |
-| Overlap jig | 1 | To hold D's in position |
-| Epoxy/potting compound | ~200ml | |
+> [!success] Valgt Konfiguration
+> **Koncentrisk** konfiguration er valgt for dette projekt:
+> - Nemmere at konstruere inden for tidsrammen
+> - Bedre pinpointing til demonstrationsformål
+> - Samme PCB og kode virker - kun kalibrering ændres
+> - Mulighed for DD som fremtidig opgradering
 
 ---
 
-## References
+## 9. Stykliste Sammenligning
 
-- [[Coil Basics.pdf|Coil Basics]] — Detailed coil theory
-- [[Advanced Instrumentation for Polyharmonic Metal Detectors.pdf|Advanced Instrumentation]] — DD coil measurements
-- [[Course_intro.pdf|Course Introduction]] — Concentric configuration (slide 37)
-- [[kravspecifikation.pdf|Kravspecifikation]] — RX coil ≥ 10 mH requirement
+### 9.1 Koncentrisk (Vores Design)
+
+| Del | Antal | Noter |
+|-----|-------|-------|
+| Kobbertråd 0.52mm (AWG 24) | ~60 m | TX + Bucking |
+| Kobbertråd 0.32mm (AWG 28) | ~45 m | RX |
+| Cirkulær form 200 mm | 1 | TX spole |
+| Cirkulær form 120 mm | 1 | Bucking spole |
+| Cirkulær form 80 mm | 1 | RX spole |
+| Epoxy/støbemasse | ~200 ml | |
+| Film kondensator 1.0 µF | 1 | TX resonans |
+| Film kondensator 470 nF | 1 | RX resonans (valgfri) |
+
+### 9.2 Double-D (Reference)
+
+| Del | Antal | Noter |
+|-----|-------|-------|
+| Kobbertråd | ~40 m | Begge D-spoler |
+| D-formet form | 2 | 3D printet, ~200 mm |
+| Overlap jig | 1 | Holder D'er i position |
+| Epoxy/støbemasse | ~200 ml | |
 
 ---
 
-#coils #hardware #design-decision
+## 10. Relaterede Dokumenter
+
+- [[Coil Design|Spole Design]] - Detaljeret spoledesign
+- [[TX Driver Design|TX Driver Design]] - Forstærker kredsløb
+- [[Power Budget Analysis|Strømbudget Analyse]] - Strømforbrug
+
+---
+
+## 11. Teori Referencer (DTU Vault)
+
+| Emne | Link | Relevans |
+|------|------|----------|
+| Magnetfelter | [Lecture 22 - Magnetostatics I](obsidian://open?vault=Obsidian&file=Courses%2FElectromagnetics%2FFormulas%2FLecture%2022%20-%20Magnetostatics%20I) | Feltmønstre omkring spoler |
+| Induktans | [L23 - Magnetostatics II](obsidian://open?vault=Obsidian&file=Courses%2FElectromagnetics%2FFormulas%2FL23%20-%20Magnetostatics%20II) | Gensidig induktans, kobling |
+| Skin Effect | [Helpers (EM)](obsidian://open?vault=Obsidian&file=Courses%2FElectromagnetics%2FHelpers) | Hvirvelstrømme, metalklassificering |
+
+---
+
+*Sammenligning af spolekonfigurationer til DTU 34621 Metaldetektor*
+
+#spoler #design #koncentrisk #double-d

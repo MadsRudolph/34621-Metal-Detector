@@ -1,57 +1,92 @@
-# VLF Metal Detector Firmware
+# VLF Metaldetektor Firmware
 
-Arduino Mega 2560 (ATmega2560) firmware for VLF metal detection.
+Arduino Nano (ATmega328P @ 16MHz) firmware til VLF metaldetektion.
 
-> 📚 **Theory:** [DSP-Bible](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FDSP-Bible) | [FIIR & IIR](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFIIR%20%26%20IIR) | [Under Sampling](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FUnder%20Sampling)
+> **Teori:** [DSP-Bible](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FDSP-Bible) | [FIIR & IIR](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFIIR%20%26%20IIR)
 
-## Structure
+## Nuværende Struktur
 
 ```
 src/
-├── config.h          # Pin definitions, constants
-├── main.c            # Application entry, state machine
-├── signal/
-│   ├── adc.c/h       # 8kHz sampling, PWM, double buffer
-│   └── dsp.c/h       # DFT analysis, IIR filter
-├── app/
-│   ├── detector.c/h  # Metal classification, calibration
-│   ├── display.c/h   # OLED screens
-│   └── ui.c/h        # Buttons, buzzer
-└── drivers/          # Given drivers (do not modify)
+├── main.c            # Al firmware i én fil
+└── drivers/          # Givne drivere (modificer ikke)
     ├── I2C.c/h
-    ├── ssd1306_driver.c/h
-    └── data.h
+    └── ssd1306.c/h
 ```
+
+> **Note:** Koden er pt. samlet i `main.c` for hurtig prototyping. Se [Project_Roadmap.md](../Docs/Project_Roadmap.md) for planlagt modularisering.
+
+## Implementeret Funktionalitet
+
+| Funktion | Status | Beskrivelse |
+|----------|--------|-------------|
+| TX Signal | ✅ Færdig | 2 kHz firkantbølge via Timer0 |
+| ADC Sampling | ✅ Færdig | 8 kHz auto-trigger fra Timer0 |
+| DFT Beregning | ✅ Færdig | Single-bin DFT med 4× oversampling |
+| Magnitude/Fase | ✅ Færdig | Beregning fra Re/Im komponenter |
+| OLED Display | ✅ Færdig | Viser Re, Im, Mag, Fase |
+| Debug Knap | ✅ Færdig | D4 skifter mellem DFT/Debug skærm |
+| Start/Stop Knap | ❌ TODO | Krav 9a - skal implementeres |
+| Kalibrering Knap | ❌ TODO | Krav 9b - skal implementeres |
+| Metalklassificering | ❌ TODO | Krav 2 - ferro/non-ferro |
+| IIR Filter | ❌ TODO | Krav 8c - display udglatning |
 
 ## Build
 
 ```bash
-pio run              # Build
-pio run -t upload    # Upload
-pio device monitor   # Serial monitor
+pio run              # Kompilér
+pio run -t upload    # Upload til board
+pio device monitor   # Seriel monitor
 ```
 
-## Pins
+## Pin Konfiguration
 
-| Pin | Function |
-|-----|----------|
-| 9   | PWM to TX coil |
-| 10  | MCP3208 CS |
-| 50  | SPI MISO |
-| 51  | SPI MOSI |
-| 52  | SPI SCK |
-| 8   | Buzzer |
-| 2   | Start/Stop (INT4) |
-| 3   | Calibrate (INT5) |
-| 20  | I2C SDA |
-| 21  | I2C SCL |
+| Pin | Funktion | Retning |
+|-----|----------|---------|
+| 9 (PB1) | TX signal output (2kHz) | OUTPUT |
+| A0 (PC0) | RX signal input (ADC) | INPUT |
+| A4 (PC4) | I2C SDA (OLED) | I/O |
+| A5 (PC5) | I2C SCL (OLED) | OUTPUT |
+| D4 (PD4) | Debug knap | INPUT (pull-up) |
+| D2 (PD2) | Start/Stop knap (TODO) | INPUT (pull-up) |
+| D3 (PD3) | Kalibrering knap (TODO) | INPUT (pull-up) |
 
-## Signal Flow
+## Signalflow
 
 ```
-PWM (2kHz) --> TX Coil --> [Metal] --> RX Coil --> MCP3208 ADC
-                                                        |
-Timer1 ISR (8kHz) ---> Double Buffer ---> Main Loop
-                                              |
-                            DFT --> Filter --> Classify --> Display/Buzzer
+Timer0 (8kHz) ──┬──> TX Pin Toggle (hver 2. interrupt = 2kHz)
+                │
+                └──> ADC Auto-Trigger
+                          │
+                          ▼
+                    ADC ISR (8kHz)
+                          │
+                          ▼
+                    DFT Akkumulering (64 samples)
+                          │
+                          ▼
+                    Hovedløkke: DFT_Calc() → Display
 ```
+
+## Konfigurationsparametre
+
+```c
+#define F_SAMPLE 8000     // Sample frekvens (Hz)
+#define F_SIGNAL 2000     // TX/RX signal frekvens (Hz)
+#define N 64              // Samples per DFT vindue
+```
+
+## Næste Skridt
+
+Se TODO-kommentarer i `main.c` for detaljeret implementeringsvejledning:
+- `Krav 9a`: Start/Stop knap på D2
+- `Krav 9b`: Kalibrering knap på D3 + baseline lagring
+- `Krav 2`: Metalklassificering baseret på faseforskel
+- `Krav 8c`: IIR lavpas filter til stabil visning
+
+## Relaterede Dokumenter
+
+- [Project_Roadmap.md](../Docs/Project_Roadmap.md) - Fuld kravanalyse og status
+- [Code_Review.md](../Docs/Guides/Code_Review.md) - Kodegennemgang
+
+#firmware #arduino #dft #metaldetektor

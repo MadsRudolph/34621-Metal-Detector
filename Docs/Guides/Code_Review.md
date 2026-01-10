@@ -1,93 +1,93 @@
-# Metal Detector Firmware Code Review
+# Metaldetektor Firmware Kodegennemgang
 
-> [!abstract] Document Purpose
-> This document provides a technical review of the VLF metal detector firmware.
-> **Current State:** Minimal test version focusing on core TX/RX/DSP functionality.
+> [!abstract] Dokumentformål
+> Dette dokument giver en teknisk gennemgang af VLF metaldetektor firmwaren.
+> **Nuværende Status:** Minimal testversion med fokus på kerne TX/RX/DSP funktionalitet.
 >
-> **Target:** ATmega328P (Arduino Nano)
-> **Course:** DTU 34621 - Embedded Systems
+> **Mål:** ATmega328P (Arduino Nano)
+> **Kursus:** DTU 34621 - Indlejrede Systemer
 
 ---
 
-## Table of Contents
+## Indholdsfortegnelse
 
-1. [[#1. System Overview]]
-2. [[#2. Code Structure]]
-3. [[#3. Hardware Configuration]]
-4. [[#4. Signal Processing]]
-5. [[#5. Building and Flashing]]
+1. [[#1. Systemoversigt]]
+2. [[#2. Kodestruktur]]
+3. [[#3. Hardware Konfiguration]]
+4. [[#4. Signalbehandling]]
+5. [[#5. Kompilering og Upload]]
 
 ---
 
-## 1. System Overview
+## 1. Systemoversigt
 
-### 1.1 Current Architecture (Minimal Test Version)
+### 1.1 Nuværende Arkitektur (Minimal Testversion)
 
-The firmware is currently in a minimal test configuration with all application code consolidated into a single `main.c` file. This simplifies development and testing of the core signal processing chain.
+Firmwaren er i øjeblikket i en minimal testkonfiguration med al applikationskode samlet i en enkelt `main.c` fil. Dette forenkler udvikling og test af kerne signalbehandlingskæden.
 
 ```
 Code/src/
-├── main.c                 # All application code (TX, RX, DSP, display)
+├── main.c                 # Al applikationskode (TX, RX, DSP, display)
 │
-└── drivers/               # Hardware drivers (kept separate)
+└── drivers/               # Hardware drivere (holdt separat)
     ├── I2C.c, I2C.h       # TWI master driver
     ├── ssd1306.c, .h      # OLED display driver
     └── data.h             # Font data (PROGMEM)
 ```
 
-### 1.2 Signal Flow
+### 1.2 Signalflow
 
 ```mermaid
 flowchart TB
-    T0[Timer0<br>8kHz] --> TX[TX Coil<br>Pin 9<br>2kHz]
-    TX -.->|Field| M((Metal))
-    M -.->|Eddy| RX[RX Coil]
+    T0[Timer0<br>8kHz] --> TX[TX Spole<br>Pin 9<br>2kHz]
+    TX -.->|Felt| M((Metal))
+    M -.->|Hvirvel| RX[RX Spole]
     RX --> ADC[ADC<br>Pin A0]
     ADC --> DFT[DFT<br>64 samples]
     DFT --> CALC[sqrt/atan2]
     CALC --> OLED[Display]
 ```
 
-**Signal chain:** Timer0 (8kHz) → TX Toggle (2kHz) → Metal → RX Coil → ADC (auto-trigger) → DFT → Display
+**Signalkæde:** Timer0 (8kHz) → TX Toggle (2kHz) → Metal → RX Spole → ADC (auto-trigger) → DFT → Display
 
-### 1.3 Key Specifications
+### 1.3 Nøglespecifikationer
 
-| Parameter | Value | Notes |
+| Parameter | Værdi | Noter |
 |-----------|-------|-------|
-| TX Frequency | 2 kHz | VLF range |
-| Sample Rate | 8 kHz | 4 samples per TX cycle |
+| TX Frekvens | 2 kHz | VLF område |
+| Samplerate | 8 kHz | 4 samples per TX cyklus |
 | ADC Trigger | Auto (ADATE) | Timer0 Compare Match A |
-| DFT Window | 64 samples | 8 ms of data |
-| TX Cycles per Window | 16 | 64 / 4 = 16 |
+| DFT Vindue | 64 samples | 8 ms data |
+| TX Cykler per Vindue | 16 | 64 / 4 = 16 |
 | I2C Clock | ~400 kHz | Fast mode |
-| ADC Resolution | 10 bits | 0-1023 range |
+| ADC Opløsning | 10 bits | 0-1023 område |
 | ADC Prescaler | 128 | 125 kHz ADC clock |
 
-### 1.4 Pin Configuration
+### 1.4 Pin Konfiguration
 
-| Pin | AVR Port | Function | Notes |
+| Pin | AVR Port | Funktion | Noter |
 |-----|----------|----------|-------|
-| 9 | PB1 | TX signal | 2 kHz square wave |
-| A0 | PC0/ADC0 | RX signal input | 10-bit ADC |
+| 9 | PB1 | TX signal | 2 kHz firkantbølge |
+| A0 | PC0/ADC0 | RX signal indgang | 10-bit ADC |
 | A4 | PC4 | I2C SDA | OLED display |
 | A5 | PC5 | I2C SCL | OLED display |
-| D4 | PD4 | Debug button | Press to toggle debug screen |
+| D4 | PD4 | Debug knap | Tryk for at skifte debug skærm |
 
 ---
 
-## 2. Code Structure
+## 2. Kodestruktur
 
-### 2.1 main.c Overview
+### 2.1 main.c Oversigt
 
-**Location:** `Code/src/main.c` (~188 lines)
+**Placering:** `Code/src/main.c` (~188 linjer)
 
-The minimal test version contains:
-- TX signal generation (Timer0)
+Den minimale testversion indeholder:
+- TX signalgenerering (Timer0)
 - ADC sampling (auto-triggered)
-- DFT accumulation and calculation
-- Basic OLED display output
+- DFT akkumulering og beregning
+- Basis OLED display output
 
-#### Includes and Constants
+#### Includes og Konstanter
 
 ```c
 #include <avr/io.h>
@@ -99,18 +99,18 @@ The minimal test version contains:
 #include "drivers/I2C.h"
 #include "drivers/ssd1306.h"
 
-#define N 64                      /* DFT window size */
-#define ADC_OFFSET 512            /* DC offset (mid-scale) */
+#define N 64                      /* DFT vinduesstørrelse */
+#define ADC_OFFSET 512            /* DC offset (mid-skala) */
 #define RAD_TO_DEG 57.2957795131  /* 180/PI */
 ```
 
-#### Global Variables
+#### Globale Variable
 
 ```c
-/* TX counter */
+/* TX tæller */
 static volatile uint8_t tx_i = 0;
 
-/* DFT accumulators */
+/* DFT akkumulatorer */
 static volatile uint8_t dft_i = 0;
 static volatile int32_t Re = 0;
 static volatile int32_t Im = 0;
@@ -118,21 +118,21 @@ static volatile int32_t Re_buf = 0;
 static volatile int32_t Im_buf = 0;
 static volatile uint8_t DFT_done = 0;
 
-/* Results */
+/* Resultater */
 static volatile uint16_t magnitude = 0;
 static volatile int16_t phase = 0;
 ```
 
-> [!WARNING] Signed Types Required
-> `Re` and `Im` MUST be `int32_t` (signed), not `uint32_t`.
-> The DFT subtracts values, so negative results are expected.
+> [!WARNING] Signed Typer Påkrævet
+> `Re` og `Im` SKAL være `int32_t` (signed), ikke `uint32_t`.
+> DFT'en subtraherer værdier, så negative resultater er forventede.
 
-#### Timer0 Initialization
+#### Timer0 Initialisering
 
 ```c
 void tx_init(void)
 {
-    DDRB |= (1 << PB1);           /* Pin 9 output */
+    DDRB |= (1 << PB1);           /* Pin 9 udgang */
     TCCR0A = (1 << WGM01);        /* CTC mode */
     TCCR0B = (1 << CS01);         /* Prescaler 8 */
     OCR0A = 249;                  /* 8 kHz interrupt */
@@ -140,11 +140,11 @@ void tx_init(void)
 }
 ```
 
-**Frequency Calculation:**
+**Frekvensberegning:**
 - f_interrupt = 16 MHz / (8 × 250) = 8 kHz
-- TX toggles every 2nd interrupt = 4 kHz toggle rate = 2 kHz square wave
+- TX toggles hver 2. interrupt = 4 kHz toggle rate = 2 kHz firkantbølge
 
-#### ADC Initialization
+#### ADC Initialisering
 
 ```c
 void adc_init(void)
@@ -158,15 +158,15 @@ void adc_init(void)
 ```
 
 > [!TIP] Auto-Trigger Mode
-> Using `ADATE` with `ADTS1:0 = 011` means the ADC automatically starts a new
-> conversion on every Timer0 Compare Match A event. No manual triggering needed.
+> Ved brug af `ADATE` med `ADTS1:0 = 011` starter ADC automatisk en ny
+> konvertering ved hver Timer0 Compare Match A event. Ingen manuel triggering nødvendig.
 
-#### Timer0 ISR (TX Generation)
+#### Timer0 ISR (TX Generering)
 
 ```c
 ISR(TIMER0_COMPA_vect)
 {
-    /* Toggle TX every 2nd interrupt = 2kHz */
+    /* Toggle TX hver 2. interrupt = 2kHz */
     if (++tx_i >= 2) {
         PORTB ^= (1 << PB1);
         tx_i = 0;
@@ -174,14 +174,14 @@ ISR(TIMER0_COMPA_vect)
 }
 ```
 
-#### ADC ISR (DFT Accumulation)
+#### ADC ISR (DFT Akkumulering)
 
 ```c
 ISR(ADC_vect)
 {
     int16_t sample = ADC - ADC_OFFSET;
 
-    /* 4x oversampling DFT at 2kHz */
+    /* 4x oversampling DFT ved 2kHz */
     switch (dft_i & 3) {
         case 0: Re += sample; break;
         case 1: Im -= sample; break;
@@ -199,7 +199,7 @@ ISR(ADC_vect)
 }
 ```
 
-#### Magnitude and Phase Calculation
+#### Magnitude og Fase Beregning
 
 ```c
 void calc_mag_phase(void)
@@ -212,12 +212,12 @@ void calc_mag_phase(void)
 }
 ```
 
-> [!NOTE] Floating-Point Math
-> Uses standard library `sqrt()` and `atan2()` from `<math.h>` for accuracy.
-> This is slower on AVR but prioritizes correctness for testing.
-> Can be optimized with integer approximations later.
+> [!NOTE] Floating-Point Matematik
+> Bruger standard bibliotek `sqrt()` og `atan2()` fra `<math.h>` for nøjagtighed.
+> Dette er langsommere på AVR men prioriterer korrekthed til test.
+> Kan optimeres med integer approksimationer senere.
 
-#### Main Function
+#### Main Funktion
 
 ```c
 int main(void)
@@ -230,11 +230,11 @@ int main(void)
     adc_init();
     sei();
 
-    sendStrXY("Starting...", 3, 2);
+    sendStrXY("Starter...", 3, 2);
     _delay_ms(1000);
     clear_display();
 
-    /* Main loop */
+    /* Hovedløkke */
     while (1) {
         if (DFT_done) {
             DFT_done = 0;
@@ -246,85 +246,88 @@ int main(void)
 }
 ```
 
-> [!DANGER] Don't Forget sei()
-> Without `sei()`, no interrupts will fire. The TX signal won't generate and ADC won't sample.
+> [!DANGER] Glem Ikke sei()
+> Uden `sei()` vil ingen interrupts køre. TX signalet genereres ikke og ADC sampler ikke.
 
 ---
 
-## 3. Hardware Configuration
+## 3. Hardware Konfiguration
 
-### 3.1 Timer0 - TX Generation & ADC Auto-Trigger
+### 3.1 Timer0 - TX Generering & ADC Auto-Trigger
 
-Timer0 serves dual purposes:
-1. Generate 8 kHz Compare Match A event for ADC auto-triggering
-2. ISR toggles TX pin every 2nd interrupt for 2 kHz signal
+Timer0 tjener dobbelt formål:
+1. Generer 8 kHz Compare Match A event til ADC auto-triggering
+2. ISR toggler TX pin hver 2. interrupt for 2 kHz signal
 
 ```mermaid
 flowchart TD
     CLK[16 MHz Clock] --> PRE[Prescaler /8<br>2 MHz]
-    PRE --> CNT[TCNT0 Counter<br>0 → 249 → 0]
+    PRE --> CNT[TCNT0 Tæller<br>0 → 249 → 0]
     CNT --> CMP{TCNT0 == OCR0A?}
-    CMP -->|Yes| EVENT[Compare Match A Event]
-    CMP -->|No| CNT
+    CMP -->|Ja| EVENT[Compare Match A Event]
+    CMP -->|Nej| CNT
 
-    EVENT --> ISR[TIMER0_COMPA ISR<br>Toggle TX every 2nd]
+    EVENT --> ISR[TIMER0_COMPA ISR<br>Toggle TX hver 2.]
     EVENT --> ADC[ADC Auto-Trigger<br>via ADATE]
 
-    ADC --> CONV[ADC Conversion]
-    CONV --> ADC_ISR[ADC_vect ISR<br>DFT accumulation]
+    ADC --> CONV[ADC Konvertering]
+    CONV --> ADC_ISR[ADC_vect ISR<br>DFT akkumulering]
 ```
 
 ### 3.2 ADC Timing
 
-| Parameter | Value | Calculation |
-|-----------|-------|-------------|
+| Parameter | Værdi | Beregning |
+|-----------|-------|-----------|
 | ADC clock | 125 kHz | 16 MHz / 128 |
-| Conversion time | 104 µs | 13 cycles / 125 kHz |
+| Konverteringstid | 104 µs | 13 cykler / 125 kHz |
 | Sample interval | 125 µs | 8 kHz rate |
 | Margin | 21 µs | 125 - 104 |
 
-### 3.3 Timing Diagram
+### 3.3 Timingdiagram
 
 ```
-Time (µs):     0    125   250   375   500
+Tid (µs):      0    125   250   375   500
                │     │     │     │     │
 Timer0 ISR:   [0]   [1]   [2]   [3]   [4]  (8 kHz)
-TX Toggle:    Yes   No    Yes   No    Yes
+TX Toggle:    Ja    Nej   Ja    Nej   Ja
 TX Output:    ─────HIGH─────┐     ┌─────HIGH─────
                             └LOW─┘
-ADC Sample:   S0    S1    S2    S3         (4 samples per TX cycle)
+ADC Sample:   S0    S1    S2    S3         (4 samples per TX cyklus)
 DFT coeff:   Re+   Im-   Re-   Im+
 
-             ◄───── 500µs (one TX cycle, 2 kHz) ─────►
+             ◄───── 500µs (én TX cyklus, 2 kHz) ─────►
 ```
 
 ---
 
-## 4. Signal Processing
+## 4. Signalbehandling
 
-### 4.1 The 4× Oversampling DFT Trick
+> [!info] Detaljeret DFT Dokumentation
+> Se [[../Theory/DFT Algorithm|DFT Algoritme]] for fuld matematisk baggrund og implementation detaljer.
 
-Since we sample at exactly 4× the signal frequency (8kHz sampling, 2kHz signal), the DFT coefficients become trivial:
+### 4.1 4× Oversampling DFT Tricket
 
-| Sample Index | cos coefficient | sin coefficient | Operation |
-|--------------|-----------------|-----------------|-----------|
+Da vi sampler ved præcis 4× signalfrekvensen (8kHz sampling, 2kHz signal), bliver DFT koefficienterne trivielle:
+
+| Sample Indeks | cos koefficient | sin koefficient | Operation |
+|---------------|-----------------|-----------------|-----------|
 | 0 | +1 | 0 | Re += sample |
 | 1 | 0 | -1 | Im -= sample |
 | 2 | -1 | 0 | Re -= sample |
 | 3 | 0 | +1 | Im += sample |
 
-**No trigonometric calculations needed in the ISR!**
+**Ingen trigonometriske beregninger nødvendige i ISR!**
 
-### 4.2 DFT Accumulation Pattern
+### 4.2 DFT Akkumuleringsmønster
 
 ```
 TX Signal:     ┌────────────┐            ┌────────────┐
                │            │            │            │
           ─────┘            └────────────┘            └─────
 
-Sample:        S0     S1     S2     S3     (4 samples per cycle)
+Sample:        S0     S1     S2     S3     (4 samples per cyklus)
                │      │      │      │
-Phase:         0°    90°   180°   270°
+Fase:          0°    90°   180°   270°
                │      │      │      │
                ▼      ▼      ▼      ▼
           Re += S0
@@ -335,47 +338,38 @@ Phase:         0°    90°   180°   270°
 
 ### 4.3 Display Output
 
-Press the **D4 button** to toggle between two screens:
+Tryk på **D4 knappen** for at skifte mellem to skærme:
 
-**Screen 1: DFT Results**
+**Skærm 1: DFT Resultater**
 ```
 === DFT ===
 
-Re:   <value>
-Im:   <value>
+Re:   <værdi>
+Im:   <værdi>
 
-Mag:  <value>
-Phase: <value> deg
+Mag:  <værdi>
+Fase: <værdi> grader
 ```
 
-**Screen 2: Debug Info**
+**Skærm 2: Debug Info**
 ```
 === DEBUG ===
 
-ADC:  <raw 0-1023>
-Min:  <minimum seen>
-Max:  <maximum seen>
-TX:   HIGH/LOW
-DFT#: <completion count>
-Vpp:  <max - min>
+ADC:  <rå 0-1023>
 ```
 
-| Value | Description |
+| Værdi | Beskrivelse |
 |-------|-------------|
-| **Re/Im** | Raw DFT components (can be negative) |
+| **Re/Im** | Rå DFT komponenter (kan være negative) |
 | **Mag** | sqrt(Re² + Im²) / 16 |
-| **Phase** | atan2(Im, Re) × 180/π degrees |
-| **ADC** | Current raw ADC reading (0-1023) |
-| **Min/Max** | ADC range since power-on |
-| **TX** | Current TX pin state |
-| **DFT#** | Number of completed DFT windows |
-| **Vpp** | Peak-to-peak ADC swing (Max - Min) |
+| **Fase** | atan2(Im, Re) × 180/π grader |
+| **ADC** | Nuværende rå ADC aflæsning (0-1023) |
 
 ---
 
-## 5. Building and Flashing
+## 5. Kompilering og Upload
 
-### 5.1 PlatformIO Configuration
+### 5.1 PlatformIO Konfiguration
 
 ```ini
 [env:nano]
@@ -391,83 +385,83 @@ build_flags =
     -Os
 ```
 
-### 5.2 Build Commands
+### 5.2 Build Kommandoer
 
 ```bash
-# Build
+# Kompiler
 pio run
 
 # Upload
 pio run -t upload
 
-# Monitor serial
+# Monitor seriel
 pio device monitor
 ```
 
-### 5.3 Memory Usage (Minimal Version with Debug)
+### 5.3 Hukommelsesforbrug (Minimal Version med Debug)
 
-| Memory | Used | Available | Percentage |
-|--------|------|-----------|------------|
+| Hukommelse | Brugt | Tilgængelig | Procent |
+|------------|-------|-------------|---------|
 | RAM | 261 bytes | 2048 bytes | 12.7% |
 | Flash | 4874 bytes | 30720 bytes | 15.9% |
 
 ---
 
-## Troubleshooting
+## Fejlfinding
 
-### No TX Signal on Pin 9
+### Intet TX Signal på Pin 9
 
-1. Check `tx_init()` is called
-2. Verify `DDRB |= (1 << PB1)` executed
-3. Check `sei()` is called (enables interrupts)
-4. Measure with oscilloscope (should be 2kHz)
+1. Tjek at `tx_init()` kaldes
+2. Verificer at `DDRB |= (1 << PB1)` er udført
+3. Tjek at `sei()` kaldes (aktiverer interrupts)
+4. Mål med oscilloskop (bør være 2kHz)
 
-### ADC Not Sampling
+### ADC Sampler Ikke
 
-1. Verify `sei()` is called (enables interrupts)
-2. Check `adc_init()` is called (sets up auto-trigger)
-3. Verify ADCSRA has ADEN, ADIE, and ADATE set
-4. Verify ADCSRB has ADTS1:0 = 011 (Timer0 Compare Match A trigger)
+1. Verificer at `sei()` kaldes (aktiverer interrupts)
+2. Tjek at `adc_init()` kaldes (sætter auto-trigger op)
+3. Verificer at ADCSRA har ADEN, ADIE og ADATE sat
+4. Verificer at ADCSRB har ADTS1:0 = 011 (Timer0 Compare Match A trigger)
 
-### Display Not Working
+### Display Virker Ikke
 
-1. Check I2C connections (A4=SDA, A5=SCL)
-2. Verify I2C_Init() called before InitializeDisplay()
-3. Try different I2C address (some modules use 0x7A instead of 0x78)
+1. Tjek I2C forbindelser (A4=SDA, A5=SCL)
+2. Verificer at I2C_Init() kaldes før InitializeDisplay()
+3. Prøv anden I2C adresse (nogle moduler bruger 0x7A i stedet for 0x78)
 
-### Values Always Zero
+### Værdier Altid Nul
 
-1. Ensure ADC is connected to RX coil signal
-2. Check that ADC_OFFSET (512) is appropriate for your signal
-3. Verify DFT_done flag is being set (ISR running)
-
----
-
-## Future Enhancements
-
-The following features were removed for minimal testing and can be re-added later:
-
-- [ ] IIR filtering for smoothed display
-- [ ] Calibration routine
-- [ ] Metal classification (ferrous/non-ferrous based on phase)
-- [ ] Buzzer output with Timer2 PWM
-- [ ] Button input for UI control
-- [ ] Debug screens
-- [ ] State machine (IDLE/RUNNING/CALIBRATING)
+1. Sørg for at ADC er forbundet til RX spole signal
+2. Tjek at ADC_OFFSET (512) er passende for dit signal
+3. Verificer at DFT_done flag bliver sat (ISR kører)
 
 ---
 
-## Document Revision History
+## Fremtidige Forbedringer
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2025-01 | Initial comprehensive review (ATmega2560) |
-| 2.0 | 2025-01 | Migrated to Arduino Nano (ATmega328P) |
-| 2.1 | 2025-01 | Updated to reflect ADC auto-trigger mode (ADATE) |
-| 2.2 | 2025-01 | Changed to floating-point sqrt()/atan2() |
-| 3.0 | 2025-01 | Simplified to minimal test version (single main.c) |
+Følgende funktioner blev fjernet til minimal test og kan tilføjes senere:
+
+- [ ] IIR filtrering til udjævnet display
+- [ ] Kalibreringsrutine
+- [ ] Metalklassificering (ferro/ikke-ferro baseret på fase)
+- [ ] Buzzer output med Timer2 PWM
+- [ ] Knapinput til UI kontrol
+- [ ] Debug skærme
+- [ ] Tilstandsmaskine (IDLE/RUNNING/CALIBRATING)
 
 ---
 
-*Document generated for DTU 34621 Metal Detector Project*
-*Team: Mads Rudolph, Andreas Skaaning, Jonas Beck & Sigurd Hestbech*
+## Dokumentrevisionshistorik
+
+| Version | Dato | Ændringer |
+|---------|------|-----------|
+| 1.0 | 2025-01 | Første omfattende gennemgang (ATmega2560) |
+| 2.0 | 2025-01 | Migreret til Arduino Nano (ATmega328P) |
+| 2.1 | 2025-01 | Opdateret til at afspejle ADC auto-trigger mode (ADATE) |
+| 2.2 | 2025-01 | Ændret til floating-point sqrt()/atan2() |
+| 3.0 | 2025-01 | Forenklet til minimal testversion (enkelt main.c) |
+
+---
+
+*Dokument genereret til DTU 34621 Metaldetektor Projekt*
+*Hold: Mads Rudolph, Andreas Skaaning, Jonas Beck & Sigurd Hestbech*

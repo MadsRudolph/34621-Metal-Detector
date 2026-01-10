@@ -1,37 +1,37 @@
-# VLF Metal Detector - Assembly Guide
+# VLF Metaldetektor - Montagevejledning
 
-## Arduino Nano Breadboard Wiring
+## Arduino Nano Breadboard Ledningsføring
 
-This guide shows how to wire up the Arduino Nano for the DTU 34621 Metal Detector project.
+Denne guide viser hvordan man forbinder Arduino Nano til DTU 34621 Metaldetektor projektet.
 
-**Current State:** Minimal test configuration for core TX/RX/DSP testing.
+**Nuværende Status:** Minimal testkonfiguration til kerne TX/RX/DSP test.
 
 ---
 
-## Component List (Minimal Test Version)
+## Komponentliste (Minimal Testversion)
 
-| Component | Quantity | Notes |
-|-----------|----------|-------|
+| Komponent | Antal | Noter |
+|-----------|-------|-------|
 | Arduino Nano | 1 | ATmega328P, 16MHz |
-| Breadboard | 1 | Full-size recommended |
+| Breadboard | 1 | Fuld størrelse anbefalet |
 | SSD1306 OLED Display | 1 | 128x64, I2C interface |
-| Push button | 1 | Debug screen toggle (D4) |
-| TX Coil driver | 1 | H-bridge or transistor circuit |
-| RX Coil amplifier | 1 | Op-amp circuit for coil signal |
-| Jumper wires | ~10 | Various colors recommended |
+| Trykknap | 1 | Debug skærm skift (D4) |
+| TX Spole driver | 1 | H-bro eller transistor kredsløb |
+| RX Spole forstærker | 1 | Op-amp kredsløb til spolesignal |
+| Jumperwires | ~10 | Forskellige farver anbefalet |
 
-### Components for Later (Not Used in Minimal Version)
+### Komponenter til Senere (Ikke Brugt i Minimal Version)
 
-| Component | Quantity | Notes |
-|-----------|----------|-------|
-| Push button | 1 | Start/Stop (D2) |
-| Piezo buzzer | 1 | For audio feedback |
+| Komponent | Antal | Noter |
+|-----------|-------|-------|
+| Trykknap | 1 | Start/Stop (D2) |
+| Piezo buzzer | 1 | Til lydtilbagemelding |
 
 ---
 
-## Pin Connections
+## Pin Forbindelser
 
-### Arduino Nano Pinout Summary
+### Arduino Nano Pinout Oversigt
 
 ```
                      +-----+
@@ -49,40 +49,40 @@ This guide shows how to wire up the Arduino Nano for the DTU 34621 Metal Detecto
             | [ ]  D6|     |A3  [ ] |
             | [ ]  D7|     |A2  [ ] |
             | [ ]  D8|     |A1  [ ] |
- TX-OUT [X] | [X]  D9|     |A0  [X] | RX-IN
+ TX-UD  [X] | [X]  D9|     |A0  [X] | RX-IND
             | [ ] D10|     |AREF[ ] |
  MOSI       | [ ] D11|     |3V3 [ ] |
  MISO       | [ ] D12|     |D13 [ ] | SCK
             +-------+-------+-------+
 
-[X] = Used in minimal test version
+[X] = Brugt i minimal testversion
 ```
 
 ---
 
-## Wiring Table (Minimal Test Version)
+## Ledningstabel (Minimal Testversion)
 
-| Function | Arduino Pin | Port | Direction | Connection |
-|----------|-------------|------|-----------|------------|
-| **TX Signal** | D9 | PB1 | Output | TX coil driver input |
-| **RX Input** | A0 | PC0 | Input | RX amplifier output |
-| **Debug Button** | D4 | PD4 | Input | Button to GND |
+| Funktion | Arduino Pin | Port | Retning | Forbindelse |
+|----------|-------------|------|---------|-------------|
+| **TX Signal** | D9 | PB1 | Udgang | TX spole driver indgang |
+| **RX Indgang** | A0 | PC0 | Indgang | RX forstærker udgang |
+| **Debug Knap** | D4 | PD4 | Indgang | Knap til GND |
 | **OLED SDA** | A4 | PC4 | I2C | Display SDA |
 | **OLED SCL** | A5 | PC5 | I2C | Display SCL |
-| **5V** | 5V | - | Power | Display VCC, components |
-| **GND** | GND | - | Power | Common ground |
+| **5V** | 5V | - | Strøm | Display VCC, komponenter |
+| **GND** | GND | - | Strøm | Fælles stel |
 
-### Pins Reserved for Future Use
+### Pins Reserveret til Fremtidig Brug
 
-| Function | Arduino Pin | Port | Notes |
+| Funktion | Arduino Pin | Port | Noter |
 |----------|-------------|------|-------|
-| Start/Stop Button | D2 | PD2 | To be added |
-| Buzzer | D3 | PD3 | To be added |
-| Debug Pin | D8 | PB0 | Optional oscilloscope |
+| Start/Stop Knap | D2 | PD2 | Tilføjes senere |
+| Buzzer | D3 | PD3 | Tilføjes senere |
+| Debug Pin | D8 | PB0 | Valgfri oscilloskop |
 
 ---
 
-## Wiring Diagram (ASCII)
+## Ledningsdiagram (ASCII)
 
 ```
                                     +------------------+
@@ -98,162 +98,153 @@ This guide shows how to wire up the Arduino Nano for the DTU 34621 Metal Detecto
     |  +-----------+                   |   |    |   |           |
     |  |           |                   |   |    |   |           |
     |  |       5V  +-------------------+   |    |   |           |
-    |  |      GND  +---[COMMON GND]--------+    |   |           |
+    |  |      GND  +---[FÆLLES STEL]-------+    |   |           |
     |  |       A5  +------------------------+   |   |           |
     |  |       A4  +----------------------------+   |           |
-    |  |       A0  +---[RX AMPLIFIER OUTPUT]--------+           |
+    |  |       A0  +---[RX FORSTÆRKER UDGANG]-------+           |
     |  |           |                                            |
-    |  |       D9  +---[TX COIL DRIVER INPUT]                   |
+    |  |       D9  +---[TX SPOLE DRIVER INDGANG]                |
     |  |           |                                            |
     |  |       D4  +---+                                        |
     |  |           |   |  +-------+                             |
-    |  +-----------+   +--+ BTN   +--[GND]   (Debug toggle)     |
+    |  +-----------+   +--+ KNAP  +--[GND]   (Debug skift)      |
     |                     +-------+                             |
     +-----------------------------------------------------------+
 ```
 
 ---
 
-## Step-by-Step Wiring Instructions
+## Trin-for-Trin Ledningsinstruktioner
 
-### Step 1: Place Arduino Nano on Breadboard
+### Trin 1: Placer Arduino Nano på Breadboard
 
-1. Insert the Arduino Nano straddling the center gap of the breadboard
-2. Ensure all pins are firmly inserted
-3. Leave space on both sides for component connections
+1. Indsæt Arduino Nano så den strækker sig over midtergabet på breadboardet
+2. Sørg for at alle pins er sat ordentligt i
+3. Efterlad plads på begge sider til komponentforbindelser
 
-### Step 2: Power Rails
+### Trin 2: Strømskinner
 
-1. Connect Arduino **5V** to breadboard **+** rail (red)
-2. Connect Arduino **GND** to breadboard **-** rail (blue)
-3. If using both sides, bridge the power rails
+1. Forbind Arduino **5V** til breadboard **+** skinne (rød)
+2. Forbind Arduino **GND** til breadboard **-** skinne (blå)
+3. Hvis du bruger begge sider, forbind strømskinnerne
 
-### Step 3: OLED Display (I2C)
+### Trin 3: OLED Display (I2C)
 
-| OLED Pin | Connect To |
-|----------|------------|
-| VCC | 5V rail (+) |
-| GND | GND rail (-) |
+| OLED Pin | Forbind Til |
+|----------|-------------|
+| VCC | 5V skinne (+) |
+| GND | GND skinne (-) |
 | SCL | Arduino A5 |
 | SDA | Arduino A4 |
 
-### Step 4: TX Coil Driver
+### Trin 4: TX Spole Driver
 
-Connect Arduino **D9** to your TX coil driver circuit input.
+Forbind Arduino **D9** til din TX spole driver kredsløbs indgang.
 
-The signal characteristics:
-- Frequency: 2 kHz square wave
-- Voltage: 0-5V logic level
-- Current: ~20mA max (use driver circuit for coil)
+Signalkarakteristika:
+- Frekvens: 2 kHz firkantbølge
+- Spænding: 0-5V logikniveau
+- Strøm: ~20mA maks (brug driver kredsløb til spole)
 
-### Step 5: RX Coil Amplifier
+### Trin 5: RX Spole Forstærker
 
-Connect your RX amplifier output to Arduino **A0**.
+Forbind din RX forstærker udgang til Arduino **A0**.
 
-Signal requirements:
-- Voltage range: 0-5V (centered at 2.5V recommended)
-- Frequency: 2 kHz (same as TX)
-- Bandwidth: Amplifier should pass 2 kHz signal
+Signalkrav:
+- Spændingsområde: 0-5V (centreret ved 2.5V anbefalet)
+- Frekvens: 2 kHz (samme som TX)
+- Båndbredde: Forstærker skal passere 2 kHz signal
 
-### Step 6: Debug Button (D4)
+### Trin 6: Debug Knap (D4)
 
-Connect a push button between **D4** and **GND**.
+Forbind en trykknap mellem **D4** og **GND**.
 
 ```
-Arduino D4 ----+---- BTN ----+---- GND
-               |             |
-          (internal pull-up enabled in code)
+Arduino D4 ----+---- KNAP ----+---- GND
+               |              |
+          (intern pull-up aktiveret i kode)
 ```
 
-> **Note:** No external resistor needed - code enables internal pull-up.
-> Press to toggle between DFT and Debug screens.
+> **Bemærk:** Ingen ekstern modstand nødvendig - koden aktiverer intern pull-up.
+> Tryk for at skifte mellem DFT og Debug skærme.
 
 ---
 
-## Verification Checklist (Minimal Test Version)
+## Verifikationstjekliste (Minimal Testversion)
 
-After wiring, verify each connection:
+Efter ledningsføring, verificer hver forbindelse:
 
-- [ ] **Power:** 5V and GND rails connected
-- [ ] **OLED:** Display shows "Starting..." then DFT screen
-- [ ] **Debug Button:** Press D4 button - screen toggles to DEBUG
-- [ ] **TX Signal:** Oscilloscope on D9 shows 2 kHz square wave
-- [ ] **RX Input:** A0 receives signal from RX amplifier
-- [ ] **Display Values:** Re, Im, Mag, Phase values update on screen
+- [ ] **Strøm:** 5V og GND skinner forbundet
+- [ ] **OLED:** Display viser "Starter..." derefter DFT skærm
+- [ ] **Debug Knap:** Tryk D4 knap - skærm skifter til DEBUG
+- [ ] **TX Signal:** Oscilloskop på D9 viser 2 kHz firkantbølge
+- [ ] **RX Indgang:** A0 modtager signal fra RX forstærker
+- [ ] **Display Værdier:** Re, Im, Mag, Fase værdier opdateres på skærm
 
 ---
 
-## Expected Display Output
+## Forventet Display Output
 
-Press the **D4 button** to toggle between two screens:
+Tryk på **D4 knappen** for at skifte mellem to skærme:
 
-**Screen 1: DFT Results**
+**Skærm 1: DFT Resultater**
 ```
 === DFT ===
 
-Re:   <value>
-Im:   <value>
+Re:   <værdi>
+Im:   <værdi>
 
-Mag:  <value>
-Phase: <value> deg
+Mag:  <værdi>
+Fase: <værdi> grader
 ```
 
-**Screen 2: Debug Info**
+**Skærm 2: Debug Info**
 ```
 === DEBUG ===
 
-ADC:  <raw value>
-Min:  <minimum>
-Max:  <maximum>
-TX:   HIGH/LOW
-DFT#: <count>
-Vpp:  <swing>
+ADC:  <rå værdi>
 ```
 
-| Value | Description |
+| Værdi | Beskrivelse |
 |-------|-------------|
-| **Re/Im** | DFT components (can be negative) |
+| **Re/Im** | DFT komponenter (kan være negative) |
 | **Mag** | Magnitude = sqrt(Re² + Im²) / 16 |
-| **Phase** | Phase angle in degrees |
-| **ADC** | Current raw ADC value (0-1023) |
-| **Min/Max** | ADC range seen since power-on |
-| **TX** | Current TX pin state |
-| **DFT#** | Completed DFT windows (should increment) |
-| **Vpp** | Peak-to-peak ADC swing |
+| **Fase** | Fasevinkel i grader |
+| **ADC** | Nuværende rå ADC værdi (0-1023) |
 
 ---
 
-## Troubleshooting
+## Fejlfinding
 
-| Problem | Possible Cause | Solution |
-|---------|---------------|----------|
-| No display | I2C wiring wrong | Check A4/A5 connections, verify I2C address |
-| Display shows garbage | Wrong I2C address | Try 0x7A instead of 0x78 |
-| No TX signal | Timer not running | Check sei() is called, verify D9 connection |
-| Re/Im always 0 | No RX signal | Verify RX amp outputs 0-5V range on A0 |
-| Re/Im always same sign | DC offset wrong | ADC should be centered at ~512 |
-| Phase stuck at 0 or 90 | No signal variation | Check coil connections |
-
----
-
-## Safety Notes
-
-1. **Do not exceed 5V** on any input pin
-2. **Do not draw more than 20mA** from any single pin
-3. **Use driver circuits** for coils - do not drive directly from pins
-4. **Disconnect power** before making wiring changes
+| Problem | Mulig Årsag | Løsning |
+|---------|-------------|---------|
+| Intet display | I2C ledningsføring forkert | Tjek A4/A5 forbindelser, verificer I2C adresse |
+| Display viser vrøvl | Forkert I2C adresse | Prøv 0x7A i stedet for 0x78 |
+| Intet TX signal | Timer kører ikke | Tjek sei() kaldes, verificer D9 forbindelse |
+| Re/Im altid 0 | Intet RX signal | Verificer RX forstærker udsender 0-5V på A0 |
+| Re/Im altid samme fortegn | DC offset forkert | ADC bør være centreret ved ~512 |
+| Fase sidder fast på 0 eller 90 | Ingen signalvariation | Tjek spoleforbindelser |
 
 ---
 
-## Future Additions
+## Sikkerhedsnoter
 
-When ready to add UI features, wire:
+1. **Overskrid ikke 5V** på nogen indgangspin
+2. **Træk ikke mere end 20mA** fra nogen enkelt pin
+3. **Brug driver kredsløb** til spoler - driv ikke direkte fra pins
+4. **Afbryd strøm** før ledningsændringer
 
-| Component | Pin | Notes |
+---
+
+## Fremtidige Tilføjelser
+
+Når klar til at tilføje UI funktioner, forbind:
+
+| Komponent | Pin | Noter |
 |-----------|-----|-------|
-| Start/Stop Button | D2 to GND | Internal pull-up in code |
-| Buzzer (+) | D3 | Negative to GND |
-| Debug Pin | D8 | For oscilloscope timing |
+| Start/Stop Knap | D2 til GND | Intern pull-up i kode |
+| Buzzer (+) | D3 | Negativ til GND |
+| Debug Pin | D8 | Til oscilloskop timing |
 
 ---
 

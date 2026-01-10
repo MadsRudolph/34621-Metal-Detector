@@ -1,115 +1,99 @@
-# 🔧 KiCad Schematics & PCB
+# KiCad Skemaer & PCB
 
-Hardware design files for the VLF Metal Detector.
+Hardware designfiler til VLF Metaldetektoren.
 
-> 🚀 **Open Project:** [Metaldetector.kicad_pro](file:///C:/Users/Mads2/34621-EM-Sensors-DSP/KiCad/Metaldetector/Metaldetector.kicad_pro)
+> **Teori:** [Op-Amp Design](obsidian://open?vault=Obsidian&file=Courses%2FIntegrated%20Analog%20Electronics%2FLTspice%20%26%20Kicad%2F02%20-%20Two-Stage%20CMOS%20Op-Amp) | [Induktans](obsidian://open?vault=Obsidian&file=Courses%2FElectromagnetics%2FFormulas%2FL23%20-%20Magnetostatics%20II)
 
-> 📚 **Theory:** [Op-Amp Design](obsidian://open?vault=Obsidian&file=Courses%2FIntegrated%20Analog%20Electronics%2FLTspice%20%26%20Kicad%2F02%20-%20Two-Stage%20CMOS%20Op-Amp) | [Inductance](obsidian://open?vault=Obsidian&file=Courses%2FElectromagnetics%2FFormulas%2FL23%20-%20Magnetostatics%20II)
+## Status
 
-## Structure
+| Del | Status | Noter |
+|-----|--------|-------|
+| TX H-bro Driver | ✅ Designet | QSPICE valideret, ~90% effektivitet |
+| RX Forstærker | ⏳ Afventer | Design påbegyndt |
+| Strømforsyning | ⏳ Afventer | 9V → 5V regulering |
+| MCU Sektion | ⏳ Afventer | Arduino Nano breakout |
 
-```
-KiCad/
-├── schematics/      # .kicad_sch schematic files
-│   ├── metal_detector.kicad_pro
-│   ├── power_supply.kicad_sch
-│   ├── tx_driver.kicad_sch
-│   ├── rx_amplifier.kicad_sch
-│   ├── microcontroller.kicad_sch
-│   └── display_interface.kicad_sch
-├── pcb/             # .kicad_pcb board files
-├── footprints/      # Custom .kicad_mod footprints
-├── symbols/         # Custom .kicad_sym symbols
-├── gerbers/         # Manufacturing output files
-└── bom/             # Bill of materials
-```
+## Kredsløbsblokke
 
-## Schematic Blocks
+### 1. Strømforsyning
+- 9V batteri input
+- Spændingsregulering (5V til MCU)
+- Power filtrering
+- Batteri monitorering (valgfri)
 
-### 1. Power Supply
-- 9V battery input
-- Voltage regulation (5V for MCU, 3.3V optional)
-- Power filtering
-- Battery monitoring (optional)
+### 2. TX H-bro Driver
+- PWM input fra Arduino (Pin 9)
+- **P-kanal MOSFET:** IRF5305PbF (2 stk)
+- **N-kanal MOSFET:** IRL530 (2 stk)
+- Gate drivere til niveau-skift
+- Spoletilslutning (skrueterminal)
+- **Effektivitet:** ~90% (QSPICE verificeret)
 
-### 2. TX Coil Driver
-- PWM input from Arduino (Pin 9)
-- Power transistor/MOSFET driver
-- Current limiting
-- Coil connection (JST or screw terminal)
+### 3. RX Forstærker
+- Høj-impedans indgangstrin
+- Forstærkertrin (op-amp)
+- Båndpasfilter omkring 2kHz
+- Output skalering til 0-5V for ADC
 
-### 3. RX Amplifier
-- High-impedance input stage
-- Gain stages (op-amp)
-- Bandpass filtering around 2kHz
-- Output scaling to 0-5V for ADC
+### 4. Microcontroller Sektion
+- Arduino Nano (ATmega328P)
+- Intern 10-bit ADC (ingen ekstern ADC nødvendig)
+- Timer0 auto-trigger til synkroniseret sampling
 
-### 4. Microcontroller Section
-- ATmega328P (DIP-28 socket for removability)
-- Crystal oscillator (16MHz)
-- Reset circuit
-- ISP header for programming
-- Decoupling capacitors
-
-### 5. MCP3208 ADC
-- SPI connections
-- Reference voltage
-- Anti-aliasing filter
-
-### 6. Display & UI
+### 5. Display & UI
 - SSD1306 OLED header (I2C)
-- Button inputs (calibrate, sound toggle)
-- Buzzer output
-- Status LEDs (optional)
+- Knapinput (Start/Stop, Kalibrering, Debug)
+- Summer output (valgfri)
 
-## Component Selection
+## Komponentvalg
 
-| Component | Part Number | Package | Notes |
-|-----------|-------------|---------|-------|
-| MCU | ATmega328P-PU | DIP-28 | Socketed! |
+| Komponent | Delnummer | Pakke | Noter |
+|-----------|-----------|-------|-------|
+| MCU | Arduino Nano | - | ATmega328P @ 16MHz |
+| P-MOSFET | IRF5305PbF | TO-220 | H-bro højside |
+| N-MOSFET | IRL530 | TO-220 | H-bro lavside |
 | Op-Amp | LM358 / TL072 | DIP-8 | Dual |
-| ADC | MCP3208 | DIP-16 | 12-bit SPI |
 | Regulator | 7805 | TO-220 | 5V 1A |
-| Crystal | 16MHz | HC-49 | 22pF caps |
+| OLED | SSD1306 | - | 128×64, I2C |
 
-## Design Rules (2-layer PCB)
+## Pin Mapping (Arduino Nano / ATmega328P)
 
-| Parameter | Value |
-|-----------|-------|
-| Min trace width | 0.25mm (10mil) |
-| Min spacing | 0.25mm (10mil) |
-| Via diameter | 0.8mm |
-| Via drill | 0.4mm |
-| Copper weight | 1oz |
-
-## Checklist
-
-- [ ] Schematic capture complete
-- [ ] ERC (Electrical Rules Check) passed
-- [ ] Footprints assigned
-- [ ] PCB layout complete
-- [ ] DRC (Design Rules Check) passed
-- [ ] Gerbers generated
-- [ ] BOM exported
-
-## Pin Mapping (ATmega328P / Arduino Uno)
-
-| Function | Arduino Pin | ATmega Pin | Port |
+| Funktion | Arduino Pin | ATmega Pin | Port |
 |----------|-------------|------------|------|
-| PWM Out | 9 | PB1 (15) | PORTB |
-| SPI CS | 10 | PB2 (16) | PORTB |
-| SPI MOSI | 11 | PB3 (17) | PORTB |
-| SPI MISO | 12 | PB4 (18) | PORTB |
-| SPI SCK | 13 | PB5 (19) | PORTB |
+| TX Output | 9 | PB1 (15) | PORTB |
+| RX Input (ADC) | A0 | PC0 (23) | PORTC |
 | I2C SDA | A4 | PC4 (27) | PORTC |
 | I2C SCL | A5 | PC5 (28) | PORTC |
-| Button 1 | 2 | PD2 (4) | PORTD |
-| Button 2 | 3 | PD3 (5) | PORTD |
-| Buzzer | 8 | PB0 (14) | PORTB |
+| Debug Knap | 4 | PD4 (6) | PORTD |
+| Start/Stop | 2 | PD2 (4) | PORTD |
+| Kalibrering | 3 | PD3 (5) | PORTD |
 
-## Related Documents
-- [[Literature/kravspecifikation.pdf|Requirements Specification]]
-- [[Literature/Coil_Basics.pdf|Coil Design]]
+## Design Regler (2-lags PCB)
 
-## Tags
-#kicad #pcb #hardware #schematic
+| Parameter | Værdi |
+|-----------|-------|
+| Min sporbredde | 0.25mm (10mil) |
+| Min afstand | 0.25mm (10mil) |
+| Via diameter | 0.8mm |
+| Via boring | 0.4mm |
+| Kobbertykkelse | 1oz |
+
+## Tjekliste
+
+- [x] H-bro design færdigt
+- [x] QSPICE simulering bekræftet
+- [ ] Skematisk capture komplet
+- [ ] ERC (Electrical Rules Check) bestået
+- [ ] Footprints tildelt
+- [ ] PCB layout komplet
+- [ ] DRC (Design Rules Check) bestået
+- [ ] Gerbers genereret
+- [ ] BOM eksporteret
+
+## Relaterede Dokumenter
+
+- [TX Driver Design.md](../Docs/Theory/TX%20Driver%20Design.md) - H-bro designanalyse
+- [Power Budget Analysis.md](../Docs/Theory/Power%20Budget%20Analysis.md) - Strømforbrugsanalyse
+- [[../Literature/kravspecifikation.pdf|Kravspecifikation]]
+
+#kicad #pcb #hardware #skema
