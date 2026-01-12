@@ -1,0 +1,306 @@
+/**
+ * @file ssd1306.c
+ * @brief SSD1306 OLED display driver (128x64)
+ * @author DTU 34621 Metal Detector Project
+ * @date 2026-01-12
+ *
+ * @details Implementation of SSD1306 display driver with framebuffer.
+ *          Uses TWI (I2C) for communication at 400kHz.
+ */
+
+#include "ssd1306.h"
+#include "config.h"
+#include "twi.h"
+#include <avr/io.h>
+#include <util/delay.h>
+#include <string.h>
+
+/**
+ * @brief Display framebuffer (1024 bytes = 128 x 64 / 8)
+ * @details Organized as 8 pages of 128 bytes each.
+ *          Each byte represents 8 vertical pixels (LSB = top pixel).
+ */
+static uint8_t g_display_buffer[OLED_WIDTH * OLED_PAGES];
+
+/**
+ * @brief 5x7 pixel font data for ASCII 32-122
+ * @details Each character is 5 bytes (columns), 7 bits used per byte.
+ *          Bit 0 is top row, bit 6 is bottom row.
+ */
+static const uint8_t font5x7[] = {
+    0x00,0x00,0x00,0x00,0x00, /* Space */
+    0x00,0x00,0x5F,0x00,0x00, /* ! */
+    0x00,0x07,0x00,0x07,0x00, /* " */
+    0x14,0x7F,0x14,0x7F,0x14, /* # */
+    0x24,0x2A,0x7F,0x2A,0x12, /* $ */
+    0x23,0x13,0x08,0x64,0x62, /* % */
+    0x36,0x49,0x55,0x22,0x50, /* & */
+    0x00,0x05,0x03,0x00,0x00, /* ' */
+    0x00,0x1C,0x22,0x41,0x00, /* ( */
+    0x00,0x41,0x22,0x1C,0x00, /* ) */
+    0x08,0x2A,0x1C,0x2A,0x08, /* * */
+    0x08,0x08,0x3E,0x08,0x08, /* + */
+    0x00,0x50,0x30,0x00,0x00, /* , */
+    0x08,0x08,0x08,0x08,0x08, /* - */
+    0x00,0x60,0x60,0x00,0x00, /* . */
+    0x20,0x10,0x08,0x04,0x02, /* / */
+    0x3E,0x51,0x49,0x45,0x3E, /* 0 */
+    0x00,0x42,0x7F,0x40,0x00, /* 1 */
+    0x42,0x61,0x51,0x49,0x46, /* 2 */
+    0x21,0x41,0x45,0x4B,0x31, /* 3 */
+    0x18,0x14,0x12,0x7F,0x10, /* 4 */
+    0x27,0x45,0x45,0x45,0x39, /* 5 */
+    0x3C,0x4A,0x49,0x49,0x30, /* 6 */
+    0x01,0x71,0x09,0x05,0x03, /* 7 */
+    0x36,0x49,0x49,0x49,0x36, /* 8 */
+    0x06,0x49,0x49,0x29,0x1E, /* 9 */
+    0x00,0x36,0x36,0x00,0x00, /* : */
+    0x00,0x56,0x36,0x00,0x00, /* ; */
+    0x00,0x08,0x14,0x22,0x41, /* < */
+    0x14,0x14,0x14,0x14,0x14, /* = */
+    0x41,0x22,0x14,0x08,0x00, /* > */
+    0x02,0x01,0x51,0x09,0x06, /* ? */
+    0x32,0x49,0x79,0x41,0x3E, /* @ */
+    0x7E,0x11,0x11,0x11,0x7E, /* A */
+    0x7F,0x49,0x49,0x49,0x36, /* B */
+    0x3E,0x41,0x41,0x41,0x22, /* C */
+    0x7F,0x41,0x41,0x22,0x1C, /* D */
+    0x7F,0x49,0x49,0x49,0x41, /* E */
+    0x7F,0x09,0x09,0x01,0x01, /* F */
+    0x3E,0x41,0x41,0x51,0x32, /* G */
+    0x7F,0x08,0x08,0x08,0x7F, /* H */
+    0x00,0x41,0x7F,0x41,0x00, /* I */
+    0x20,0x40,0x41,0x3F,0x01, /* J */
+    0x7F,0x08,0x14,0x22,0x41, /* K */
+    0x7F,0x40,0x40,0x40,0x40, /* L */
+    0x7F,0x02,0x04,0x02,0x7F, /* M */
+    0x7F,0x04,0x08,0x10,0x7F, /* N */
+    0x3E,0x41,0x41,0x41,0x3E, /* O */
+    0x7F,0x09,0x09,0x09,0x06, /* P */
+    0x3E,0x41,0x51,0x21,0x5E, /* Q */
+    0x7F,0x09,0x19,0x29,0x46, /* R */
+    0x46,0x49,0x49,0x49,0x31, /* S */
+    0x01,0x01,0x7F,0x01,0x01, /* T */
+    0x3F,0x40,0x40,0x40,0x3F, /* U */
+    0x1F,0x20,0x40,0x20,0x1F, /* V */
+    0x7F,0x20,0x18,0x20,0x7F, /* W */
+    0x63,0x14,0x08,0x14,0x63, /* X */
+    0x03,0x04,0x78,0x04,0x03, /* Y */
+    0x61,0x51,0x49,0x45,0x43, /* Z */
+    0x00,0x00,0x7F,0x41,0x41, /* [ */
+    0x02,0x04,0x08,0x10,0x20, /* \ */
+    0x41,0x41,0x7F,0x00,0x00, /* ] */
+    0x04,0x02,0x01,0x02,0x04, /* ^ */
+    0x40,0x40,0x40,0x40,0x40, /* _ */
+    0x00,0x01,0x02,0x04,0x00, /* ` */
+    0x20,0x54,0x54,0x54,0x78, /* a */
+    0x7F,0x48,0x44,0x44,0x38, /* b */
+    0x38,0x44,0x44,0x44,0x20, /* c */
+    0x38,0x44,0x44,0x48,0x7F, /* d */
+    0x38,0x54,0x54,0x54,0x18, /* e */
+    0x08,0x7E,0x09,0x01,0x02, /* f */
+    0x08,0x54,0x54,0x54,0x3C, /* g */
+    0x7F,0x08,0x04,0x04,0x78, /* h */
+    0x00,0x44,0x7D,0x40,0x00, /* i */
+    0x20,0x40,0x44,0x3D,0x00, /* j */
+    0x00,0x7F,0x10,0x28,0x44, /* k */
+    0x00,0x41,0x7F,0x40,0x00, /* l */
+    0x7C,0x04,0x18,0x04,0x78, /* m */
+    0x7C,0x08,0x04,0x04,0x78, /* n */
+    0x38,0x44,0x44,0x44,0x38, /* o */
+    0x7C,0x14,0x14,0x14,0x08, /* p */
+    0x08,0x14,0x14,0x18,0x7C, /* q */
+    0x7C,0x08,0x04,0x04,0x08, /* r */
+    0x48,0x54,0x54,0x54,0x20, /* s */
+    0x04,0x3F,0x44,0x40,0x20, /* t */
+    0x3C,0x40,0x40,0x20,0x7C, /* u */
+    0x1C,0x20,0x40,0x20,0x1C, /* v */
+    0x3C,0x40,0x30,0x40,0x3C, /* w */
+    0x44,0x28,0x10,0x28,0x44, /* x */
+    0x0C,0x50,0x50,0x50,0x3C, /* y */
+    0x44,0x64,0x54,0x4C,0x44, /* z */
+};
+
+/**
+ * @brief Send command byte to SSD1306
+ * @details Sends a single command via I2C (control byte 0x00).
+ * @param cmd Command byte to send
+ */
+static void ssd1306_cmd(uint8_t cmd)
+{
+    twi_start();
+    twi_write(SSD1306_ADDR << 1);  /* Address + write bit */
+    twi_write(0x00);               /* Control byte: command mode */
+    twi_write(cmd);
+    twi_stop();
+}
+
+void ssd1306_init(void)
+{
+    /* Wait for display power to stabilize */
+    _delay_ms(100);
+
+    /* Initialization sequence */
+    ssd1306_cmd(0xAE);  /* Display off */
+    ssd1306_cmd(0xD5);  /* Set display clock divide ratio */
+    ssd1306_cmd(0x80);  /* Suggested value */
+    ssd1306_cmd(0xA8);  /* Set multiplex ratio */
+    ssd1306_cmd(0x3F);  /* 64 lines (height - 1) */
+    ssd1306_cmd(0xD3);  /* Set display offset */
+    ssd1306_cmd(0x00);  /* No offset */
+    ssd1306_cmd(0x40);  /* Set start line to 0 */
+    ssd1306_cmd(0x8D);  /* Charge pump setting */
+    ssd1306_cmd(0x14);  /* Enable charge pump */
+    ssd1306_cmd(0x20);  /* Set memory addressing mode */
+    ssd1306_cmd(0x00);  /* Horizontal addressing mode */
+    ssd1306_cmd(0xA1);  /* Set segment re-map (flip horizontal) */
+    ssd1306_cmd(0xC8);  /* Set COM output scan direction (flip vertical) */
+    ssd1306_cmd(0xDA);  /* Set COM pins hardware configuration */
+    ssd1306_cmd(0x12);  /* Alternative COM pin config */
+    ssd1306_cmd(0x81);  /* Set contrast control */
+    ssd1306_cmd(0xCF);  /* High contrast */
+    ssd1306_cmd(0xD9);  /* Set pre-charge period */
+    ssd1306_cmd(0xF1);  /* Phase 1: 1 DCLK, Phase 2: 15 DCLKs */
+    ssd1306_cmd(0xDB);  /* Set VCOMH deselect level */
+    ssd1306_cmd(0x40);  /* ~0.77 x VCC */
+    ssd1306_cmd(0xA4);  /* Display from RAM */
+    ssd1306_cmd(0xA6);  /* Normal display (not inverted) */
+    ssd1306_cmd(0xAF);  /* Display on */
+}
+
+void ssd1306_clear(void)
+{
+    memset(g_display_buffer, 0, sizeof(g_display_buffer));
+}
+
+void ssd1306_update(void)
+{
+    /* Set column address range (0-127) */
+    ssd1306_cmd(0x21);
+    ssd1306_cmd(0);
+    ssd1306_cmd(127);
+
+    /* Set page address range (0-7) */
+    ssd1306_cmd(0x22);
+    ssd1306_cmd(0);
+    ssd1306_cmd(7);
+
+    /* Send framebuffer data */
+    twi_start();
+    twi_write(SSD1306_ADDR << 1);  /* Address + write bit */
+    twi_write(0x40);               /* Control byte: data mode */
+
+    for (uint16_t i = 0; i < sizeof(g_display_buffer); i++) {
+        twi_write(g_display_buffer[i]);
+    }
+
+    twi_stop();
+}
+
+void ssd1306_set_pixel(uint8_t x, uint8_t y, bool on)
+{
+    /* Bounds check */
+    if (x >= OLED_WIDTH || y >= OLED_HEIGHT) {
+        return;
+    }
+
+    /* Calculate buffer index and bit position */
+    uint16_t idx = x + (y / 8) * OLED_WIDTH;
+    uint8_t bit = y % 8;
+
+    if (on) {
+        g_display_buffer[idx] |= (1 << bit);
+    } else {
+        g_display_buffer[idx] &= ~(1 << bit);
+    }
+}
+
+void ssd1306_draw_char(uint8_t x, uint8_t y, char c, uint8_t scale)
+{
+    /* Clamp character to valid range */
+    if (c < 32 || c > 122) {
+        c = '?';
+    }
+
+    uint8_t idx = c - 32;
+
+    /* Draw each column of the character */
+    for (uint8_t col = 0; col < 5; col++) {
+        uint8_t line = font5x7[idx * 5 + col];
+
+        /* Draw each row of the column */
+        for (uint8_t row = 0; row < 7; row++) {
+            bool pixel = (line >> row) & 1;
+
+            /* Scale the pixel */
+            for (uint8_t sy = 0; sy < scale; sy++) {
+                for (uint8_t sx = 0; sx < scale; sx++) {
+                    ssd1306_set_pixel(x + col * scale + sx,
+                                      y + row * scale + sy,
+                                      pixel);
+                }
+            }
+        }
+    }
+}
+
+void ssd1306_draw_string(uint8_t x, uint8_t y, const char *str, uint8_t scale)
+{
+    while (*str) {
+        ssd1306_draw_char(x, y, *str++, scale);
+        x += 6 * scale;  /* 5 pixels + 1 pixel spacing */
+    }
+}
+
+void ssd1306_draw_int(uint8_t x, uint8_t y, int16_t num, uint8_t digits, uint8_t scale)
+{
+    char buf[8];
+    int8_t i = digits - 1;
+
+    /* Convert to positive for digit extraction */
+    if (num < 0) {
+        num = -num;
+    }
+
+    /* Build string right-to-left (zero-padded) */
+    buf[digits] = '\0';
+    while (i >= 0) {
+        buf[i--] = '0' + (num % 10);
+        num /= 10;
+    }
+
+    ssd1306_draw_string(x, y, buf, scale);
+}
+
+void ssd1306_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, bool fill)
+{
+    for (uint8_t i = x; i < x + w; i++) {
+        for (uint8_t j = y; j < y + h; j++) {
+            /* Draw if filled, or if on edge */
+            if (fill || i == x || i == x + w - 1 || j == y || j == y + h - 1) {
+                ssd1306_set_pixel(i, j, true);
+            }
+        }
+    }
+}
+
+void ssd1306_draw_progress(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
+                           uint16_t value, uint16_t max_val)
+{
+    /* Draw outline */
+    ssd1306_draw_rect(x, y, w, h, false);
+
+    /* Calculate and draw fill */
+    if (max_val > 0 && value > 0) {
+        uint8_t fill = ((uint32_t)(w - 2) * value) / max_val;
+
+        /* Clamp to available width */
+        if (fill > w - 2) {
+            fill = w - 2;
+        }
+
+        if (fill > 0) {
+            ssd1306_draw_rect(x + 1, y + 1, fill, h - 2, true);
+        }
+    }
+}
