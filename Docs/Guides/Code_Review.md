@@ -302,68 +302,22 @@ DFT coeff:   Re+   Im-   Re-   Im+
 
 ## 4. Signalbehandling
 
-> [!info] Detaljeret DFT Dokumentation
-> Se [[../Theory/DFT Algorithm|DFT Algoritme]] for fuld matematisk baggrund og implementation detaljer.
+> [!info] DFT Algoritme Dokumentation
+> Se [[../Theory/DFT Algorithm|DFT Algoritme]] for fuld matematisk baggrund.
 
-### 4.1 4× Oversampling DFT Tricket
+Firmwaren bruger en optimeret single-bin DFT der udnytter 4× oversampling:
+- Sampler ved 8 kHz, signal ved 2 kHz
+- Cos/sin koefficienter reduceres til +1, -1, 0
+- Ingen trigonometriske beregninger i ISR
 
-Da vi sampler ved præcis 4× signalfrekvensen (8kHz sampling, 2kHz signal), bliver DFT koefficienterne trivielle:
+### 4.1 Display Output
 
-| Sample Indeks | cos koefficient | sin koefficient | Operation |
-|---------------|-----------------|-----------------|-----------|
-| 0 | +1 | 0 | Re += sample |
-| 1 | 0 | -1 | Im -= sample |
-| 2 | -1 | 0 | Re -= sample |
-| 3 | 0 | +1 | Im += sample |
+Tryk på **D4 knappen** for at skifte mellem skærme:
 
-**Ingen trigonometriske beregninger nødvendige i ISR!**
-
-### 4.2 DFT Akkumuleringsmønster
-
-```
-TX Signal:     ┌────────────┐            ┌────────────┐
-               │            │            │            │
-          ─────┘            └────────────┘            └─────
-
-Sample:        S0     S1     S2     S3     (4 samples per cyklus)
-               │      │      │      │
-Fase:          0°    90°   180°   270°
-               │      │      │      │
-               ▼      ▼      ▼      ▼
-          Re += S0
-                 Im -= S1
-                        Re -= S2
-                               Im += S3
-```
-
-### 4.3 Display Output
-
-Tryk på **D4 knappen** for at skifte mellem to skærme:
-
-**Skærm 1: DFT Resultater**
-```
-=== DFT ===
-
-Re:   <værdi>
-Im:   <værdi>
-
-Mag:  <værdi>
-Fase: <værdi> grader
-```
-
-**Skærm 2: Debug Info**
-```
-=== DEBUG ===
-
-ADC:  <rå 0-1023>
-```
-
-| Værdi | Beskrivelse |
-|-------|-------------|
-| **Re/Im** | Rå DFT komponenter (kan være negative) |
-| **Mag** | sqrt(Re² + Im²) / 16 |
-| **Fase** | atan2(Im, Re) × 180/π grader |
-| **ADC** | Nuværende rå ADC aflæsning (0-1023) |
+| Skærm | Indhold |
+|-------|---------|
+| DFT | Re, Im, Mag, Fase |
+| Debug | Rå ADC værdi (0-1023) |
 
 ---
 

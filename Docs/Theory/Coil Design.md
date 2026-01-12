@@ -442,16 +442,54 @@ C = 1 / ((2*pi*f)^2 * L)  % Resultat: ~1.0 µF
 
 ---
 
-## 12. Relaterede Dokumenter
+## 12. Konfigurationsvalg: Koncentrisk vs Double-D
+
+### 12.1 Sammenligning
+
+| Aspekt | Koncentrisk (Valgt) | Double-D |
+|--------|---------------------|----------|
+| **Konstruktion** | Nemmere (cirkulære spoler) | Sværere (D-formet, præcis overlap) |
+| **Følsomhed** | Bedre (ikke-mineraliseret jord) | Lidt mindre |
+| **Jordafvisning** | Dårlig i mineraliseret jord | Fremragende |
+| **Pinpointing** | Bedst (center-fokuseret) | God (klinge-mønster) |
+| **Detektionsmønster** | Kegle (cirkulær) | Klinge (linje) |
+
+### 12.2 Detektionsfelt Mønstre
+
+```text
+KONCENTRISK                    DOUBLE-D
+  Set Ovenfra                   Set Ovenfra
+ ┌─────────┐                   ┌─────────┐
+╱    RX    ╲                  ╱ D     D  ╲
+│   ┌───┐   │ TX              │   ╲   ╱   │
+│   │ B │   │                 │    ╲ ╱    │
+│   └───┘   │                 │    ╱ ╲    │
+╲          ╱                  ╲  ╱   ╲   ╱
+ └─────────┘                   └─────────┘
+
+Kegleformet felt               Klingeformet felt
+Bedst i centrum                Langs centerlinje
+```
+
+### 12.3 Hvorfor Koncentrisk er Valgt
+
+> [!success] Valgt Konfiguration: Koncentrisk
+> - Nemmere at konstruere inden for tidsrammen
+> - Bedre pinpointing til demonstrationsformål
+> - Samme PCB og kode virker - kun kalibrering ændres
+> - Mulighed for DD som fremtidig opgradering
+
+---
+
+## 13. Relaterede Dokumenter
 
 - [[TX Driver Design|TX Driver Design]] - H-bro forstærker
 - [[Power Budget Analysis|Strømbudget Analyse]] - Arduino Nano strømbudget
 - [[DFT Algorithm|DFT Algoritme]] - Signalbehandling
-- [[Coil Configuration Comparison|Spole Konfiguration Sammenligning]] - Koncentrisk vs DD
 
 ---
 
-## 13. Teori Referencer (DTU Vault)
+## 14. Teori Referencer (DTU Vault)
 
 | Emne | Link | Relevans |
 |------|------|----------|

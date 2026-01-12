@@ -157,7 +157,7 @@ flowchart TD
 > Fase = atan2(-2A, +2A) = -45°
 > ```
 
-Se [[../Guides/Test_RC_Loopback|RC Loopback Test]] for verifikation af faseberegning.
+Se [[../Guides/Testing Guide|Testguide]] for verifikation af faseberegning.
 
 ---
 
@@ -176,10 +176,8 @@ Se [[../Guides/Test_RC_Loopback|RC Loopback Test]] for verifikation af fasebereg
 
 ## Relaterede Dokumenter
 
-- [[../Guides/DFT_Verification|DFT Verifikation med MATLAB]]
+- [[../Guides/Testing Guide|Testguide]] - AD3, RC Loopback, MATLAB verifikation
 - [[../Guides/Code_Review|Firmware Kodegennemgang]]
-- [[../Guides/Test_RC_Loopback|RC Loopback Test]]
-- [[../Guides/Test_Guide_AD3|Analog Discovery 3 Testguide]]
 
 ---
 

@@ -3,6 +3,9 @@
 > TX driver simulation for VLF metal detector coil excitation.
 > Achieved **~98% efficiency** with optimized RLC filter.
 
+> [!note] Danish Documentation
+> For detailed theory and design rationale in Danish, see [TX Driver Design](../Docs/Theory/TX%20Driver%20Design.md).
+
 ---
 
 ## Overview
@@ -254,6 +257,14 @@ Uncomment in `Hbro_sim.qsch` to optimize:
 .step param R 0.01K 0.91K 0.1K    ; Sweep dead-time resistor
 .step param c1 0.1µ 1µ 0.1µ       ; Sweep tank capacitor
 ```
+
+---
+
+## Related Documentation
+
+- [TX Driver Design](../Docs/Theory/TX%20Driver%20Design.md) - Theory and design rationale (Danish)
+- [Coil Design](../Docs/Theory/Coil%20Design.md) - TX coil specifications
+- [Power Budget Analysis](../Docs/Theory/Power%20Budget%20Analysis.md) - System power consumption
 
 ---
 

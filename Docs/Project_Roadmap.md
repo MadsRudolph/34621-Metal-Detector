@@ -582,7 +582,7 @@ void display_show_message(const char* msg);
 - [[DFT Algorithm|DFT Algoritme]] - DSP algoritme dokumentation
 - [[Code_Review|Firmware Kodegennemgang]] - Kodestruktur dokumentation
 - [[Assembly_Guide|Samlevejledning]] - Hardware samlevejledning
-- [[Test_RC_Loopback|RC Loopback Test]] - Fasemålings verifikation
+- [[Testing Guide|Testguide]] - AD3, RC Loopback, MATLAB verifikation
 - [[kravspecifikation.pdf|Kravspecifikation]] - Officielle krav
 
 ---

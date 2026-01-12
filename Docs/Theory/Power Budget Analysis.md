@@ -339,130 +339,39 @@ $$P_{TX} = V_{forsyning} \times I_{TX}$$
 
 ---
 
-## 6. TX Spole Design Beregninger
+## 6. TX Spole og Driver
 
-> **Detaljerede spole designs:** Se [[Search Coil Design]]
+> [!info] Detaljeret Dokumentation
+> - **Spole specifikationer:** Se [[Coil Design|Spole Design]]
+> - **Driver kredsløb:** Se [[TX Driver Design|TX Driver Design]]
 
-### 6.1 Trådspecifikation
+### 6.1 Nøgletal for Strømbudget
 
-| Parameter | Værdi | Noter |
+| Parameter | Værdi | Kilde |
 |-----------|-------|-------|
-| **Tråddiameter** | **0.52 mm** | AWG 24 ækvivalent |
-| Trådtype | Emaljeret kobber | Magnetledning |
-| Modstand per meter | **0.079 Ω/m** | |
-| Strømkapacitet | 1.2 A | Langt over 80 mA |
+| TX induktans | 6.33 mH | Spole Design |
+| TX impedans @ 2kHz | ~95 Ω | Beregnet |
+| TX strøm @ 7.5V | ~80 mA | Strømbudget |
+| Driver effektivitet | >98% | QSPICE simulation |
+| Driver tab | <2 mW | Negligerbart |
 
-### 6.2 Påkrævet Impedans Beregning
+### 6.2 Arduino Nano vs Mega Fordel
 
-For målstrøm $I_{spole}$ ved forsyningsspænding $V$:
-
-$$|Z_{spole}| = \frac{V_{forsyning}}{I_{spole}}$$
-
-| $V_{forsyning}$ | $I_{spole}$ | $|Z|$ |
-|-----------------|-------------|-------|
-| 9.0 V | 80 mA | 112.5 Ω |
-| 7.5 V | 80 mA | 93.75 Ω |
-| 6.0 V | 80 mA | 75 Ω |
-
-**Designmål: $|Z| \approx 95\ \Omega$** (for mid-life batterispænding @ 7.5V)
-
-### 6.3 Induktans Beregning
-
-Ved 2 kHz, antaget $R_{dc} \ll X_L$:
-
-$$|Z| \approx X_L = 2\pi f L$$
-
-$$L = \frac{|Z|}{2\pi f} = \frac{95}{2\pi \times 2000} = 7.5\ \text{mH}$$
-
-**Mål TX spole induktans: L ≈ 7-8 mH** (for 80 mA @ 7.5V)
-
-> [!note] Sammenligning med Arduino Mega Design
-> Med Arduino Mega var målimpedansen ~190Ω for 40 mA.
-> Med Arduino Nano kan vi bruge ~95Ω for 80 mA — **dobbelt strøm = dobbelt magnetfelt!**
-
-### 6.4 Koncentrisk Spole Design (Opdateret til Nano)
-
-| Parameter | Mega Design | Nano Design | Ændring |
-|-----------|-------------|-------------|---------|
-| TX diameter | 150 mm | 150 mm | Samme |
-| TX vindinger | 130 | ~90 | Færre |
-| TX induktans | 15 mH | 7.5 mH | Halveret |
-| TX impedans @ 2kHz | 189 Ω | 95 Ω | Halveret |
-| TX strøm @ 7.5V | 40 mA | **80 mA** | **Dobbelt** |
-| Magnetisk felt | Baseline | **~200%** | **Dobbelt** |
-
-### 6.5 Detektionsdybde Forbedring
-
-Detektionsdybde skalerer med kubikroden af magnetisk feltstyrke:
-
-$$\text{Dybde} \propto B^{1/3}$$
-
-Med dobbelt TX strøm:
-$$\text{Dybdeforbedring} = 2^{1/3} = 1.26 = +26\%$$
+| Parameter | Arduino Mega | Arduino Nano | Ændring |
+|-----------|--------------|--------------|---------|
+| Elektronik strøm | 80 mA | 40 mA | **-50%** |
+| Tilgængelig TX strøm | 40 mA | 80 mA | **+100%** |
+| Magnetisk felt | Baseline | ~200% | **+100%** |
+| Detektionsdybde | Baseline | +26% | **+26%** |
 
 > [!success] Arduino Nano Fordel
 > Med samme 100 min køretid giver Arduino Nano **~26% dybere detektion** end Arduino Mega!
 
 ---
 
-## 7. TX Spole Driver Kredsløb
+## 7. Komplet Strømbudget Oversigt
 
-> **Detaljeret design:** Se [[TX Driver Design]]
-
-### 7.1 Forstærker Topologi
-
-| Aspekt | Klasse D (Switching) | Klasse AB (Lineær) |
-|--------|---------------------|-------------------|
-| **Effektivitet** | 90-99% | 50-70% |
-| **Varmeafledning** | Meget lav | Høj |
-| **Effekt til spole** | ~700 mW | ~400 mW |
-| **Kompleksitet** | Lav-Medium | Lav |
-
-> [!success] Valgt Topologi
-> **Klasse D (Switching)** — Højere effektivitet kritisk for batterilevetid.
-
-### 7.2 MOSFET Half-Bridge Design
-
-```
-                              V_bat (6-9V)
-                                 │
-                            ┌────┴────┐
-                            │   Q1    │
-                            │ Si2301  │  P-kanal
-    Pin 9 (D9) ────[100Ω]───┤G   S   D├───┐
-                            └─────────┘   │
-                                          │
-                                     ┌────┴────┐
-                                     │ TX Spole │
-                                     │  7.5 mH  │
-                                     └────┬────┘
-                                          │
-                            ┌─────────────┘
-                            │
-                       ┌────┴────┐
-                       │   Q2    │
-    Pin 10 ────[100Ω]──┤G  D    S├───► GND
-                       │ Si2302  │  N-kanal
-                       └─────────┘
-```
-
-### 7.3 Driver Effektivitet
-
-| Parameter | Værdi |
-|-----------|-------|
-| Indgangseffekt (fra batteri) | $7.5V \times 80mA = 600$ mW |
-| MOSFET lednings tab | <1 mW |
-| Switching tab | <0.1 mW |
-| Gate drive tab | <0.5 mW |
-| **Total driver tab** | **<2 mW** |
-| Effekt til spole | **~598 mW** |
-| **Driver effektivitet** | **>99%** |
-
----
-
-## 8. Komplet Strømbudget Oversigt
-
-### 8.1 Arduino Nano - Maksimal Effekt Tilstand
+### 7.1 Arduino Nano - Maksimal Effekt Tilstand
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -506,7 +415,7 @@ $$\text{Dybdeforbedring} = 2^{1/3} = 1.26 = +26\%$$
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-### 8.2 Sammenligning: Nano vs Mega
+### 7.2 Sammenligning: Nano vs Mega
 
 | Parameter | Arduino Mega | Arduino Nano | Forbedring |
 |-----------|--------------|--------------|------------|
@@ -521,7 +430,7 @@ $$\text{Dybdeforbedring} = 2^{1/3} = 1.26 = +26\%$$
 ![[nano_vs_mega.png]]
 *Figur: Arduino Nano vs Mega strømsammenligning (genereret af MATLAB)*
 
-### 8.3 Med LED Fjernet (Bedste Ydeevne)
+### 7.3 Med LED Fjernet (Bedste Ydeevne)
 
 Fjernelse af power LED frigør 3 mA for mere TX effekt:
 
@@ -532,7 +441,7 @@ Fjernelse af power LED frigør 3 mA for mere TX effekt:
 
 ---
 
-## 9. Strømstyringsstrategi
+## 8. Strømstyringsstrategi
 
 ### 9.1 Design for 7.5V Forsyningsspænding
 
@@ -583,7 +492,7 @@ Fjernelse af power LED frigør 3 mA for mere TX effekt:
 
 ---
 
-## 10. Verifikationstest Plan
+## 9. Verifikationstest Plan
 
 ### 10.1 Komponenttest
 
@@ -614,7 +523,7 @@ Fjernelse af power LED frigør 3 mA for mere TX effekt:
 
 ---
 
-## 11. Referencer
+## 10. Referencer
 
 1. [[Literature/duracell_9volt.pdf|Duracell 9V Datablad]]
 2. [[kravspecifikation.pdf|Kravspecifikation]]
