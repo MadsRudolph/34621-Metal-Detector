@@ -9,7 +9,7 @@
 
 This folder contains QSPICE simulations for the H-bridge driver that excites the TX coil at 2kHz. The system converts 9V DC battery power to a sinusoidal current through the transmit coil.
 
-```
+```text
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │  PWM Input  │────▶│  Dead-Time  │────▶│  Bootstrap  │────▶│   H-Bridge  │────▶ TX Coil
 │   (2kHz)    │     │  Generator  │     │ Gate Driver │     │  (IRL530)   │     (LC Tank)
@@ -32,7 +32,7 @@ This folder contains QSPICE simulations for the H-bridge driver that excites the
 
 ### Circuit Topology
 
-```
+```text
         +9V (V1, RSER=1.7Ω)
             │
     ┌───────┴───────┐
@@ -111,7 +111,7 @@ The bootstrap circuit enables driving high-side N-channel MOSFETs from a ground-
 
 ### Operating Principle
 
-```
+```text
     +9V
      │
      D1 (BAS521)──────┐
@@ -139,12 +139,13 @@ The bootstrap circuit enables driving high-side N-channel MOSFETs from a ground-
 
 ### Components
 
-| Half-Bridge | High-Side | Low-Side | Bootstrap |
-|-------------|-----------|----------|-----------|
-| Left | M1 (AO3422) | M2 (AO4262E) | D1, C1, R1 |
-| Right | M4 (AO3422) | M5 (AO4262E) | D2, C2, R5 |
+| Half-Bridge | High-Side | Low-Side | Bootstrap | Pull-up |
+|-------------|-----------|----------|-----------|---------|
+| Left | M1 (AO3422) | M2 (AO4262E) | D1, C1, R1 | R4 (1K) |
+| Right | M4 (AO3422) | M5 (AO4262E) | D2, C2, R5 | R8 (1K) |
 
 Gate resistors (R2, R3, R6, R7 = 10Ω) limit di/dt and reduce EMI.
+Pull-up resistors (R4, R8 = 1K) ensure defined gate state when driver is disabled.
 
 ---
 
@@ -154,7 +155,7 @@ Prevents shoot-through by ensuring both switches are OFF during transitions.
 
 ### Block Diagram
 
-```
+```text
                     ┌─────────────┐
      PWM_In ───────▶│   RC Delay  │
                     │  R4=R, C1=C │
