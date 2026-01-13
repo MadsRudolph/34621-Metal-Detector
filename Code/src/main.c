@@ -51,15 +51,15 @@
  */
 
 /* TX/RX Synkronisering */
-static uint8_t tx_count = 0;      /* Tæller til at generere 2kHz fra 8kHz timer */
+static uint8_t i = 0;      /* Tæller til at generere 2kHz fra 8kHz timer */
 volatile int16_t adc_raw = 0;     /* Seneste ADC aflæsning (0-1023) */
-volatile uint8_t sync_flag = 0;   /* Flag: 1 = start ny DFT ved næste rising edge af TX */
+volatile uint8_t risingedge_flag = 0;   /* Flag: 1 = start ny DFT ved næste rising edge af TX */
 
 /* DFT Akkumulatorer
  * Re/Im: Løbende summer for real og imaginær del
  * Re_buf/Im_buf: Færdige resultater fra sidste DFT blok (kopieres når N samples er talt)
  */
-volatile uint8_t dft_index = 0;           /* Sample nummer i aktuel DFT blok (0 til N-1) */
+volatile uint8_t j = 0;           /* Sample nummer i aktuel DFT blok (0 til N-1) */
 volatile int32_t Re = 0, Im = 0;          /* Akkumulatorer under beregning */
 volatile int32_t Re_buf = 0, Im_buf = 0;  /* Færdige DFT resultater */
 volatile uint8_t dft_done = 0;            /* Flag: 1 = ny DFT klar til beregning */
@@ -165,11 +165,11 @@ void button_init(void) {
  *   - Dette starter DFT akkumulering ved starten af TX periode
  */
 ISR(TIMER0_COMPA_vect) {
-    if (++tx_count >= 2) {              /* Hver 2. interrupt (4000 Hz toggle rate) */
+    if (++i >= 2) {              /* Hver 2. interrupt (4000 Hz toggle rate) */
         PORTB ^= (1 << PB1);            /* Toggle PB1 (D9) - XOR med 1 flipper bit */
-        tx_count = 0;
+        i= 0;
         if (PORTB & (1 << PB1)) {       /* Hvis D9 lige gik HØJ (rising edge) */
-            sync_flag = 1;              /* Signal til ADC ISR: start DFT */
+            rising edge_flag = 1;              /* Signal til ADC ISR: start DFT */
         }
     }
 }
@@ -222,15 +222,15 @@ ISR(ADC_vect) {
  */
 void dft_sum(int16_t raw) {
     /* Centrer omkring 0: ADC giver 0-1023, vi vil have -512 til +511 */
-    int16_t x = raw - ADC_OFFSET;
+    int16_t xn = raw - ADC_OFFSET;
 
 #if CAPTURE_SAMPLES
     /* Capture mode: Gem samples til MATLAB analyse */
     uint8_t state = capture_get_state();
-    if (dft_index == 0 && state == CAPTURE_WAITING) {
+    if (j == 0 && state == CAPTURE_WAITING) {
         capture_set_state(CAPTURE_ACTIVE);  /* Start capture ved DFT blok start */
     }
-    capture_store_sample(dft_index, x);
+    capture_store_sample(j, x);
 #endif
 
     /*
@@ -240,7 +240,7 @@ void dft_sum(int16_t raw) {
      * Dette implementerer: sum(x[n] * cos(pi*n/2)) for Re
      *                      sum(x[n] * -sin(pi*n/2)) for Im
      */
-    switch (dft_index & 3) {
+    switch (j & 3) {
         case 0: Re += x;  break;  /* cos=+1, sin=0  */
         case 1: Im -= x;  break;  /* cos=0,  sin=+1 -> -sin=-1 */
         case 2: Re -= x;  break;  /* cos=-1, sin=0  */
@@ -261,7 +261,7 @@ void dft_sum(int16_t raw) {
         dft_done = 1;
 
         /* Stop akkumulering indtil næste TX rising edge */
-        sync_flag = 0;
+        risingedge_flag = 0;
 
 #if CAPTURE_SAMPLES
         if (capture_get_state() == CAPTURE_ACTIVE) {
