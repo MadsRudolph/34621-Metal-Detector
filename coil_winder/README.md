@@ -17,7 +17,7 @@ No Arduino libraries, no C++ - just AVR-libc and direct register access.
 
 | Pin | Function | Component |
 |-----|----------|-----------|
-| PD2 (D2) | INT0 | ITR8307 encoder |
+| PD2 (D2) | INT0 | Break-beam sensor (LM311 output) |
 | PB1 (D9) | OC1A PWM | Servo motor |
 | PD3 (D3) | Input | Reset button |
 | PD4 (D4) | Input | Preset button |
@@ -85,11 +85,23 @@ Edit these defines in `src/main.c`:
 ## Wiring
 
 ```
-ITR8307:
-  Pin 1 (Anode)    -> 330R -> 5V
-  Pin 2 (Cathode)  -> GND
-  Pin 3 (Collector)-> D2 + 10K pull-up to 5V
-  Pin 4 (Emitter)  -> GND
+Break-Beam Sensor (SFH4546 + BP104 + LM311):
+  See Docs/Guides/Coil_Winder_Circuit_Notes.md for full schematic
+
+  SFH4546 (IR LED):
+    Anode    -> 220R -> 5V
+    Cathode  -> GND
+
+  BP104 (Photodiode):
+    Cathode  -> 47K to 5V, 100nF to GND, LM311 pin 2
+    Anode    -> GND
+
+  LM311 (Comparator):
+    Pin 2 (+) -> Photodiode signal
+    Pin 3 (-) -> 2.5V reference (47K/47K divider)
+    Pin 7 (OUT) -> D2 + 10K pull-up to 5V
+    Pin 8 (V+) -> 5V
+    Pin 1,4 (GND) -> GND
 
 Servo:
   Brown  -> GND

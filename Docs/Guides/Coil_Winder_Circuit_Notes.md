@@ -5,9 +5,291 @@
 
 ---
 
-## 1. ITR8307 Optical Sensor
+## 1. Break-Beam Optical Sensor (Recommended)
 
-### 1.1 Sensor Type Clarification
+### 1.1 Overview
+
+A DIY slotted optical sensor built from discrete components available at DTU. This **break-beam** design is more reliable than the reflective ITR8307 because:
+
+- No reflective surface required - detects a slot/hole in an encoder disc
+- Binary detection: beam either passes or is blocked
+- Less sensitive to dirt, dust, and alignment
+- Clean digital output via LM311 comparator
+
+**Components (all from DTU):**
+| Component | Part Number | Function |
+|-----------|-------------|----------|
+| IR Emitter | SFH4546 | 940nm infrared LED |
+| IR Photodiode | BP104 or SFH309-4 | Infrared detector |
+| Comparator | LM311 | Analog to digital conversion |
+| Resistors | 220Ω, 10kΩ, 47kΩ (×2) | Current limit, pull-up, reference |
+| Capacitor | 100nF | Noise filtering |
+
+### 1.2 Circuit Schematic
+
+```
+                    BREAK-BEAM OPTICAL SENSOR
+                    ─────────────────────────
+
+     ┌─────────────────────────────────────────────────────────────┐
+     │                                                             │
+     │      IR EMITTER                      IR DETECTOR            │
+     │      (SFH4546)                       (BP104)                │
+     │                                                             │
+     │         5V                              5V                  │
+     │          │                               │                  │
+     │        [220Ω]                          [47kΩ] R3            │
+     │          │                               │                  │
+     │          ▼                               │                  │
+     │      ┌───┴───┐        Encoder       ┌───┴───┐              │
+     │      │  ───► │        Disc          │   ◄── │              │
+     │      │ SFH   │◄─ ─ ─ ┌───┐ ─ ─ ─ ─ ►│  BP   │              │
+     │      │ 4546  │   IR  │   │   IR     │  104  │              │
+     │      │  ───► │  beam │ █ │  beam    │   ◄── │              │
+     │      └───┬───┘       └───┘          └───┬───┘              │
+     │          │           slot               │                  │
+     │          ▼                              │                  │
+     │         GND                             ├──────────────┐   │
+     │                                         │              │   │
+     │                                      [100nF]           │   │
+     │                                         │              │   │
+     │                                        GND             │   │
+     │                                                        │   │
+     │                              ┌──────────────────────────┘   │
+     │                              │                              │
+     │                              ▼                              │
+     │                     ┌───────────────┐                       │
+     │                     │    LM311      │                       │
+     │                     │  COMPARATOR   │                       │
+     │                     │               │                       │
+     │             Vref ──►│ -   (pin 3)   │                       │
+     │                     │               │                       │
+     │        Photodiode──►│ +   (pin 2)   │                       │
+     │            signal   │               │                       │
+     │                     │      OUT ─────┼──┬──► To Arduino D2   │
+     │                     │    (pin 7)    │  │    (INT0)          │
+     │                     │               │ [10kΩ] R4             │
+     │                     │   GND   V+    │  │                    │
+     │                     └────┬─────┬────┘  │                    │
+     │                          │     │       5V                   │
+     │                         GND   5V                            │
+     │                                                             │
+     └─────────────────────────────────────────────────────────────┘
+
+     REFERENCE VOLTAGE DIVIDER:
+
+         5V
+          │
+        [47kΩ] R1
+          │
+          ├────────► LM311 pin 3 (inverting input)
+          │
+        [47kΩ] R2
+          │
+         GND
+
+     Vref = 5V × (47k / (47k + 47k)) = 2.5V
+```
+
+### 1.3 Detailed Circuit Schematic
+
+```
+                                    5V
+                                     │
+          ┌──────────────────────────┼──────────────────────────────┐
+          │                          │                              │
+          │                          │                              │
+        [220Ω]                     [47kΩ]                         [47kΩ]
+         R_LED                       R1                             R3
+          │                          │                              │
+          │                          │    ┌───────────────┐         │
+    ┌─────┴─────┐                    │    │    LM311      │         │
+    │  SFH4546  │                    │    │               │         │
+    │    (+)    │                    └───►│3 (-)         7├──┬──────┼───► D2
+    │   LED     │                         │               │  │      │
+    │    (-)    │                    ┌───►│2 (+)    GND  4├──┼──┐   │
+    └─────┬─────┘                    │    │               │  │  │   │
+          │                          │    │         V+   8├──┼──┼───┤
+         GND                         │    └───────────────┘  │  │   │
+                                     │                       │  │   │
+                                     │                    [10kΩ] │   │
+    ┌─────────────┐                  │                     R4 │   │
+    │   BP104     │                  │                       │  │   │
+    │  Cathode(K) ├──────────────────┼───────────────────────┘  │   │
+    │             │                  │                          │   │
+    │   Anode(A)  ├──────────────────┘                          │   │
+    └─────────────┘                                             │   │
+          │                                                     │   │
+          │                                                    GND  │
+        [100nF]                                                     │
+          │                        [47kΩ]                           │
+         GND                         R2                             │
+                                     │                              │
+                                    GND                            5V
+
+
+    Component List (from DTU Component Shop):
+    ─────────────────────────────────────────
+    SFH4546      - IR Emitter (940nm)
+    BP104        - IR Photodiode (alternative: SFH309-4)
+    LM311        - Differential Comparator
+    R_LED: 220Ω  - LED current limiter (220R from E96)
+    R1, R2: 47kΩ - Reference voltage divider (47K0 from E96)
+    R3: 47kΩ     - Photodiode load resistor
+    R4: 10kΩ     - Comparator output pull-up (10K0 from E96)
+    C1: 100nF    - Noise filter capacitor (100n Ceramic)
+```
+
+### 1.4 How It Works
+
+**Normal operation (beam passes through slot):**
+1. SFH4546 emits IR light continuously
+2. IR passes through slot in encoder disc
+3. BP104 receives IR → conducts → pulls signal LOW (~0.5V)
+4. LM311: (+) input < Vref → output goes HIGH (pulled up by R4)
+
+**Beam blocked (solid part of disc):**
+1. SFH4546 emits IR light continuously
+2. Encoder disc blocks IR beam
+3. BP104 receives no IR → no conduction → signal HIGH (~5V)
+4. LM311: (+) input > Vref → output goes LOW (open collector sinks)
+
+**Interrupt trigger:**
+- Configure INT0 for **falling edge** (HIGH→LOW)
+- Each slot passing triggers one interrupt = one turn counted
+
+### 1.5 Encoder Disc Design
+
+```
+    SLOTTED ENCODER DISC (for break-beam sensor)
+
+              ┌─────────────────────────────┐
+              │                             │
+              │      ████████████████       │    Solid material
+              │     ██              ██      │    (blocks IR beam)
+              │    ██                ██     │
+              │   ██    ┌──────┐     ██    │
+              │   ██    │      │     ██    │    Slot/hole
+              │   ██    │ SLOT │     ██    │    (IR passes through)
+              │   ██    │      │     ██    │
+              │   ██    └──────┘     ██    │
+              │    ██                ██     │
+              │     ██      ●       ██      │    Center hole (M8)
+              │      ████████████████       │
+              │                             │
+              └─────────────────────────────┘
+
+    Dimensions:
+    - Disc diameter: 40-50mm
+    - Slot width: 5-8mm (wide enough for reliable detection)
+    - Slot radial length: 10-15mm
+    - Slot position: at outer edge for max angular resolution
+    - Material: 3D printed PLA (opaque)
+    - Thickness: 2-3mm
+```
+
+**Alternative: Multi-slot disc for higher resolution:**
+```
+    4-SLOT ENCODER (optional - 4 pulses per revolution)
+
+              ┌─────────────────────────────┐
+              │    ██   ═══   ██   ═══      │
+              │  ██               ══  ██    │
+              │ ║                      ║    │    4 slots at 90°
+              │ ║         ●            ║    │    intervals
+              │ ║                      ║    │
+              │  ██               ══  ██    │
+              │    ██   ═══   ██   ═══      │
+              └─────────────────────────────┘
+
+    Use 4 slots if you need:
+    - Finer position tracking
+    - Direction detection (with 2 sensors)
+    - Divide count by 4 in firmware
+```
+
+### 1.6 Sensor Mounting
+
+```
+    SIDE VIEW - SENSOR MOUNT
+
+         Encoder disc
+              │
+              ▼
+         ┌─────────┐
+    ─────┤   ███   ├─────  ◄── Disc passes through gap
+         └────┬────┘
+              │
+       ┌──────┴──────┐
+       │             │
+    ┌──┴──┐       ┌──┴──┐
+    │SFH  │       │BP   │
+    │4546 │  5mm  │104  │      Gap: 5-10mm
+    │ IR  │◄─────►│Photo│      (disc must fit + clearance)
+    │ LED │       │diode│
+    └──┬──┘       └──┬──┘
+       │             │
+    ───┴─────────────┴───  ◄── Mounting bracket (3D printed)
+```
+
+### 1.7 Component Values Calculation
+
+**IR LED Current (SFH4546):**
+```
+I_LED = (Vcc - Vf) / R_LED
+      = (5V - 1.4V) / 220Ω
+      = 16.4 mA
+
+This is within safe operating range (max 100mA continuous).
+Increase R_LED to 330Ω for longer battery life (10.9 mA).
+```
+
+**Photodiode Load Resistor (R3):**
+```
+Higher R3 = more sensitivity but slower response
+47kΩ provides good balance for hand-crank speeds.
+
+At 300 RPM = 5 Hz, rise/fall time is not critical.
+```
+
+**Reference Voltage:**
+```
+Vref = Vcc × R2 / (R1 + R2)
+     = 5V × 47k / (47k + 47k)
+     = 2.5V (midpoint)
+
+Adjust R1/R2 ratio if detection is unreliable:
+- Lower Vref (e.g., 2V): more sensitive to weak signals
+- Higher Vref (e.g., 3V): more noise immunity
+```
+
+### 1.8 LM311 Pinout
+
+```
+    LM311 (DIP-8 package)
+
+           ┌───────┐
+    GND  1─┤       ├─8  V+
+    IN+  2─┤ LM311 ├─7  OUT (open collector)
+    IN-  3─┤       ├─6  BAL/STROBE (not used)
+    V-   4─┤       ├─5  BAL (not used)
+           └───────┘
+
+    Connections:
+    - Pin 1 (GND): Connect to ground
+    - Pin 2 (IN+): Photodiode signal
+    - Pin 3 (IN-): Reference voltage (2.5V)
+    - Pin 4 (V-):  Connect to ground (single supply)
+    - Pin 7 (OUT): To Arduino D2 via 10kΩ pull-up
+    - Pin 8 (V+):  Connect to 5V
+    - Pins 5,6:    Leave unconnected or tie to V-
+```
+
+---
+
+## 2. ITR8307 Optical Sensor (Legacy/Alternative)
+
+### 2.1 Sensor Type Clarification
 
 **IMPORTANT:** The ITR8307/F43 is a **REFLECTIVE** sensor, not a slot/interrupter sensor!
 
@@ -16,7 +298,7 @@
 - Optimal detection distance: **1-3mm**
 - Works best with **white/reflective surfaces**
 
-### 1.2 Correct Pinout (from datasheet ITR8307-F43.pdf)
+### 2.2 Correct Pinout (from datasheet ITR8307-F43.pdf)
 
 ```
     Physical Layout (looking at component side):
@@ -34,7 +316,7 @@
     Pin 4 = EMITTER  (Detector -) ──► GND
 ```
 
-### 1.3 Circuit Schematic
+### 2.3 Circuit Schematic
 
 ```
                          5V
@@ -57,7 +339,7 @@
 - R2 = 10kΩ (pull-up resistor)
 - C1 = 100nF (noise filter) - **essential!**
 
-### 1.4 Encoder Wheel Design for Reflective Sensor
+### 2.4 Encoder Wheel Design for Reflective Sensor
 
 Since this is a reflective sensor, the encoder wheel needs a **reflective stripe**:
 
@@ -84,9 +366,9 @@ Since this is a reflective sensor, the encoder wheel needs a **reflective stripe
 
 ---
 
-## 2. Servo Noise Issues
+## 3. Servo Noise Issues
 
-### 2.1 Problem Description
+### 3.1 Problem Description
 
 During testing, the optical sensor signal showed significant noise/oscillation when the servo was connected:
 
@@ -96,7 +378,7 @@ During testing, the optical sensor signal showed significant noise/oscillation w
 
 **Root Cause:** Servo motors draw large current pulses during PWM cycles, causing voltage spikes and dips on the shared 5V supply.
 
-### 2.2 Oscilloscope Observations
+### 3.2 Oscilloscope Observations
 
 ```
     Without servo connected:
@@ -108,7 +390,7 @@ During testing, the optical sensor signal showed significant noise/oscillation w
     4.4V ┘ └─┘ └─┘ └─┘ └─┘ └─┘      from servo PWM
 ```
 
-### 2.3 Solution: Power Supply Filtering
+### 3.3 Solution: Power Supply Filtering
 
 **Required capacitors:**
 
@@ -135,7 +417,7 @@ During testing, the optical sensor signal showed significant noise/oscillation w
            Servo                   Sensor
 ```
 
-### 2.4 Additional Noise Reduction Techniques
+### 3.4 Additional Noise Reduction Techniques
 
 1. **Separate power paths:** Run servo power directly from Arduino 5V pin, sensor from a different 5V source if available
 
@@ -147,9 +429,9 @@ During testing, the optical sensor signal showed significant noise/oscillation w
 
 ---
 
-## 3. Code Review Findings
+## 4. Code Review Findings
 
-### 3.1 Button State Tracking Bug
+### 4.1 Button State Tracking Bug
 
 **Problem:** Buttons would occasionally stop responding, requiring Arduino reset.
 
@@ -184,7 +466,7 @@ uint8_t buttons_poll(void)
 }
 ```
 
-### 3.2 Encoder Noise Filtering
+### 4.2 Encoder Noise Filtering
 
 **Problem:** Noisy sensor signal caused false triggers and incorrect turn counts.
 
@@ -222,9 +504,9 @@ bool encoder_check_turn(void)
 
 ---
 
-## 4. Firmware Module Structure
+## 5. Firmware Module Structure
 
-### 4.1 File Organization
+### 5.1 File Organization
 
 ```
 coil_winder/src/
@@ -240,7 +522,7 @@ coil_winder/src/
 └── main.c           - Application logic (~200 lines)
 ```
 
-### 4.2 Key Configuration (config.h)
+### 5.2 Key Configuration (config.h)
 
 ```c
 /* Pin Definitions */
@@ -260,7 +542,7 @@ coil_winder/src/
 #define SERVO_RANGE     25   // Range each side
 ```
 
-### 4.3 Memory Usage
+### 5.3 Memory Usage
 
 ```
 RAM:   [========  ]  77.4% (1585 / 2048 bytes)
@@ -271,9 +553,9 @@ Plenty of headroom for additional features.
 
 ---
 
-## 5. Testing Checklist
+## 6. Testing Checklist
 
-### 5.1 Component Test Sequence
+### 6.1 Component Test Sequence
 
 - [ ] **Power supply:** 5V stable, no shorts
 - [ ] **OLED display:** Shows startup screen
@@ -284,7 +566,7 @@ Plenty of headroom for additional features.
 - [ ] **Sensor (with servo):** Signal still clean after adding capacitors
 - [ ] **Full system:** Turn counting works, servo traverses
 
-### 5.2 Oscilloscope Test Points
+### 6.2 Oscilloscope Test Points
 
 | Test Point | Expected | Problem If... |
 |------------|----------|---------------|
@@ -293,7 +575,7 @@ Plenty of headroom for additional features.
 | D9 (servo) | 1-2ms pulses at 50Hz | Missing = Timer1 issue |
 | 5V rail | 5.0V ± 0.1V | Dips = add capacitance |
 
-### 5.3 Debugging with Analog Discovery
+### 6.3 Debugging with Analog Discovery
 
 The AD3 is excellent for debugging:
 
@@ -303,7 +585,7 @@ The AD3 is excellent for debugging:
 
 ---
 
-## 6. Common Issues and Solutions
+## 7. Common Issues and Solutions
 
 | Issue | Symptom | Solution |
 |-------|---------|----------|
@@ -316,23 +598,27 @@ The AD3 is excellent for debugging:
 
 ---
 
-## 7. Version History
+## 8. Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | v1.0 | 2026-01-12 | Initial firmware, monolithic main.c |
 | v1.1 | 2026-01-12 | Modular code structure |
 | v2.0 | 2026-01-12 | Fixed button state bug, added encoder debounce |
+| v2.1 | 2026-01-13 | New break-beam sensor design (SFH4546 + BP104 + LM311) |
 
 ---
 
-## 8. References
+## 9. References
 
-- ITR8307/F43 Datasheet (Everlight)
+- ITR8307/F43 Datasheet (Everlight) - Legacy sensor
+- SFH4546 Datasheet (OSRAM) - IR Emitter
+- BP104 Datasheet (Vishay) - IR Photodiode
+- LM311 Datasheet (Texas Instruments) - Comparator
 - ATmega328P Datasheet (Section 13: External Interrupts)
 - SSD1306 Datasheet (Solomon Systech)
 
 ---
 
 *Circuit build notes for DTU 34621 Metal Detector - Coil Winder*
-*Last updated: 2026-01-12*
+*Last updated: 2026-01-13 - Added break-beam optical sensor design*

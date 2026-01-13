@@ -46,7 +46,7 @@
 **Guiding Principles:**
 1. **Use available components** - Arduino kit + DTU component shop
 2. **Servo-driven traverse** - Simple PWM control, no stepper driver needed
-3. **Accurate turn counting** - ITR8307 optical sensor with interrupt
+3. **Accurate turn counting** - Break-beam optical sensor with LM311 comparator
 4. **Auto-reverse at width limits** - No manual intervention during layer winding
 5. **Embedded C firmware** - Direct register access, minimal dependencies
 6. **Budget conscious** - Under €25 total cost
@@ -67,7 +67,7 @@
 │         ▼                   ▼                        ▼                   │
 │   ┌────────────┐    ┌────────────────┐    ┌─────────────────────────┐   │
 │   │  Spool     │    │  Hobby Servo   │    │  Hand Crank             │   │
-│   │  Holder    │    │  + Push Rod    │    │  + Optical Encoder      │   │
+│   │  Holder    │    │  + Push Rod    │    │  + Break-Beam Sensor    │   │
 │   │  Tensioner │    │  + Slide Rail  │    │  + Adapter Plates       │   │
 │   └────────────┘    └────────────────┘    └─────────────────────────┘   │
 │                             │                        │                   │
@@ -75,6 +75,7 @@
 │                     ┌────────────────────────────────────────────┐      │
 │                     │           ARDUINO UNO CONTROLLER           │      │
 │                     │  • Turn counting (INT0 interrupt)          │      │
+│                     │  • Break-beam sensor + LM311 comparator    │      │
 │                     │  • Servo PWM (Timer1 OC1A)                 │      │
 │                     │  • Auto-reverse at width limits            │      │
 │                     │  • OLED display (TWI direct)               │      │
@@ -135,10 +136,11 @@
               Coil Form                                Coil Form
 
     For each spindle rotation:
-    1. ITR8307 detects slot passing (INT0 interrupt)
-    2. Firmware increments turn count
-    3. Servo angle updated by wire diameter amount
-    4. At width limit: reverse direction, increment layer count
+    1. Break-beam sensor detects slot in encoder disc (INT0 interrupt)
+    2. LM311 comparator provides clean digital edge
+    3. Firmware increments turn count
+    4. Servo angle updated by wire diameter amount
+    5. At width limit: reverse direction, increment layer count
 ```
 
 **Servo Linkage:**
@@ -255,40 +257,47 @@ For 18mm traverse: Use 25° range or adjust horn length
 Actual calibration done in firmware (SERVO_RANGE define)
 ```
 
-### 3.4 Encoder Wheel Design (for Reflective Sensor)
+### 3.4 Encoder Disc Design (for Break-Beam Sensor)
 
-Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflective stripe:
+The break-beam sensor uses a **slotted disc** that passes between the IR emitter and photodiode:
 
 ```
-    ┌─────────────────┐
-    │  ████████████   │    Dark/black surface
-    │  ████████████   │    (non-reflective, matte)
-    │                 │
-    │   ┌───────┐     │
-    │   │ WHITE │     │    White/reflective stripe
-    │   │STRIPE │     │    (triggers sensor once per revolution)
-    │   └───────┘     │
-    │                 │
-    │        ●        │    Center hole (fits M8 spindle)
-    │                 │
-    └─────────────────┘
+    SLOTTED ENCODER DISC
 
-    Diameter: ~40mm
-    Stripe width: ~5mm
-    Stripe arc length: ~10-15mm
-    Detection distance: 1-3mm from sensor face
+              ┌─────────────────────────────┐
+              │                             │
+              │      ████████████████       │    Solid material
+              │     ██              ██      │    (blocks IR beam)
+              │    ██                ██     │
+              │   ██    ┌──────┐     ██    │
+              │   ██    │      │     ██    │    Slot/hole
+              │   ██    │ SLOT │     ██    │    (IR passes through)
+              │   ██    │      │     ██    │
+              │   ██    └──────┘     ██    │
+              │    ██                ██     │
+              │     ██      ●       ██      │    Center hole (M8)
+              │      ████████████████       │
+              │                             │
+              └─────────────────────────────┘
+
+    Dimensions:
+    - Disc diameter: 40-50mm
+    - Slot width: 5-8mm (wide enough for reliable detection)
+    - Slot radial length: 10-15mm
+    - Slot position: at outer edge for max angular resolution
+    - Material: 3D printed PLA (opaque)
+    - Thickness: 2-3mm
 ```
 
-**Implementation options:**
-1. Black wheel with white tape stripe
-2. Black wheel with white paint stripe
-3. Dark PLA wheel with white PLA insert
-4. Print in black, sand one stripe area and apply white paint
+**Implementation:**
+- 3D print in any opaque PLA color
+- Single slot = 1 pulse per revolution
+- Optional: 4 slots at 90° for higher resolution (divide count by 4)
 
 **Signal behavior:**
-- Dark surface: Output HIGH (~5V)
-- White stripe passes: Output LOW (~0V)
-- INT0 triggers on falling edge
+- Solid disc blocks beam: Output HIGH (~5V)
+- Slot passes (beam through): Output LOW (~0V)
+- INT0 triggers on falling edge (slot entering sensor)
 
 ### 3.5 Wire Tensioner
 
@@ -319,9 +328,9 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
 ├───────────────────────────────────────────────────────────────────────────┤
 │                                                                           │
 │  ┌──────────────┐                    ┌─────────────────────────────────┐ │
-│  │   ITR8307    │         PD2 (INT0) │         ARDUINO UNO             │ │
-│  │   OPTICAL    │───────────────────►│         (ATmega328P)            │ │
-│  │   SENSOR     │                    │                                 │ │
+│  │  BREAK-BEAM  │         PD2 (INT0) │         ARDUINO UNO             │ │
+│  │   SENSOR     │───────────────────►│         (ATmega328P)            │ │
+│  │  + LM311     │                    │                                 │ │
 │  └──────────────┘                    │  PD2:  Encoder input (INT0)     │ │
 │                                      │  PB1:  Servo PWM (OC1A/D9)      │ │
 │  ┌──────────────┐                    │  PD3:  Reset button             │ │
@@ -348,46 +357,60 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
 └───────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 4.2 Turn Counting - ITR8307 Optical Sensor
+### 4.2 Turn Counting - Break-Beam Optical Sensor
 
-**Sensor: ITR8307/F43 (from DTU Component Shop)**
-- **REFLECTIVE optical sensor** (not slot/interrupter!)
-- Both LED and detector point in same direction
-- Detects light bouncing back from reflective surface
-- Optimal detection distance: 1-3mm
+**DIY Break-Beam Sensor (from DTU Component Shop)**
+- **Slotted/interrupter style** - more reliable than reflective sensors
+- IR LED (SFH4546) on one side, photodiode (BP104) on the other
+- LM311 comparator provides clean digital output
+- Detects slot in encoder disc passing through beam
 - Operating voltage: 5V
-- Output: Open collector NPN phototransistor
+- Output: Clean digital edges via comparator
 
-**Correct Pinout (from datasheet):**
-```
-    Pin 1 = CATHODE  (LED -)
-    Pin 2 = ANODE    (LED +)
-    Pin 3 = COLLECTOR (Detector output)
-    Pin 4 = EMITTER  (Detector -)
-```
+**Components:**
+| Part | DTU Part Number | Function |
+|------|-----------------|----------|
+| SFH4546 | IR Emitter | 940nm infrared LED |
+| BP104 | IR Photodiode | Infrared detector |
+| LM311 | Comparator | Analog to digital |
+| 220Ω | E96 Resistor | LED current limit |
+| 47kΩ (×3) | E96 Resistor | Reference divider + load |
+| 10kΩ | E96 Resistor | Output pull-up |
+| 100nF | Ceramic Cap | Noise filter |
 
 **Circuit:**
 
 ```
-                         5V
-                          │
-            ┌─────────────┼─────────────┐
-            │             │             │
-          [330Ω]        [10kΩ]       [100nF] ← Essential for noise!
-            │             │             │
-            │             ├─────────────┼──► PD2 (D2/INT0)
-            │             │             │
-    Pin 2 ──┘    Pin 3 ───┘             │
-    (Anode)      (Collector)            │
-                                        │
-    Pin 1 ──┬── Pin 4 ──────────────────┴──► GND
-    (Cathode)   (Emitter)
-
-    Components from DTU: ITR8307, 330Ω (330R), 10kΩ (10K0), 100nF
+                                    5V
+                                     │
+          ┌──────────────────────────┼──────────────────────────────┐
+          │                          │                              │
+        [220Ω]                     [47kΩ]                         [47kΩ]
+         R_LED                       R1                             R3
+          │                          │                              │
+          │                          │    ┌───────────────┐         │
+    ┌─────┴─────┐                    │    │    LM311      │         │
+    │  SFH4546  │                    │    │               │         │
+    │    (+)    │                    └───►│3 (-)         7├──┬──────┼───► D2
+    │   LED     │                         │               │  │      │
+    │    (-)    │                    ┌───►│2 (+)    GND  4├──┼──┐   │
+    └─────┬─────┘                    │    │               │  │  │   │
+          │                          │    │         V+   8├──┼──┼───┤
+         GND                         │    └───────────────┘  │  │   │
+                                     │                       │  │   │
+    ┌─────────────┐                  │                    [10kΩ] │   │
+    │   BP104     │                  │                     R4 │   │
+    │  Cathode(K) ├──────────────────┼───────────────────────┘  │   │
+    │   Anode(A)  ├──────────────────┘                          │   │
+    └─────────────┘                                             │   │
+          │                        [47kΩ]                      GND  │
+        [100nF]                      R2                             │
+          │                          │                              │
+         GND                        GND                            5V
 ```
 
-> [!warning] Encoder Wheel Design
-> Since this is a **reflective** sensor, use an encoder wheel with a **white reflective stripe** on a dark background, not a slotted wheel!
+> [!tip] Encoder Disc Design
+> Use a **slotted encoder disc** - the slot allows the IR beam to pass through, triggering a pulse. See [[Coil_Winder_Circuit_Notes]] for detailed circuit documentation.
 
 ### 4.3 Servo Control
 
@@ -440,7 +463,7 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
                       ARDUINO UNO
                      ┌───────────┐
                      │           │
-    ITR8307 ────────►│ D2        │
+    LM311 OUT ──────►│ D2        │  ◄── Break-beam sensor output
                      │           │
     SERVO ──────────►│ D9        │
                      │           │
@@ -453,7 +476,7 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
     OLED SDA ───────►│ A4        │
     OLED SCL ───────►│ A5        │
                      │           │
-                     │ 5V ───────┼──► Power
+                     │ 5V ───────┼──► Power (sensor, LM311, servo)
                      │ GND ──────┼──► Ground
                      └───────────┘
 ```
@@ -464,15 +487,19 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
 
 ### 5.1 From DTU Component Shop (Free)
 
-| Component | DTU Part | Qty |
-|-----------|----------|-----|
-| ITR8307 | ITR8307 | 1 |
-| 330Ω Resistor | 330R (E96) | 1 |
-| 10kΩ Resistor | 10K0 (E96) | 1 |
-| 100nF Capacitor | 100n Ceramic | 2 |
-| 100µF Capacitor | 100µF Electrolytic | 1 |
-| Pushbuttons | Tryk knap til bredbord | 3 |
-| Pin Headers | Pin header strips | 1 |
+| Component | DTU Part | Qty | Purpose |
+|-----------|----------|-----|---------|
+| SFH4546 | IR Emitter | 1 | Break-beam IR LED |
+| BP104 | IR Photodiode | 1 | Break-beam detector |
+| LM311 | Comparator | 1 | Signal conditioning |
+| 220Ω Resistor | 220R (E96) | 1 | IR LED current limit |
+| 47kΩ Resistor | 47K0 (E96) | 3 | Reference divider + load |
+| 10kΩ Resistor | 10K0 (E96) | 1 | Comparator pull-up |
+| 100nF Capacitor | 100n Ceramic | 2 | Noise filtering |
+| 100µF Capacitor | 100µF Electrolytic | 1 | Servo power filtering |
+| Pushbuttons | Tryk knap til bredbord | 3 | User input |
+| DIP-8 Socket | DIP8 Socket | 1 | For LM311 |
+| Pin Headers | Pin header strips | 1 | Connections |
 
 ### 5.2 From Your Arduino Kit
 
@@ -506,10 +533,11 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
 | Bearing mounts (2) | ~60g |
 | Coil adapters (3) | ~80g |
 | Hand crank | ~20g |
-| Encoder wheel | ~5g |
+| Slotted encoder disc | ~5g |
+| Sensor mount bracket | ~10g |
 | Servo mount + linkage | ~25g |
 | Wire guide carriage | ~15g |
-| **Total** | **~355g** |
+| **Total** | **~365g** |
 
 **Total Cost: ~€25**
 
@@ -527,20 +555,21 @@ Since the ITR8307 is a **reflective** sensor, the encoder wheel needs a reflecti
 | 120mm Adapter | 1 | ~2 hours | Bucking coil |
 | 80mm Adapter | 1 | ~1 hour | RX coil |
 | Hand Crank | 1 | ~1 hour | |
-| Encoder Wheel | 1 | ~30 min | 100% infill |
+| Slotted Encoder Disc | 1 | ~30 min | Opaque PLA |
+| Sensor Mount Bracket | 1 | ~30 min | Holds IR LED + photodiode |
 | Servo Mount | 1 | ~1 hour | |
 | Linkage Arm | 1 | ~30 min | |
 | Wire Guide Carriage | 1 | ~1 hour | |
 | Slide Rail | 1 | ~1 hour | |
 
-**Total Print Time:** ~18 hours
+**Total Print Time:** ~19 hours
 
 ### 6.2 Print Settings
 
 | Setting | Value |
 |---------|-------|
 | Layer Height | 0.2 mm |
-| Infill | 20% (100% for encoder wheel) |
+| Infill | 20% (50% for encoder disc) |
 | Material | PLA |
 | Supports | Minimal |
 
@@ -589,8 +618,8 @@ Edit these defines in `src/main.c`:
 
 ### 8.1 Build Sequence
 
-1. **3D print all parts** (~18 hours)
-2. **Get components from DTU** (ITR8307, resistors, caps, buttons)
+1. **3D print all parts** (~19 hours)
+2. **Get components from DTU** (SFH4546, BP104, LM311, resistors, caps, buttons)
 3. **Buy hardware store items** (M8 rod, bearings, nuts)
 4. **Assemble frame** (base, supports, spindle)
 5. **Install servo traverse** (mount, linkage, slide)
@@ -600,12 +629,13 @@ Edit these defines in `src/main.c`:
 
 ### 8.2 Wiring Steps
 
-1. Connect ITR8307 to D2 with 330Ω and 10kΩ
-2. Connect servo signal to D9, power to 5V
-3. Connect buttons to D3, D4, D5 (other side to GND)
-4. Connect OLED: SDA→A4, SCL→A5, VCC→5V, GND→GND
-5. Connect buzzer to D10 (optional)
-6. Add 100µF capacitor between 5V and GND near servo
+1. Build break-beam sensor circuit (see Section 4.2 or [[Coil_Winder_Circuit_Notes]])
+2. Connect LM311 output to D2 with 10kΩ pull-up
+3. Connect servo signal to D9, power to 5V
+4. Connect buttons to D3, D4, D5 (other side to GND)
+5. Connect OLED: SDA→A4, SCL→A5, VCC→5V, GND→GND
+6. Connect buzzer to D10 (optional)
+7. Add 100µF capacitor between 5V and GND near servo
 
 ---
 
@@ -643,11 +673,11 @@ Edit these defines in `src/main.c`:
 
 | Problem | Cause | Solution |
 |---------|-------|----------|
-| Sensor gets hot | Wrong LED polarity | Pin 1 (Cathode) must go to GND |
-| No turn count | Sensor wiring or no reflective surface | Use white paper at 1-3mm distance |
-| Always HIGH | No reflection detected | Check LED working (phone camera sees IR) |
-| Always LOW | Too much ambient light | Shield sensor, check wiring |
-| Double counting | Noise/vibration | Add 100nF cap on D2, increase debounce |
+| IR LED gets hot | Wrong polarity or no resistor | Check 220Ω resistor in series |
+| No turn count | Sensor alignment or wiring | Check IR beam path, verify LM311 output |
+| Always HIGH | Beam blocked or no IR | Check disc slot, verify IR LED working (phone camera) |
+| Always LOW | Beam always passing | Adjust Vref divider or check photodiode |
+| Double counting | Noise/vibration | Add 100nF cap, increase debounce in firmware |
 | Noisy signal | Servo causing interference | Add 100µF cap on servo power |
 | Display blank | I2C issue | Check SDA/SCL, try 0x3D address |
 | Servo jitters | Power supply noise | Add 100µF cap on 5V near servo |
@@ -670,4 +700,4 @@ Edit these defines in `src/main.c`:
 *Coil Winder Design for DTU 34621 Metal Detector Project*
 *Simplified servo-based design with embedded C firmware*
 *Total cost: ~€25*
-*Last updated: 2026-01-12*
+*Last updated: 2026-01-13 - Updated to break-beam sensor (SFH4546 + BP104 + LM311)*
