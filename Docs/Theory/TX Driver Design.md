@@ -53,13 +53,13 @@
    M6              M3
   (IRL530)       (IRL530)      ← High-side switches
     │               │
-    ├───[L2]───[C1]─┤───[R10]───┐
-    │   6.3mH   1µF │    35Ω    │   ← LC Tank (TX spole)
-   M4              M2           │
-  (IRL530)       (IRL530)       │   ← Low-side switches
-    │               │           │
-    └───────┬───────┘           │
-           GND◄─────────────────┘
+    ├───[C1]───[R1]───[L2]─────┤
+    │   1µF    32Ω   6.3mH     │   ← RLC Tank (R_total = 35Ω)
+   M4              M2          │
+  (IRL530)       (IRL530)      │   ← Low-side switches
+    │               │          │
+    └───────┬───────┘          │
+           GND◄────────────────┘
 ```
 
 ### 2.3 Switching Sekvens
@@ -221,17 +221,19 @@ $$f_0 = \frac{1}{2\pi\sqrt{LC}} = \frac{1}{2\pi\sqrt{6.332\text{mH} \cdot 1\mu\t
 
 | Komponent | Værdi | Formål |
 |-----------|-------|--------|
-| L2 | 6.332 mH | TX spole induktans |
+| L2 | 6.33 mH | TX spole induktans |
 | C1 | 1 µF | Resonanskondensator |
-| R10 | 35Ω | Spole DC modstand |
+| R1 | **32 Ω (5W)** | Serie modstand |
+| R_coil | ~3 Ω | Spole DC modstand (0.56mm tråd) |
+| **R_total** | **35 Ω** | Total kredsløbsmodstand |
 
 ### 5.4 Q-Faktor
 
-$$Q = \frac{X_L}{R} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times 0.00633}{35} = 2.27$$
+$$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times 0.00633}{35} = 2.27$$
 
-> [!note] Moderat Q
-> Q ≈ 2.3 giver god sinusform uden for skarp resonans.
-> Højere Q ville give renere sinus men smallere båndbredde.
+> [!note] Lav Q med serie modstand
+> Q ≈ 2.3 giver bred båndbredde og stabil drift.
+> Serie modstanden (32Ω) sænker Q og tillader ~360 mA RMS strøm.
 
 ---
 
@@ -293,12 +295,13 @@ Se [[../../QSPICE/README|QSPICE README]] for detaljer om simulering.
 | Kondensator | 5nF | 1 | Parameteriserbar |
 | Op-amp | RRopAmp | 2 | Rail-to-rail |
 
-### 7.4 LC Tank
+### 7.4 RLC Tank
 
 | Komponent | Værdi | Antal | Noter |
 |-----------|-------|-------|-------|
-| Spole | 6.33 mH | 1 | TX spole |
+| Spole | 6.33 mH | 1 | TX spole (0.56mm tråd) |
 | Kondensator | 1µF, 50V | 1 | Film type (MKP) |
+| **Serie modstand** | **32Ω, 5W** | 1 | Wirewound eller keramisk |
 
 ---
 

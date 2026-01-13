@@ -1,0 +1,28 @@
+var group__SSD1306Commands =
+[
+    [ "SSD1306_CHARGEPUMP", "group__SSD1306Commands.html#gad5f3bf0b48ad6edc82ab0f3d5f1f38f7", null ],
+    [ "SSD1306_COLUMNADDR", "group__SSD1306Commands.html#gafd716ee5fcbff49c51b4878c3d193dc1", null ],
+    [ "SSD1306_COMSCANDEC", "group__SSD1306Commands.html#gadc99324d6d22a2997b77a63ea6bf2bfb", null ],
+    [ "SSD1306_COMSCANINC", "group__SSD1306Commands.html#ga369ae001f8683735d9a4783a4113cce2", null ],
+    [ "SSD1306_DISPLAYALLON", "group__SSD1306Commands.html#gafbd6adc39acd5752049314fe4384e296", null ],
+    [ "SSD1306_DISPLAYALLON_RESUME", "group__SSD1306Commands.html#ga19ba0228ffbe726628ce81819bc85821", null ],
+    [ "SSD1306_DISPLAYOFF", "group__SSD1306Commands.html#gafc679e79b4ab084fac5e1789e0fe7d84", null ],
+    [ "SSD1306_DISPLAYON", "group__SSD1306Commands.html#ga9222e241542c96063618792a8e2dee19", null ],
+    [ "SSD1306_EXTERNALVCC", "group__SSD1306Commands.html#gacaee84439cd8e333833f5955f0c3839e", null ],
+    [ "SSD1306_INVERTDISPLAY", "group__SSD1306Commands.html#ga38c7bb576204300a0898af715533b84a", null ],
+    [ "SSD1306_MEMORYMODE", "group__SSD1306Commands.html#ga1713056208cbb0c414fc8abeb944b00e", null ],
+    [ "SSD1306_NORMALDISPLAY", "group__SSD1306Commands.html#gae7307026b4917a896d71853d59a5edb0", null ],
+    [ "SSD1306_PAGEADDR", "group__SSD1306Commands.html#ga71f30ebeedfa1daa6591af3596361bcd", null ],
+    [ "SSD1306_SEGREMAP", "group__SSD1306Commands.html#ga5e76edda0d4f9167ca212483e936f961", null ],
+    [ "SSD1306_SETCOMPINS", "group__SSD1306Commands.html#ga8bdc6b082d008e8499489a693f2c6b0d", null ],
+    [ "SSD1306_SETCONTRAST", "group__SSD1306Commands.html#gabe457a5fa79469c69e09444f9faa239a", null ],
+    [ "SSD1306_SETDISPLAYCLOCKDIV", "group__SSD1306Commands.html#ga070e748bd638a07123916428b2790e97", null ],
+    [ "SSD1306_SETDISPLAYOFFSET", "group__SSD1306Commands.html#ga4af482a7cbc00c50ad6e43a9c1e97ff8", null ],
+    [ "SSD1306_SETHIGHCOLUMN", "group__SSD1306Commands.html#gad2ae230e4a2fc5b6f78b7664807d9b83", null ],
+    [ "SSD1306_SETLOWCOLUMN", "group__SSD1306Commands.html#gaf1f85c5b893e2e128db19ee1dfd11db2", null ],
+    [ "SSD1306_SETMULTIPLEX", "group__SSD1306Commands.html#gae1150e8229efb2f2b287697b372a8123", null ],
+    [ "SSD1306_SETPRECHARGE", "group__SSD1306Commands.html#ga72782bf815e85585b6e8f147567107ac", null ],
+    [ "SSD1306_SETSTARTLINE", "group__SSD1306Commands.html#gabd029a2f0e626f2c7cbb401af7625b3a", null ],
+    [ "SSD1306_SETVCOMDETECT", "group__SSD1306Commands.html#ga0701d3111d446fbb44650b5c8ee97989", null ],
+    [ "SSD1306_SWITCHCAPVCC", "group__SSD1306Commands.html#gad9d18b92ad68b542033c7e5ccbdcced0", null ]
+];
