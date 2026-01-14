@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['i2c_20configuration_0',['I2C Configuration',['../group__I2CConfig.html',1,'']]],
+  ['i2c_20functions_1',['I2C Functions',['../group__I2CFunctions.html',1,'']]],
+  ['i2c_20global_20variables_2',['I2C Global Variables',['../group__I2CGlobals.html',1,'']]],
+  ['i2c_2ec_3',['I2C.c',['../I2C_8c.html',1,'']]],
+  ['i2c_2eh_4',['I2C.h',['../I2C_8h.html',1,'']]],
+  ['i2c_5finit_5',['I2C_Init',['../group__I2CFunctions.html#ga84df9a5887b8b8230cfe85d18e53900e',1,'I2C_Init(void):&#160;I2C.c'],['../group__I2CFunctions.html#ga84df9a5887b8b8230cfe85d18e53900e',1,'I2C_Init(void):&#160;I2C.c']]],
+  ['i2c_5fread_5fack_6',['I2C_Read_Ack',['../group__I2CFunctions.html#gabeed64465de5bbaafd446028f565ee2e',1,'I2C_Read_Ack(void):&#160;I2C.c'],['../group__I2CFunctions.html#gabeed64465de5bbaafd446028f565ee2e',1,'I2C_Read_Ack(void):&#160;I2C.c']]],
+  ['i2c_5fread_5fnack_7',['I2C_Read_Nack',['../group__I2CFunctions.html#ga88dcace328728021d12bf6c8fe9730e9',1,'I2C_Read_Nack(void):&#160;I2C.c'],['../group__I2CFunctions.html#ga88dcace328728021d12bf6c8fe9730e9',1,'I2C_Read_Nack(void):&#160;I2C.c']]],
+  ['i2c_5frepeated_5fstart_8',['I2C_Repeated_Start',['../group__I2CFunctions.html#ga2bb15dfd7e3ed4bed326464681cf3a3d',1,'I2C_Repeated_Start(char read_address):&#160;I2C.c'],['../group__I2CFunctions.html#ga2bb15dfd7e3ed4bed326464681cf3a3d',1,'I2C_Repeated_Start(char read_address):&#160;I2C.c']]],
+  ['i2c_5fstart_9',['I2C_Start',['../group__I2CFunctions.html#ga448f6e23bf0173b02512d604e5fb227b',1,'I2C_Start(char write_address):&#160;I2C.c'],['../group__I2CFunctions.html#ga448f6e23bf0173b02512d604e5fb227b',1,'I2C_Start(char write_address):&#160;I2C.c']]],
+  ['i2c_5fstop_10',['I2C_Stop',['../group__I2CFunctions.html#gafce134e0a1b6a8bc503c97b37639c9e6',1,'I2C_Stop(void):&#160;I2C.c'],['../group__I2CFunctions.html#gafce134e0a1b6a8bc503c97b37639c9e6',1,'I2C_Stop(void):&#160;I2C.c']]],
+  ['i2c_5fwrite_11',['I2C_Write',['../group__I2CFunctions.html#ga56ad67229c9f431ec86643db55c0e862',1,'I2C_Write(char data):&#160;I2C.c'],['../group__I2CFunctions.html#ga56ad67229c9f431ec86643db55c0e862',1,'I2C_Write(char data):&#160;I2C.c']]],
+  ['iir_20filter_20configuration_12',['IIR Filter Configuration',['../group__Filter.html',1,'']]],
+  ['iir_5falpha_13',['IIR_ALPHA',['../group__Filter.html#gabe7cb8ed40cf49978ad84399b0db56d6',1,'main.c']]],
+  ['im_14',['Im',['../group__Globals.html#ga7daaa1cf2bb71d3c504d536257369101',1,'main.c']]],
+  ['im_5fbuf_15',['Im_buf',['../group__Globals.html#gafb3df9b7d8a52a80d845d93ccafb8d25',1,'main.c']]],
+  ['initialization_16',['Hardware Initialization',['../group__HWInit.html',1,'']]],
+  ['initializedisplay_17',['InitializeDisplay',['../group__CoreFunctions.html#gaf8cce1c7fe421b04074d1f66061ad41f',1,'InitializeDisplay():&#160;ssd1306.c'],['../group__CoreFunctions.html#gaf8cce1c7fe421b04074d1f66061ad41f',1,'InitializeDisplay(void):&#160;ssd1306.c']]],
+  ['interrupt_20service_20routines_18',['Interrupt Service Routines',['../group__ISR.html',1,'']]],
+  ['inverse_19',['INVERSE',['../group__ColorDefs.html#gade269cc47cfaba70068f2586e898051d',1,'ssd1306.h']]],
+  ['invertdisplay_20',['invertDisplay',['../group__DisplayControl.html#ga2722e04c5cda6b95eb9114cdb6e0a7cb',1,'invertDisplay(uint8_t i):&#160;ssd1306.c'],['../group__DisplayControl.html#ga2722e04c5cda6b95eb9114cdb6e0a7cb',1,'invertDisplay(uint8_t i):&#160;ssd1306.c']]],
+  ['is_5fcalibrated_21',['is_calibrated',['../group__Globals.html#ga9af05951257cdd1734d5f47496337459',1,'main.c']]],
+  ['isr_22',['ISR',['../group__ISR.html#gaec43762dc86e029b395d4e5819192c2d',1,'ISR(TIMER0_COMPA_vect):&#160;main.c'],['../group__ISR.html#ga05c2e5b588ced1cd7312f5b0edc5b295',1,'ISR(ADC_vect):&#160;main.c']]]
+];

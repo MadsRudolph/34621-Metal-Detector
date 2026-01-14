@@ -3,9 +3,12 @@
  * Captures raw ADC samples and outputs via UART for verification
  */
 
+#include "capture.h"
+
+#if DFT_VERIFICATION_MODE
+
 #include <avr/io.h>
 #include <stdio.h>
-#include "capture.h"
 
 static volatile int16_t samples[N_SAMPLES];
 static volatile uint8_t capture_state = CAPTURE_IDLE;
@@ -76,3 +79,5 @@ void capture_output(int32_t re, int32_t im, uint16_t mag, int16_t phase) {
     sprintf(buf, "Phase,%d\r\n", phase); uart_puts(buf);
     uart_puts("--- End Capture ---\r\n\r\n");
 }
+
+#endif /* DFT_VERIFICATION_MODE */

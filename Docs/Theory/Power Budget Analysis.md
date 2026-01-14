@@ -158,9 +158,6 @@ De fleste Arduino Nano kloner bruger CH340G til USB-til-Serial konvertering.
 | Aktiv (USB forbundet) | 15 mA |
 | Standby (USB afbrudt) | 2-3 mA |
 
-> [!note] CH340 vs ATmega16U2
-> Original Arduino Nano bruger FTDI chip. Mange kloner bruger CH340G som trækker mindre strøm end ATmega16U2 (12 mA) på Arduino Mega.
-
 **$I_{USB\_chip} = 3$ mA** (USB afbrudt, kun serial)
 
 #### 3.2.3 Power LED
@@ -220,21 +217,6 @@ For typisk tekst display (~30% pixels tændt):
 | SSD1306 OLED | 12 | ~30% pixels |
 | PCB lækage | 2 | Kondensatorer, spor |
 | **Total (5V rail)** | **40 mA** | |
-
-### 3.4 Sammenligning: Arduino Nano vs Arduino Mega
-
-| Parameter | Arduino Nano | Arduino Mega 2560 | Besparelse |
-|-----------|--------------|-------------------|------------|
-| MCU | ATmega328P | ATmega2560 | |
-| MCU strøm (aktiv) | 12 mA | 14 mA | 2 mA |
-| MCU strøm (max) | 15 mA | 25 mA | 10 mA |
-| USB chip | CH340G (3 mA) | ATmega16U2 (12 mA) | **9 mA** |
-| Power LED | 3 mA | 8 mA | 5 mA |
-| 3.3V system | Minimal | 2 mA | 2 mA |
-| **Total elektronik** | **~40 mA** | **~80 mA** | **~40 mA** |
-
-> [!success] Arduino Nano Fordel
-> Arduino Nano bruger cirka **halvt så meget strøm** som Arduino Mega, hvilket giver mere strøm til TX spolen!
 
 ---
 
@@ -305,37 +287,36 @@ CPU'en kører allerede. DFT beregning øger ikke strømmen — den bruger bare C
 |-----------|------------|-----------|
 | **Elektronik baseline** | **40** | Beregnet |
 | **DSP tillæg** | **0.3** | Beregnet |
+| **TX Spole (RMS)** | **360** | H-bro design |
 | **Total Elektronik** | **~40 mA** | Høj |
+| **Total System** | **~400 mA** | Høj |
 
-### 5.2 Tilgængelig Strøm til TX Spole
+### 5.2 TX Strøm Beregning
 
-$$I_{TX,tilgængelig} = I_{max} - I_{elektronik}$$
+H-bro forstærkeren leverer 18 Vpp til RLC tank med total modstand 35Ω:
 
-**Konservativ tilstand (100 mA budget):**
-$$I_{TX} = 100\ \text{mA} - 40\ \text{mA} = 60\ \text{mA}$$
+$$I_{peak} = \frac{V_{pp}}{R_{total}} = \frac{18V}{35\Omega} = 514\ \text{mA}$$
 
-**Maksimal tilstand (120 mA budget):**
-$$I_{TX} = 120\ \text{mA} - 40\ \text{mA} = 80\ \text{mA}$$
+$$I_{RMS} = \frac{I_{peak}}{\sqrt{2}} = \frac{514}{\sqrt{2}} = 363\ \text{mA} \approx 360\ \text{mA}$$
 
-> [!tip] Designmål for TX Spole
-> **60-80 mA** tilgængelig for TX spole driver — **dobbelt så meget som Arduino Mega!**
+> [!warning] Høj TX Strøm
+> TX systemet trækker **360 mA RMS**, hvilket er væsentligt højere end tidligere estimater.
+> Dette påvirker køretiden betydeligt.
 
-### 5.3 Tilgængelig Effekt til TX Spole
+### 5.3 Total Systemeffekt
 
-$$P_{TX} = V_{forsyning} \times I_{TX}$$
+$$P_{total} = V_{bat} \times I_{total}$$
 
-| Batteri Tilstand | $V_{forsyning}$ (V) | $I_{TX}$ (mA) | $P_{TX}$ (mW) |
-|------------------|---------------------|---------------|---------------|
-| Frisk | 9.0 | 80 | **720** |
-| 75% kapacitet | 8.0 | 80 | **640** |
-| 50% kapacitet | 7.5 | 80 | **600** |
-| 25% kapacitet | 7.0 | 80 | **560** |
-| Slut på levetid | 6.5 | 80 | **520** |
-| Cutoff | 6.0 | 80 | **480** |
+| Batteri Tilstand | $V_{bat}$ (V) | $I_{total}$ (mA) | $P_{total}$ (W) |
+|------------------|---------------|------------------|-----------------|
+| Frisk | 9.0 | 400 | **3.6** |
+| 75% kapacitet | 8.0 | 400 | **3.2** |
+| 50% kapacitet | 7.5 | 400 | **3.0** |
+| Slut på levetid | 6.5 | 400 | **2.6** |
 
-> [!info] TX Spole Strømbudget
-> **480-720 mW** tilgængelig (varierer med batterispænding)
-> Dette er **dobbelt** så meget som med Arduino Mega!
+> [!danger] Strømbudget Overskridelse
+> Total systemstrøm på **400 mA** overstiger 9V batteriets praktiske grænse.
+> Se afsnit 7 for løsningsmuligheder.
 
 ---
 
@@ -350,36 +331,27 @@ $$P_{TX} = V_{forsyning} \times I_{TX}$$
 | Parameter | Værdi | Kilde |
 |-----------|-------|-------|
 | TX induktans | 6.33 mH | Spole Design |
-| TX impedans @ 2kHz | ~95 Ω | Beregnet |
-| TX strøm @ 7.5V | ~80 mA | Strømbudget |
+| Spole DC modstand | ~3 Ω | 0.56mm tråd |
+| Serie modstand | 32 Ω (5W) | Forstærker matching |
+| Total modstand | 35 Ω | R_coil + R_serie |
+| H-bro spænding | 18 Vpp | 2 × 9V batteri |
+| **TX strøm (RMS)** | **360 mA** | Beregnet |
+| Effekt i serie R | ~4.1 W | $I^2 \times R$ |
 | Driver effektivitet | >98% | QSPICE simulation |
-| Driver tab | <2 mW | Negligerbart |
-
-### 6.2 Arduino Nano vs Mega Fordel
-
-| Parameter | Arduino Mega | Arduino Nano | Ændring |
-|-----------|--------------|--------------|---------|
-| Elektronik strøm | 80 mA | 40 mA | **-50%** |
-| Tilgængelig TX strøm | 40 mA | 80 mA | **+100%** |
-| Magnetisk felt | Baseline | ~200% | **+100%** |
-| Detektionsdybde | Baseline | +26% | **+26%** |
-
-> [!success] Arduino Nano Fordel
-> Med samme 100 min køretid giver Arduino Nano **~26% dybere detektion** end Arduino Mega!
 
 ---
 
 ## 7. Komplet Strømbudget Oversigt
 
-### 7.1 Arduino Nano - Maksimal Effekt Tilstand
+### 7.1 Opdateret Strømbudget (H-bro Design)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│               STRØMBUDGET - ARDUINO NANO                             │
-│                   (Koncentrisk Spole, 0.52mm Tråd)                   │
+│               STRØMBUDGET - H-BRO FORSTÆRKER                        │
+│                   (RLC Tank: 6.33mH + 32Ω + 1µF)                    │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  BATTERI: Duracell MN1604 → ~350 mAh til 6V @ 120mA                 │
+│  BATTERI: Duracell MN1604 (9V alkalisk)                             │
 │  MÅL KØRETID: 100 min (krav)                                        │
 │  TX DUTY CYCLE: 100% (kontinuerlig)                                 │
 │                                                                      │
@@ -397,53 +369,77 @@ $$P_{TX} = V_{forsyning} \times I_{TX}$$
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  TX SPOLE SYSTEM (100% duty cycle)                      80 mA       │
-│  ├─ TX Spole (L=7.5mH, Z=95Ω @ 7.5V)                   80 mA       │
+│  TX SPOLE SYSTEM (H-bro, 18 Vpp, 35Ω total)           360 mA       │
+│  ├─ TX Spole (L=6.33mH, R_dc=3Ω)                                   │
+│  ├─ Serie Modstand (32Ω, 5W)                          ~4.1 W tab   │
 │  └─ Driver tab (MOSFET)                               <0.5 mW       │
 │                                                                      │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│  TOTAL SYSTEM STRØM                                   120 mA        │
-│  FORVENTET KØRETID                                   ~100 min       │
+│  TOTAL SYSTEM STRØM                                   400 mA        │
+│  FORVENTET KØRETID (enkelt 9V)                       ~30-40 min    │
 │                                                                      │
-│  TX STRØM                                              80 mA        │
-│  MAGNETISK FELTSTYRKE                           ~200% vs Mega       │
-│  DETEKTIONSDYBDE                                +26% vs Mega        │
+│  TX STRØM (RMS)                                       360 mA        │
 │                                                                      │
-│  STATUS: ✅ OPFYLDER KRAV - Dobbelt felt vs Arduino Mega!           │
+│  STATUS: ⚠️ OVERSTIGER 9V BATTERI KAPACITET                        │
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-### 7.2 Sammenligning: Nano vs Mega
+> [!danger] Køretidsproblem
+> Med 400 mA total strøm kan et enkelt 9V batteri kun levere **~30-40 minutter** køretid.
+> Dette opfylder IKKE kravet om 100 minutter.
 
-| Parameter | Arduino Mega | Arduino Nano | Forbedring |
-|-----------|--------------|--------------|------------|
-| Elektronik strøm | 80 mA | 40 mA | **-50%** |
-| Tilgængelig TX strøm | 40 mA | 80 mA | **+100%** |
-| TX spole impedans | 189 Ω | 95 Ω | -50% |
-| TX spole induktans | 15 mH | 7.5 mH | -50% |
-| Magnetisk felt | Baseline | **~200%** | **+100%** |
-| Detektionsdybde | Baseline | **+26%** | **+26%** |
-| Køretid | 100 min | 100 min | Samme |
+### 7.2 Køretidsestimater
 
-![[nano_vs_mega.png]]
-*Figur: Arduino Nano vs Mega strømsammenligning (genereret af MATLAB)*
+Fra afladningsdata (sektion 1.3) kan vi ekstrapolere:
 
-### 7.3 Med LED Fjernet (Bedste Ydeevne)
+| Total Strøm | Estimeret Køretid | Status |
+|-------------|-------------------|--------|
+| 200 mA | ~75 min | Under krav |
+| 300 mA | ~45 min | Under krav |
+| **400 mA** | **~30 min** | **Langt under krav** |
 
-Fjernelse af power LED frigør 3 mA for mere TX effekt:
+### 7.3 Løsningsmuligheder
 
-| Konfiguration | TX Strøm | Total Strøm | Køretid | Felt |
-|---------------|----------|-------------|---------|------|
-| Standard | 80 mA | 120 mA | 100 min | 200% |
-| LED fjernet | **83 mA** | 120 mA | 100 min | **207%** |
+#### Option A: Reduceret TX Duty Cycle
+
+| Duty Cycle | TX Strøm (avg) | Total Strøm | Køretid |
+|------------|----------------|-------------|---------|
+| 100% | 360 mA | 400 mA | ~30 min |
+| 50% | 180 mA | 220 mA | ~65 min |
+| 25% | 90 mA | 130 mA | ~95 min |
+| **20%** | **72 mA** | **112 mA** | **~100 min** ✓ |
+
+> [!tip] Pulserende TX
+> Ved at køre TX med ~20% duty cycle kan køretidskravet opfyldes.
+> Dette reducerer dog detektionsfølsomheden.
+
+#### Option B: Ekstern Strømforsyning
+
+| Strømkilde | Kapacitet | Køretid @ 400mA |
+|------------|-----------|-----------------|
+| 9V alkalisk | ~250 mAh @ 400mA | ~35 min |
+| 2× 9V parallel | ~500 mAh | ~70 min |
+| **6× AA (9V)** | **~2000 mAh** | **~5 timer** ✓ |
+| USB powerbank | 5000+ mAh | Mange timer |
+
+#### Option C: Højere Modstand (Lavere Strøm)
+
+| Total R | TX Strøm | Total Strøm | Køretid |
+|---------|----------|-------------|---------|
+| 35 Ω | 360 mA | 400 mA | ~30 min |
+| 70 Ω | 180 mA | 220 mA | ~65 min |
+| **150 Ω** | **85 mA** | **125 mA** | **~100 min** ✓ |
+
+> [!note] Trade-off
+> Højere modstand = lavere strøm = længere køretid, men også svagere magnetfelt.
 
 ---
 
 ## 8. Strømstyringsstrategi
 
-### 9.1 Design for 7.5V Forsyningsspænding
+### 8.1 Design for 7.5V Forsyningsspænding
 
 **Problem med at designe for 9V:**
 - Frisk batteri: 9.4V under belastning
@@ -458,68 +454,61 @@ Fjernelse af power LED frigør 3 mA for mere TX effekt:
 | **Ingen kompensationskode** | Ikke behov for spændingsregistrering eller adaptiv drift |
 | **Forudsigelig opførsel** | Detektionsdybde forbliver konstant gennem brug |
 
-### 9.2 Driftstilstande
+### 8.2 Driftstilstande
 
-| Tilstand | TX Duty | TX Strøm | Total Strøm | Køretid | Felt |
-|----------|---------|----------|-------------|---------|------|
-| **Maksimal** | 100% | 80 mA | 120 mA | 100 min | 200% |
-| Konservativ | 80% | 64 mA | 100 mA | 120 min | 160% |
-| Batteri Sparer | 50% | 40 mA | 80 mA | 150 min | 100% |
+> [!warning] Bemærk
+> Med nuværende design (360 mA TX) kan 100 min køretid kun opnås med reduceret duty cycle eller alternativ strømkilde.
+
+| Tilstand | TX Duty | TX Strøm (avg) | Total Strøm | Køretid |
+|----------|---------|----------------|-------------|---------|
+| **Fuld ydelse** | 100% | 360 mA | 400 mA | ~30 min |
+| Pulserende | 50% | 180 mA | 220 mA | ~65 min |
+| Batterisparer | 25% | 90 mA | 130 mA | ~95 min |
+| **Kravopfyldelse** | **20%** | **72 mA** | **112 mA** | **~100 min** |
 
 > [!tip] Anbefaling
-> Brug **Maksimal tilstand** for bedste detektionsydeevne.
-> Arduino Nano's lave strømforbrug betyder vi kan køre TX ved fuld effekt!
-
-### 9.3 Hvorfor Arduino Nano er Bedre
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                STRØMFORDELING SAMMENLIGNING                     │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ARDUINO MEGA (120 mA budget):                                 │
-│  ████████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
-│  │◄──── Elektronik 80 mA ────►│◄── TX 40 mA ──►│              │
-│                                                                 │
-│  ARDUINO NANO (120 mA budget):                                 │
-│  ████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ │
-│  │◄─ Elek 40 mA ─►│◄────────── TX 80 mA ──────────►│          │
-│                                                                 │
-│  Resultat: DOBBELT magnetfelt = +26% detektionsdybde           │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+> For at opfylde 100 min køretidskravet:
+> - **Option A:** Brug ~20% TX duty cycle (reduceret følsomhed)
+> - **Option B:** Brug ekstern strømkilde (6× AA batterier)
+> - **Option C:** Øg serie modstand til ~150Ω (reduceret magnetfelt)
 
 ---
 
 ## 9. Verifikationstest Plan
 
-### 10.1 Komponenttest
+### 9.1 Komponenttest
 
 | Test | Opsætning | Bestået Kriterier |
 |------|-----------|-------------------|
 | Arduino Nano + OLED | AD3 @ 9V via shunt | < 45 mA |
-| TX driver alene | Oscilloskop + DMM | 75-85 mA |
-| Fuld elektronik | Shunt + batteri | < 45 mA |
-| Fuldt system | Shunt + batteri | 115-125 mA |
+| TX driver alene | Oscilloskop + DMM | 350-370 mA RMS |
+| Fuld elektronik (uden TX) | Shunt + batteri | < 45 mA |
+| Fuldt system (100% duty) | Shunt + batteri | 390-410 mA |
 
-### 10.2 Spole Verifikation
+### 9.2 Spole Verifikation
 
 | Test | Metode | Bestået Kriterier |
 |------|--------|-------------------|
-| TX induktans | LCR meter @ 1kHz | 7-8 mH |
-| TX modstand | Multimeter | 2-4 Ω |
-| TX impedans @ 2kHz | Beregnet | 90-100 Ω |
+| TX induktans | LCR meter @ 1kHz | 6-7 mH |
+| TX DC modstand | Multimeter | 2-4 Ω |
+| Serie modstand | Multimeter | 32 Ω ±5% |
+| Total modstand | Multimeter | 34-36 Ω |
 
-### 10.3 Køretids Test Protokol
+### 9.3 Køretids Test Protokol
+
+> [!note] Test Scenarie
+> Følgende test antager **20% TX duty cycle** for at opfylde køretidskravet.
 
 | Tid (min) | Mål I (mA) | $V_{bat}$ (V) | Status |
 |-----------|------------|---------------|--------|
-| 0 | 120 | >9.0 | Start |
-| 25 | 120 | >8.0 | |
-| 50 | 120 | >7.5 | |
-| 75 | 120 | >7.0 | |
-| **100** | 120 | **>6.0** | **BESTÅET?** |
+| 0 | ~112 | >9.0 | Start |
+| 25 | ~112 | >8.0 | |
+| 50 | ~112 | >7.5 | |
+| 75 | ~112 | >7.0 | |
+| **100** | ~112 | **>6.0** | **BESTÅET?** |
+
+> [!warning] Alternativ Test
+> Ved 100% TX duty cycle (400 mA) vil batteriet være opbrugt efter ~30 min.
 
 ---
 
@@ -537,7 +526,5 @@ Fjernelse af power LED frigør 3 mA for mere TX effekt:
 10. AMS1117 Datablad, Advanced Monolithic Systems
 
 ---
-
-*Dokument opdateret til Arduino Nano (ATmega328P) fra Arduino Mega 2560*
 
 #strøm #beregninger #spole-design #driver #målinger #krav
