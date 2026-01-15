@@ -1,99 +1,99 @@
-# 📚 Literature
+# Litteratur
 
-Course materials, datasheets, and reference documents.
+Kursusmaterialer, datablade og referencedokumenter til VLF Metaldetektor projektet.
 
-## Course Documents
+## Kursusdokumenter
 
-| Document | Description |
+| Dokument | Beskrivelse |
 |----------|-------------|
-| [[Course_intro.pdf]] | Course introduction and overview |
-| [[kravspecifikation.pdf]] | Requirements specification (Danish) |
-| [[arbejdsplan.pdf]] | Work plan template (Danish) |
-| [[pseudocode_stm_MD.pdf]] | Pseudocode for state machine |
+| [[Course_intro.pdf]] | Kursusintroduktion og overblik |
+| [[kravspecifikation.pdf]] | Kravspecifikation (16 krav) |
+| [[arbejdsplan.pdf]] | Arbejdsplan skabelon |
+| [[pseudocode_stm_MD.pdf]] | Pseudokode til tilstandsmaskine |
 
-## Theory & Background
+## Teori & Baggrund
 
-### Signal Processing
-| Document | Topics Covered |
-|----------|----------------|
-| [[The_Discrete_Fourier_Transform.pdf]] | DFT theory, implementation |
-| [[Filter_lektion.pdf]] | Filter design lecture |
-| [[filters_v3_III_v1.pdf]] | Advanced filter theory |
+### Signalbehandling
+| Dokument | Emner |
+|----------|-------|
+| [[The_Discrete_Fourier_Transform.pdf]] | DFT teori, implementering |
+| [[Filter_lektion.pdf]] | Filterdesign forelæsning |
+| [[filters_v3_III_v1.pdf]] | Avanceret filterteori |
 
-### Circuit Theory
-| Document | Topics Covered |
-|----------|----------------|
-| [[RLC_Circuits_and_Resonance.pdf]] | Resonance, Q-factor |
-| [[Lesson_3_RLC_circuits__resonance.pdf]] | RLC circuit analysis |
-| [[Transients_and_Oscillations_in_RLC_Circuitsv2m.pdf]] | Transient response |
-| [[Coil_Basics.pdf]] | Inductor/coil design |
+### Kredsløbsteori
+| Dokument | Emner |
+|----------|-------|
+| [[RLC_Circuits_and_Resonance.pdf]] | Resonans, Q-faktor |
+| [[Lesson_3_RLC_circuits__resonance.pdf]] | RLC kredsløbsanalyse |
+| [[Transients_and_Oscillations_in_RLC_Circuitsv2m.pdf]] | Transient respons |
+| [[Coil_Basics.pdf]] | Spoledesign |
 
-### Electronics
-| Document | Topics Covered |
-|----------|----------------|
-| [[op_amps_everyone.pdf]] | Op-amp circuits, design |
-| [[duracell_9volt.pdf]] | 9V battery specifications |
+### Elektronik
+| Dokument | Emner |
+|----------|-------|
+| [[op_amps_everyone.pdf]] | Op-amp kredsløb, design |
+| [[duracell_9volt.pdf]] | 9V batteri specifikationer |
 
-### Metal Detector Specific
-| Document | Topics Covered |
-|----------|----------------|
-| [[Advanced_Instrumentation_for_Polyharmonic_Metal_Detectors.pdf]] | Advanced MD techniques |
+### Metaldetektor Specifikt
+| Dokument | Emner |
+|----------|-------|
+| [[Advanced_Instrumentation_for_Polyharmonic_Metal_Detectors.pdf]] | Avancerede MD teknikker |
 
-## Reading Order (Suggested)
+## Læserækkefølge (Anbefalet)
 
-1. **Week 1 - Fundamentals**
+1. **Uge 1 - Grundlæggende**
    - [ ] Course_intro.pdf
    - [ ] kravspecifikation.pdf
    - [ ] Coil_Basics.pdf
    - [ ] RLC_Circuits_and_Resonance.pdf
 
-2. **Week 2 - Signal Processing**
+2. **Uge 2 - Signalbehandling**
    - [ ] The_Discrete_Fourier_Transform.pdf
    - [ ] Filter_lektion.pdf
    - [ ] op_amps_everyone.pdf
 
-3. **Week 3 - Integration**
+3. **Uge 3 - Integration**
    - [ ] pseudocode_stm_MD.pdf
    - [ ] Advanced_Instrumentation_for_Polyharmonic_Metal_Detectors.pdf
 
-## Key Concepts by Topic
+## Nøglebegreber
 
-### DFT (Discrete Fourier Transform)
-- Single-bin DFT for 2kHz detection
-- 4× oversampling optimization: `cos = {1,0,-1,0}`, `sin = {0,1,0,-1}`
-- No trig functions needed!
-- See: [[The_Discrete_Fourier_Transform.pdf]]
+### DFT (Diskret Fourier Transformation)
+- Single-bin DFT til 2kHz detektion
+- 4× oversampling optimering: `cos = {1,0,-1,0}`, `sin = {0,1,0,-1}`
+- Ingen trigonometriske funktioner nødvendige!
+- Se: [[The_Discrete_Fourier_Transform.pdf]]
 
-### RLC Resonance
-- Resonant frequency: $f_0 = \frac{1}{2\pi\sqrt{LC}}$
-- Quality factor: $Q = \frac{f_0}{BW}$
-- Phase shift indicates metal type
-- See: [[RLC_Circuits_and_Resonance.pdf]]
+### RLC Resonans
+- Resonansfrekvens: $f_0 = \frac{1}{2\pi\sqrt{LC}}$
+- Kvalitetsfaktor: $Q = \frac{f_0}{BW}$
+- Faseforskel indikerer metaltype
+- Se: [[RLC_Circuits_and_Resonance.pdf]]
 
-### Coil Design
-- TX coil: Generate 2kHz magnetic field
-- RX coil: Pick up reflected signal
-- Mutual inductance and coupling
-- See: [[Coil_Basics.pdf]]
+### Spoledesign
+- TX spole: Generér 2kHz magnetfelt (Ø200mm, 20 vindinger)
+- RX spole: Opfang reflekteret signal (Ø80mm, 200 vindinger)
+- Bucking spole: Annullér direkte kobling (Ø120mm, 20 vindinger)
+- Se: [[Coil_Basics.pdf]], [Coil Design.md](../Docs/Theory/Coil%20Design.md)
 
-### Phase Detection
-- Ferrous metals: Phase < 65° (high permeability)
-- Non-ferrous metals: Phase > 65° (eddy currents)
-- Amplitude indicates proximity
-- See: [[Course_intro.pdf]]
+### Fasedetektion
+- Ferromagnetiske metaller: Fase < 65° (høj permeabilitet)
+- Ikke-ferromagnetiske metaller: Fase > 65° (hvirvelstrømme)
+- Amplitude indikerer nærhed
+- Se: [[Course_intro.pdf]]
 
-## External Resources
+## Eksterne Ressourcer
 
-### Datasheets (to download)
-- [ATmega2560 Datasheet](https://ww1.microchip.com/downloads/en/devicedoc/atmel-2549-8-bit-avr-microcontroller-atmega640-1280-1281-2560-2561_datasheet.pdf)
-- [ATmega328P Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf)
-- [MCP3208 Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/21298e.pdf)
-- [SSD1306 Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
-- [LM358 Datasheet](https://www.ti.com/lit/ds/symlink/lm358.pdf)
+### Datablade (til download)
+- [ATmega328P Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-7810-Automotive-Microcontrollers-ATmega328P_Datasheet.pdf) - Microcontroller
+- [SSD1306 Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf) - OLED display
+- [IRF5305PbF Datasheet](https://www.infineon.com/dgdl/irf5305pbf.pdf) - P-kanal MOSFET (H-bro)
+- [IRL530 Datasheet](https://www.infineon.com/dgdl/irl530.pdf) - N-kanal MOSFET (H-bro)
+- [LM358 Datasheet](https://www.ti.com/lit/ds/symlink/lm358.pdf) - Op-amp
 
-## Notes Template
+## Relaterede Dokumenter
 
-When reading a document, use [[Templates/Literature Note]] to create notes.
+- [Project_Roadmap.md](../Docs/Project_Roadmap.md) - Projektstatus og kravanalyse
+- [Theory References.md](../Docs/Theory/Theory%20References.md) - Teori krydsreferencer
 
-## Tags
-#literature #reference #theory #datasheets
+#litteratur #reference #teori #datablade

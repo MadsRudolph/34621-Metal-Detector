@@ -1,0 +1,13 @@
+var searchData=
+[
+  ['calibrate_0',['calibrate',['../group__Prototypes.html#ga9a707d52fb1af46aceaf1f16a48dbbba',1,'main.c']]],
+  ['capture_5fcheck_5fserial_1',['capture_check_serial',['../group__CaptureFunctions.html#ga3ddb2d10101cfb07656cd3da2eec856c',1,'capture_check_serial(void):&#160;capture.c'],['../group__CaptureFunctions.html#ga3ddb2d10101cfb07656cd3da2eec856c',1,'capture_check_serial(void):&#160;capture.c']]],
+  ['capture_5fget_5fstate_2',['capture_get_state',['../group__CaptureFunctions.html#gabd34bf5a5ed7535a4ec3397bc9445001',1,'capture_get_state(void):&#160;capture.c'],['../group__CaptureFunctions.html#gabd34bf5a5ed7535a4ec3397bc9445001',1,'capture_get_state(void):&#160;capture.c']]],
+  ['capture_5finit_3',['capture_init',['../group__UARTPrivate.html#ga2af4306bf532ea2805d99eb48ae254aa',1,'capture_init(uint32_t baud):&#160;capture.c'],['../group__CaptureFunctions.html#ga2af4306bf532ea2805d99eb48ae254aa',1,'capture_init(uint32_t baud):&#160;capture.c']]],
+  ['capture_5foutput_4',['capture_output',['../group__CaptureFunctions.html#gace54d0dad4852fac9409f5e1c7a82553',1,'capture_output(int32_t re, int32_t im, uint16_t mag, int16_t phase):&#160;capture.c'],['../group__CaptureFunctions.html#gace54d0dad4852fac9409f5e1c7a82553',1,'capture_output(int32_t re, int32_t im, uint16_t mag, int16_t phase):&#160;capture.c']]],
+  ['capture_5fsend_5fready_5',['capture_send_ready',['../group__CaptureFunctions.html#ga835a42447dfae996cf099ecc8eb77cb3',1,'capture_send_ready(void):&#160;capture.c'],['../group__CaptureFunctions.html#ga835a42447dfae996cf099ecc8eb77cb3',1,'capture_send_ready(void):&#160;capture.c']]],
+  ['capture_5fset_5fstate_6',['capture_set_state',['../group__CaptureFunctions.html#gaab4f7bbf50c0a9aeb45e1b3b63dd0fb2',1,'capture_set_state(uint8_t state):&#160;capture.c'],['../group__CaptureFunctions.html#gaab4f7bbf50c0a9aeb45e1b3b63dd0fb2',1,'capture_set_state(uint8_t state):&#160;capture.c']]],
+  ['capture_5fstore_5fsample_7',['capture_store_sample',['../group__CaptureFunctions.html#ga5be9aa0d7b03320c7e3b82dd494a8954',1,'capture_store_sample(uint8_t index, int16_t sample):&#160;capture.c'],['../group__CaptureFunctions.html#ga5be9aa0d7b03320c7e3b82dd494a8954',1,'capture_store_sample(uint8_t index, int16_t sample):&#160;capture.c']]],
+  ['classify_5fmetal_8',['classify_metal',['../group__Prototypes.html#gaee038a739595c620265f67bc009a57ac',1,'main.c']]],
+  ['clear_5fdisplay_9',['clear_display',['../group__CoreFunctions.html#ga07cca7b02e387c8bdf514898a95eae0a',1,'clear_display(void):&#160;ssd1306.c'],['../group__CoreFunctions.html#ga07cca7b02e387c8bdf514898a95eae0a',1,'clear_display(void):&#160;ssd1306.c']]]
+];

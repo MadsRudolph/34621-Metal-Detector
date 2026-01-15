@@ -1,0 +1,10 @@
+# MATLAB Generated Images
+
+Dette directory indeholder grafer genereret af MATLAB scriptet `Docs/Matlab/Coil_Design_Multilayer.m`.
+
+## Forventede filer:
+- `tx_turns_vs_inductance.png` - TX vindinger vs induktans kurve
+- `tx_current_vs_resistance.png` - H-bro TX strøm vs total modstand (ved resonans)
+
+## Generer grafer:
+Kør `Coil_Design_Multilayer.m` i MATLAB for at generere/opdatere graferne.

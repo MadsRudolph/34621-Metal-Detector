@@ -1,80 +1,94 @@
-# ⚡ LTspice Simulations
+# LTspice & QSPICE Simuleringer
 
-Circuit simulations for the VLF Metal Detector.
+Kredsløbssimuleringer til VLF Metaldetektoren.
 
-> 📚 **Theory:** [Op-Amp Design](obsidian://open?vault=Obsidian&file=Courses%2FIntegrated%20Analog%20Electronics%2FLTspice%20%26%20Kicad%2F02%20-%20Two-Stage%20CMOS%20Op-Amp) | [Filter Prototypes](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFilter_Prototypes_Comparison)
+> **Teori:** [Op-Amp Design](obsidian://open?vault=Obsidian&file=Courses%2FIntegrated%20Analog%20Electronics%2FLTspice%20%26%20Kicad%2F02%20-%20Two-Stage%20CMOS%20Op-Amp) | [Filter Prototyper](obsidian://open?vault=Obsidian&file=Courses%2FDSP%2FFormulas%2FFilter_Prototypes_Comparison)
 
-## Structure
+## Simuleringsværktøjer
 
-```
-LTspice/
-├── simulations/     # .asc simulation files
-│   ├── tx_coil_driver.asc
-│   ├── rx_amplifier.asc
-│   ├── bandpass_filter.asc
-│   └── full_analog_chain.asc
-├── models/          # .lib and .mod component models
-│   └── op_amp_models.lib
-└── exports/         # Exported plots and data
-    ├── bode_plots/
-    └── transient/
-```
+| Værktøj | Anvendelse | Mappe |
+|---------|------------|-------|
+| LTspice | Generelle simuleringer | `LTspice/` |
+| QSPICE | H-bro driver (bedre MOSFET modeller) | `QSPICE/` |
 
-## Circuits to Simulate
+## Status
 
-### 1. TX Coil Driver (Power Amplifier)
-- [ ] PWM to sine conversion
-- [ ] Current drive capability
-- [ ] Power consumption from 9V
+| Kredsløb | Skema | Transient | AC Analyse | Status |
+|----------|-------|-----------|------------|--------|
+| TX H-bro Driver | ✅ | ✅ | ✅ | **Færdig** (QSPICE) |
+| RX Forstærker | ⬜ | ⬜ | ⬜ | Afventer |
+| Båndpasfilter | ⬜ | ⬜ | ⬜ | Afventer |
+| Fuld Analog Kæde | ⬜ | ⬜ | ⬜ | Afventer |
 
-### 2. RX Coil Amplifier
-- [ ] Gain calculation
-- [ ] Noise analysis
-- [ ] Bandwidth (centered on 2kHz)
+## TX H-bro Driver (QSPICE) ✅
 
-### 3. Bandpass Filter
-- [ ] Center frequency: 2 kHz
-- [ ] Q factor selection
-- [ ] Phase response
+H-bro MOSFET driver til TX spole er fuldt simuleret og verificeret.
 
-### 4. Full Analog Chain
-- [ ] End-to-end simulation
-- [ ] Phase shift verification
-- [ ] Signal levels at each stage
+### Nøgleresultater
+- **Effektivitet:** ~90%
+- **Output:** 2 kHz firkantbølge
+- **P-MOSFET:** IRF5305PbF (2 stk, højside)
+- **N-MOSFET:** IRL530 (2 stk, lavside)
+- **Strømforbrug:** Inden for power budget
 
-## Simulation Checklist
+Se: [TX Driver Design.md](../Docs/Theory/TX%20Driver%20Design.md) for fuld analyse.
 
-| Circuit    | Schematic | Transient | AC Analysis | Notes |
-| ---------- | --------- | --------- | ----------- | ----- |
-| TX Driver  | ⬜         | ⬜         | ⬜           |       |
-| RX Amp     | ⬜         | ⬜         | ⬜           |       |
-| Filter     | ⬜         | ⬜         | ⬜           |       |
-| Full Chain | ⬜         | ⬜         | ⬜           |       |
+## Planlagte Simuleringer
+
+### 1. RX Spole Forstærker
+- [ ] Forstærkningsberegning
+- [ ] Støjanalyse
+- [ ] Båndbredde (centreret på 2kHz)
+
+### 2. Båndpasfilter
+- [ ] Centerfrekvens: 2 kHz
+- [ ] Q-faktor valg
+- [ ] Faserespons
+
+### 3. Fuld Analog Kæde
+- [ ] End-to-end simulering
+- [ ] Faseforskel verifikation
+- [ ] Signalniveauer ved hvert trin
 
 ## LTspice Tips
 
-### Useful Directives
+### Nyttige Direktiver
 ```spice
 .tran 0 10m 0 1u      ; Transient: 10ms, 1µs step
-.ac dec 100 10 100k   ; AC: 10Hz to 100kHz, 100 pts/decade
-.param Vcc=9          ; Parameter for supply voltage
+.ac dec 100 10 100k   ; AC: 10Hz til 100kHz, 100 pkt/dekade
+.param Vcc=9          ; Parameter for forsyningsspænding
 ```
 
-### Measuring Phase
-1. Run AC analysis
-2. Add plot: `V(out)` and `V(in)`
-3. Right-click → Add Trace → Phase
+### Måling af Fase
+1. Kør AC analyse
+2. Tilføj plot: `V(out)` og `V(in)`
+3. Højreklik → Add Trace → Phase
 
-### Op-Amp Models
-Use generic models or specific ones:
-- `UniversalOpAmp2` - Generic
+### Op-Amp Modeller
+Brug generiske modeller eller specifikke:
+- `UniversalOpAmp2` - Generisk
 - `LM358` - Dual, rail-to-rail input
-- `TL072` - Low noise JFET
+- `TL072` - Lav støj JFET
 
-## Related Documents
-- [[Literature/op_amps_everyone.pdf|Op Amps for Everyone]]
-- [[Literature/filters_v3_III_v1.pdf|Filter Design]]
-- [[Literature/RLC_Circuits_and_Resonance.pdf|RLC Circuits]]
+## Mappestruktur
 
-## Tags
-#ltspice #simulation #analog #circuits
+```
+LTspice/
+├── simulations/      # .asc simuleringsfiler
+├── models/           # .lib og .mod komponentmodeller
+└── exports/          # Eksporterede plots og data
+    ├── bode_plots/
+    └── transient/
+
+QSPICE/
+└── [H-bro simuleringer]
+```
+
+## Relaterede Dokumenter
+
+- [TX Driver Design.md](../Docs/Theory/TX%20Driver%20Design.md) - H-bro analyse
+- [Power Budget Analysis.md](../Docs/Theory/Power%20Budget%20Analysis.md) - Strømforbrug
+- [[../Literature/op_amps_everyone.pdf|Op Amps for Everyone]]
+- [[../Literature/RLC_Circuits_and_Resonance.pdf|RLC Kredsløb]]
+
+#ltspice #qspice #simulering #analog #kredsløb
