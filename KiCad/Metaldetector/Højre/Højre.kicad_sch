@@ -2,7 +2,7 @@
 	(version 20250114)
 	(generator "eeschema")
 	(generator_version "9.0")
-	(uuid "5d4b3760-b34d-4d84-9846-2ec5bfc41926")
+	(uuid "b4841c49-a350-4802-be1b-bbe4cc1b21cc")
 	(paper "A4")
 	(lib_symbols
 		(symbol "Connector:Conn_01x01_Pin"
@@ -1431,533 +1431,532 @@
 		)
 	)
 	(junction
-		(at 151.13 85.09)
+		(at 128.27 82.55)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "00ce081c-1a04-4003-9689-a8173fcf7602")
+		(uuid "1227cacf-f95c-4acf-8d5a-1dec3f51645a")
 	)
 	(junction
-		(at 116.84 106.68)
+		(at 116.84 102.87)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "071ac31a-a2f4-4f63-8a47-849c5f277044")
+		(uuid "41d6525e-ea3f-4ccd-870c-773cee0e0274")
 	)
 	(junction
-		(at 127 124.46)
+		(at 116.84 104.14)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "6b8e3da1-2356-421d-b776-e1d8643630af")
+		(uuid "57516f98-a813-494c-a704-a43aa1b8e090")
 	)
 	(junction
-		(at 116.84 105.41)
+		(at 154.94 68.58)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "866fe658-7bef-42cd-aeab-4d10d18f64f8")
+		(uuid "698bebf3-023f-4e7b-afb5-2c09d3a875f7")
 	)
 	(junction
-		(at 154.94 71.12)
+		(at 133.35 104.14)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "906f5c60-c788-46c0-a1f7-0e01370fe04a")
+		(uuid "6cdafbea-f782-40ce-865e-158f0d187182")
 	)
 	(junction
-		(at 116.84 99.06)
+		(at 151.13 82.55)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "a750aeca-22d9-483c-b90f-805d5da07cca")
+		(uuid "8e4ba678-2f0b-42ee-a705-675ab522bfeb")
 	)
 	(junction
-		(at 128.27 85.09)
+		(at 116.84 96.52)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "cffa4706-a14a-435d-a411-f1c0432491eb")
+		(uuid "b64c5419-e6da-4232-bcb6-c3709c0a5df5")
 	)
 	(junction
-		(at 154.94 85.09)
+		(at 127 121.92)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "d01a8dc7-8f17-42d3-990a-b29ec64ef3b4")
+		(uuid "c30899cb-bfa4-4e38-9b0a-80eb7b140099")
 	)
 	(junction
-		(at 133.35 106.68)
+		(at 154.94 82.55)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "eda24616-ed99-4c29-8889-6163298da91f")
+		(uuid "d00da945-da6f-4e0c-b7a1-679db975e36a")
 	)
 	(wire
 		(pts
-			(xy 35.56 27.94) (xy 38.1 27.94)
+			(xy 127 121.92) (xy 124.46 121.92)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "0003b60f-4d64-4a7c-b867-f74d923042c0")
+		(uuid "10450748-d4c4-408f-8633-9dc8cf3bfeb7")
 	)
 	(wire
 		(pts
-			(xy 133.35 106.68) (xy 116.84 106.68)
+			(xy 15.24 20.32) (xy 15.24 21.59)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "031e20cd-ef9a-41b9-abac-c569dd2cccde")
+		(uuid "140ba152-2492-49d0-b3bb-1075f0ef6dc4")
 	)
 	(wire
 		(pts
-			(xy 140.97 124.46) (xy 137.16 124.46)
+			(xy 133.35 104.14) (xy 116.84 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "067f2fd1-7fdc-4926-ad48-1770d6248ab7")
+		(uuid "1b679a79-47b5-4f79-9ba1-9d05e2f7d00f")
 	)
 	(wire
 		(pts
-			(xy 151.13 106.68) (xy 133.35 106.68)
+			(xy 35.56 20.32) (xy 35.56 25.4)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "19f0433f-731d-4cdb-b038-ec35907b8df7")
+		(uuid "238ab4f3-2538-4bb6-aa0b-63166c9b4466")
 	)
 	(wire
 		(pts
-			(xy 116.84 99.06) (xy 116.84 105.41)
+			(xy 133.35 68.58) (xy 133.35 88.9)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "1ba20965-6592-4dc7-929e-64c157794fe1")
+		(uuid "25c0114d-3032-4e82-964f-367f311e2961")
 	)
 	(wire
 		(pts
-			(xy 168.91 106.68) (xy 168.91 107.95)
+			(xy 168.91 104.14) (xy 168.91 105.41)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2389c66d-56cb-45bd-9d94-7a1c1929df9f")
+		(uuid "28453e59-08cc-4dda-b299-a45635c66139")
 	)
 	(wire
 		(pts
-			(xy 128.27 68.58) (xy 128.27 85.09)
+			(xy 95.25 102.87) (xy 101.6 102.87)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "23d07c6c-c969-4177-ae47-4999116eee03")
+		(uuid "2a26000a-0935-4d85-9623-81e4fe92b416")
 	)
 	(wire
 		(pts
-			(xy 55.88 22.86) (xy 55.88 27.94)
+			(xy 127 121.92) (xy 127 129.54)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2990ad6d-aa31-429e-a398-bfa9d2487cdb")
+		(uuid "33e6b72a-7de3-4a54-bba9-0162f9dc631b")
 	)
 	(wire
 		(pts
-			(xy 148.59 85.09) (xy 151.13 85.09)
+			(xy 76.2 20.32) (xy 76.2 24.13)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2b13acad-c37d-4db8-975b-fcd950800622")
+		(uuid "3a4e385c-2fbc-4a1b-91d2-5f5b7e698bda")
 	)
 	(wire
 		(pts
-			(xy 129.54 124.46) (xy 127 124.46)
+			(xy 55.88 20.32) (xy 55.88 25.4)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "37f601e4-c16a-4c0f-af86-0876edbc1475")
+		(uuid "3a8529a4-ed88-4224-9f3c-3c63943ab269")
 	)
 	(wire
 		(pts
-			(xy 176.53 101.6) (xy 179.07 101.6)
+			(xy 78.74 20.32) (xy 78.74 24.13)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "3a998782-356d-40cf-a9a5-552603271f76")
+		(uuid "48c7ac4c-4b12-49e0-9c00-12a64f5d8081")
 	)
 	(wire
 		(pts
-			(xy 55.88 27.94) (xy 58.42 27.94)
+			(xy 154.94 76.2) (xy 154.94 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "43449d88-e0d6-4d18-9276-1213e62682c0")
+		(uuid "4a5c575e-e71e-4883-9284-304355dd78d8")
 	)
 	(wire
 		(pts
-			(xy 116.84 105.41) (xy 109.22 105.41)
+			(xy 81.28 20.32) (xy 81.28 24.13)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "477abf61-b9b2-4caf-96ed-e8dbfbed4e42")
+		(uuid "4d0ac65f-f41b-48be-b817-cbe3fbac6d23")
 	)
 	(wire
 		(pts
-			(xy 151.13 104.14) (xy 151.13 106.68)
+			(xy 173.99 68.58) (xy 168.91 68.58)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "4e3ff132-d7bb-43ea-969b-34e6bc71df7a")
+		(uuid "54ef0c41-3e57-43c3-a802-1a0148fa8992")
 	)
 	(wire
 		(pts
-			(xy 15.24 22.86) (xy 15.24 24.13)
+			(xy 186.69 68.58) (xy 181.61 68.58)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "53a757ec-d388-48ec-910a-ebf04cc45571")
+		(uuid "650b2645-fd93-40e9-8ada-e0d93302b5c2")
 	)
 	(wire
 		(pts
-			(xy 116.84 105.41) (xy 116.84 106.68)
+			(xy 151.13 82.55) (xy 154.94 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "53deaa37-1087-41a2-9b39-4229a0a03c7d")
+		(uuid "6528c1d7-d19e-4be6-b2d2-5404b800fb94")
 	)
 	(wire
 		(pts
-			(xy 116.84 90.17) (xy 116.84 99.06)
+			(xy 128.27 66.04) (xy 128.27 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "540bfbf2-9fc8-48ca-87c3-b50eb1cd38f7")
+		(uuid "67c27f54-6700-4743-8028-4d131d156c11")
 	)
 	(wire
 		(pts
-			(xy 133.35 71.12) (xy 133.35 91.44)
+			(xy 129.54 121.92) (xy 127 121.92)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "57d6fed0-becc-4549-8b78-1d4e6bb8ad9e")
+		(uuid "6b93ccb3-81bf-42d7-857a-10ff305cdb41")
 	)
 	(wire
 		(pts
-			(xy 161.29 71.12) (xy 154.94 71.12)
+			(xy 168.91 82.55) (xy 168.91 93.98)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "5e562433-db02-45ef-8681-8c595074a884")
+		(uuid "6bdc8595-3e5f-46dc-bf0f-89691a8d517a")
 	)
 	(wire
 		(pts
-			(xy 154.94 85.09) (xy 168.91 85.09)
+			(xy 116.84 102.87) (xy 116.84 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "60330ad8-b22a-4ae7-9842-bf09598ec622")
+		(uuid "73de4c68-01b3-43ec-8d2a-26fcc3f554b5")
 	)
 	(wire
 		(pts
-			(xy 35.56 22.86) (xy 35.56 27.94)
+			(xy 116.84 127) (xy 116.84 128.27)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "73421814-a56d-4323-b2d7-25bffb689a85")
+		(uuid "899b40d6-6420-4e3d-bc64-d23ad21228dc")
 	)
 	(wire
 		(pts
-			(xy 127 124.46) (xy 127 132.08)
+			(xy 116.84 96.52) (xy 116.84 102.87)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "73450d36-e51d-494b-8a3b-6ce2146c3a3a")
+		(uuid "957291da-7029-4cb4-b01a-6ee0cb557f8a")
 	)
 	(wire
 		(pts
-			(xy 154.94 78.74) (xy 154.94 85.09)
+			(xy 154.94 82.55) (xy 168.91 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7747985d-28ad-4153-bb31-d82fbf8dfd9e")
+		(uuid "99e9a42b-7144-4cfd-98e4-f4e2def99428")
 	)
 	(wire
 		(pts
-			(xy 133.35 99.06) (xy 133.35 106.68)
+			(xy 154.94 68.58) (xy 133.35 68.58)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7804aab9-39d2-41ec-9ce9-a463a4df9830")
+		(uuid "9bbad060-ebc2-4547-9511-484a753d019f")
 	)
 	(wire
 		(pts
-			(xy 128.27 85.09) (xy 124.46 85.09)
+			(xy 140.97 82.55) (xy 128.27 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "7f8dca7e-1865-4cb9-b6ed-804e06cff106")
+		(uuid "9cc50f0e-f550-48b4-8f2b-6df1cf7cc86b")
 	)
 	(wire
 		(pts
-			(xy 116.84 78.74) (xy 116.84 80.01)
+			(xy 161.29 68.58) (xy 154.94 68.58)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "80545b0f-6e77-424d-8d71-7468b43e7765")
+		(uuid "a897f779-8e19-4e4c-b417-d30416e760c9")
 	)
 	(wire
 		(pts
-			(xy 76.2 22.86) (xy 76.2 26.67)
+			(xy 140.97 121.92) (xy 137.16 121.92)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8226a025-b641-4bc2-a680-925178426a87")
+		(uuid "ab49af86-c323-4b51-b317-a67e736cb04b")
 	)
 	(wire
 		(pts
-			(xy 140.97 85.09) (xy 128.27 85.09)
+			(xy 151.13 104.14) (xy 133.35 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8803bccd-30e1-42ae-aea1-26350b351eb9")
+		(uuid "ab845683-b1d3-4298-ac80-b4e3329e0b91")
 	)
 	(wire
 		(pts
-			(xy 151.13 85.09) (xy 154.94 85.09)
+			(xy 116.84 104.14) (xy 116.84 116.84)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8b918180-2315-4349-a7c5-661ac9f503d0")
+		(uuid "b8c67864-0016-4580-9b29-ed1c0445a7a4")
 	)
 	(wire
 		(pts
-			(xy 186.69 71.12) (xy 181.61 71.12)
+			(xy 128.27 82.55) (xy 124.46 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "98b7d703-0315-4861-a728-77f3639145ee")
+		(uuid "b935715b-45f3-404d-9c85-0d747ff7654f")
 	)
 	(wire
 		(pts
-			(xy 116.84 129.54) (xy 116.84 130.81)
+			(xy 176.53 99.06) (xy 179.07 99.06)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "9e879fe0-09fd-4315-ba50-19c5a866097b")
+		(uuid "ce7c0641-d1ed-4d1a-99db-87562e392b65")
 	)
 	(wire
 		(pts
-			(xy 127 124.46) (xy 124.46 124.46)
+			(xy 133.35 96.52) (xy 133.35 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "af3eee10-18dd-47a8-9ea0-748fcbefb5c2")
+		(uuid "cfd15ad1-655f-4624-9b45-f89d163e3b12")
 	)
 	(wire
 		(pts
-			(xy 78.74 22.86) (xy 78.74 26.67)
+			(xy 116.84 102.87) (xy 109.22 102.87)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "b5513779-9c22-4a1d-8f83-3e4ebe575b10")
+		(uuid "d110183d-7157-449a-a964-77f6485222e5")
 	)
 	(wire
 		(pts
-			(xy 116.84 106.68) (xy 116.84 119.38)
+			(xy 116.84 87.63) (xy 116.84 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d5dfd8cb-7739-4adc-b047-3c5db6a4be0c")
+		(uuid "e01b921d-44f7-4b47-8495-eb1a300dee3c")
 	)
 	(wire
 		(pts
-			(xy 81.28 22.86) (xy 81.28 26.67)
+			(xy 151.13 82.55) (xy 151.13 93.98)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d625700f-083e-4632-9fa0-5368f0203cef")
+		(uuid "e2693879-5850-46f2-b4b5-8afad4af72c3")
 	)
 	(wire
 		(pts
-			(xy 168.91 85.09) (xy 168.91 96.52)
+			(xy 148.59 82.55) (xy 151.13 82.55)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "d6e02e63-11ed-4705-81ea-a543eec20d28")
+		(uuid "e8697ae1-8426-4583-8f4c-95451029f44f")
 	)
 	(wire
 		(pts
-			(xy 151.13 85.09) (xy 151.13 96.52)
+			(xy 109.22 96.52) (xy 116.84 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "da2bb3fb-33c3-4234-8fac-c1745d875ddc")
+		(uuid "e8a48255-defe-4e6c-ac69-3e7bd310ab68")
 	)
 	(wire
 		(pts
-			(xy 173.99 71.12) (xy 168.91 71.12)
+			(xy 116.84 76.2) (xy 116.84 77.47)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "dbdc5f52-a2f5-4a76-bfd0-a0ee4e5fb19b")
+		(uuid "ecf623ee-9420-4517-bf9c-0f55d887f913")
 	)
 	(wire
 		(pts
-			(xy 154.94 71.12) (xy 133.35 71.12)
+			(xy 55.88 25.4) (xy 58.42 25.4)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "e754a3fe-ae8f-450e-9fad-8497cf45483a")
+		(uuid "ed854b5c-9245-42ef-84b0-31b2eebec63a")
 	)
 	(wire
 		(pts
-			(xy 109.22 99.06) (xy 116.84 99.06)
+			(xy 151.13 101.6) (xy 151.13 104.14)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "ed1a1eff-1693-44ad-a3e9-710c7400a825")
+		(uuid "f2fe738f-3ebd-42a0-9e34-5a6395501144")
 	)
-	(label "Meas_GATE_M4"
-		(at 78.74 26.67 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
+	(wire
+		(pts
+			(xy 35.56 25.4) (xy 38.1 25.4)
 		)
-		(uuid "261b6eee-804f-4e37-b872-a65dc752e925")
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f8661761-ab2c-4255-bd99-0c53238da6a2")
 	)
 	(label "Meas_H_Out"
-		(at 109.22 99.06 180)
+		(at 109.22 96.52 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "374c855d-9aea-41ad-92c0-1645458232f5")
+		(uuid "28a50a9b-db8b-4eb1-8a9e-a149cfb0b739")
 	)
 	(label "Meas_GATE_M4"
-		(at 127 132.08 0)
+		(at 127 129.54 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "5ebb6c70-e185-4cf1-8751-60fb81a88947")
+		(uuid "31a1051c-a1ee-4b07-b71c-040839f54223")
+	)
+	(label "Meas_H_Out"
+		(at 81.28 24.13 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "48560605-5218-4669-8bf4-7fc47287045c")
 	)
 	(label "Meas_GATE_M2"
-		(at 128.27 68.58 0)
+		(at 128.27 66.04 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "b1082876-f099-421e-8641-ec496edbb60c")
-	)
-	(label "Meas_H_Out"
-		(at 81.28 26.67 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right bottom)
-		)
-		(uuid "da64eb55-de7a-4bf9-b7e3-67466ff3de09")
+		(uuid "679a5c6a-54ad-4cc4-92c0-770bb46633fd")
 	)
 	(label "Meas_GATE_M2"
-		(at 76.2 26.67 270)
+		(at 76.2 24.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right bottom)
 		)
-		(uuid "e7f030b8-94ef-4d99-870a-7e3098cc8c58")
+		(uuid "6cbb2831-4389-44b8-b9f6-366a38eb1e27")
 	)
-	(hierarchical_label "Højre_out"
-		(shape input)
-		(at 109.22 105.41 180)
+	(label "Meas_GATE_M4"
+		(at 78.74 24.13 270)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify right bottom)
 		)
-		(uuid "1d334b50-c373-48ad-b7cf-a2b7ae60d680")
+		(uuid "cc4a7c0d-2b3f-4b44-8688-e58a1e70234f")
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 186.69 71.12 0)
+		(at 186.69 68.58 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1967,7 +1966,7 @@
 		(fields_autoplaced yes)
 		(uuid "0223b69d-e625-4089-a521-e7258ac1bb40")
 		(property "Reference" "#PWR03"
-			(at 186.69 74.93 0)
+			(at 186.69 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1976,7 +1975,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 186.69 66.04 0)
+			(at 186.69 63.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1984,7 +1983,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 186.69 71.12 0)
+			(at 186.69 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1993,7 +1992,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 186.69 71.12 0)
+			(at 186.69 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2002,7 +2001,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 186.69 71.12 0)
+			(at 186.69 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2014,8 +2013,14 @@
 			(uuid "7a54f222-e2a7-4400-9761-7c7a7e95baf9")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "#PWR03")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "#PWR03")
 					(unit 1)
 				)
@@ -2024,7 +2029,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 144.78 85.09 270)
+		(at 144.78 82.55 270)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2034,7 +2039,7 @@
 		(fields_autoplaced yes)
 		(uuid "08cbee1b-18cc-41b9-a990-a99befd6bd18")
 		(property "Reference" "R7"
-			(at 144.78 78.74 90)
+			(at 144.78 76.2 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2042,7 +2047,7 @@
 			)
 		)
 		(property "Value" "1"
-			(at 144.78 81.28 90)
+			(at 144.78 78.74 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2050,7 +2055,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 144.78 86.868 90)
+			(at 144.78 84.328 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2059,7 +2064,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 144.78 85.09 0)
+			(at 144.78 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2068,7 +2073,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 144.78 85.09 0)
+			(at 144.78 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2083,8 +2088,14 @@
 			(uuid "06f00032-ebcd-4c38-a904-92070403bef6")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "R7")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "R7")
 					(unit 1)
 				)
@@ -2093,7 +2104,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 55.88 17.78 90)
+		(at 55.88 15.24 90)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2103,7 +2114,7 @@
 		(fields_autoplaced yes)
 		(uuid "0e6e4835-93e6-4dc5-91f2-dcc3b9fe0230")
 		(property "Reference" "9V_pin2"
-			(at 57.15 17.1449 90)
+			(at 57.15 14.6049 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2112,7 +2123,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01_Pin"
-			(at 57.15 19.6849 90)
+			(at 57.15 17.1449 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2121,7 +2132,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 55.88 17.78 0)
+			(at 55.88 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2130,7 +2141,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 55.88 17.78 0)
+			(at 55.88 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2139,7 +2150,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 55.88 17.78 0)
+			(at 55.88 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2151,8 +2162,14 @@
 			(uuid "6b949817-5877-4306-bfcd-690bc6f40509")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "9V_pin2")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "9V_pin2")
 					(unit 1)
 				)
@@ -2161,7 +2178,7 @@
 	)
 	(symbol
 		(lib_id "power:+9V")
-		(at 58.42 27.94 0)
+		(at 58.42 25.4 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2170,7 +2187,7 @@
 		(fields_autoplaced yes)
 		(uuid "178047d0-9914-4e47-8ea6-96627cd1f05a")
 		(property "Reference" "#PWR013"
-			(at 58.42 31.75 0)
+			(at 58.42 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2179,7 +2196,7 @@
 			)
 		)
 		(property "Value" "+9V"
-			(at 58.42 22.86 0)
+			(at 58.42 20.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2187,7 +2204,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 58.42 27.94 0)
+			(at 58.42 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2196,7 +2213,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 58.42 27.94 0)
+			(at 58.42 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2205,7 +2222,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+9V\""
-			(at 58.42 27.94 0)
+			(at 58.42 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2217,8 +2234,14 @@
 			(uuid "4e57cd8a-2730-4777-8832-ce3ad555f057")
 		)
 		(instances
-			(project ""
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "#PWR013")
 					(unit 1)
 				)
@@ -2227,7 +2250,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 146.05 124.46 0)
+		(at 146.05 121.92 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2237,7 +2260,7 @@
 		(fields_autoplaced yes)
 		(uuid "1d1fbb3c-ba67-4ded-b079-ce3c3555a9cf")
 		(property "Reference" "PWM_2_In1"
-			(at 145.415 119.38 0)
+			(at 145.415 116.84 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2245,7 +2268,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01_Pin"
-			(at 145.415 121.92 0)
+			(at 145.415 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2253,7 +2276,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 146.05 124.46 0)
+			(at 146.05 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2262,7 +2285,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 146.05 124.46 0)
+			(at 146.05 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2271,7 +2294,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 146.05 124.46 0)
+			(at 146.05 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2283,8 +2306,14 @@
 			(uuid "c09a397b-ad44-46fc-a4d2-1f8cd983e677")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "PWM_2_In1")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "PWM_2_In1")
 					(unit 1)
 				)
@@ -2293,7 +2322,7 @@
 	)
 	(symbol
 		(lib_id "Simulation_SPICE:NMOS")
-		(at 171.45 101.6 0)
+		(at 171.45 99.06 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2302,7 +2331,7 @@
 		(dnp no)
 		(uuid "2f55d988-c235-4475-aee2-c65a071d718a")
 		(property "Reference" "Q6"
-			(at 165.1 100.3299 0)
+			(at 165.1 97.7899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2311,7 +2340,7 @@
 			)
 		)
 		(property "Value" "NMOS_IRL530"
-			(at 166.37 103.124 0)
+			(at 166.37 100.584 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2320,7 +2349,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 166.37 99.06 0)
+			(at 166.37 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2329,7 +2358,7 @@
 			)
 		)
 		(property "Datasheet" "https://ngspice.sourceforge.io/docs/ngspice-html-manual/manual.xhtml#cha_MOSFETs"
-			(at 171.45 114.3 0)
+			(at 171.45 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2338,7 +2367,7 @@
 			)
 		)
 		(property "Description" "N-MOSFET transistor, drain/source/gate"
-			(at 171.45 101.6 0)
+			(at 171.45 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2347,7 +2376,7 @@
 			)
 		)
 		(property "Sim.Device" "NMOS"
-			(at 171.45 118.745 0)
+			(at 171.45 116.205 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2356,7 +2385,7 @@
 			)
 		)
 		(property "Sim.Type" "VDMOS"
-			(at 171.45 120.65 0)
+			(at 171.45 118.11 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2365,7 +2394,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=D 2=G 3=S"
-			(at 171.45 116.84 0)
+			(at 171.45 114.3 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2383,8 +2412,14 @@
 			(uuid "91f2d6de-b837-4209-9699-d5429aec3449")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "Q6")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "Q6")
 					(unit 1)
 				)
@@ -2393,7 +2428,7 @@
 	)
 	(symbol
 		(lib_id "Device:D")
-		(at 151.13 100.33 90)
+		(at 151.13 97.79 90)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2403,7 +2438,7 @@
 		(fields_autoplaced yes)
 		(uuid "3aab0a4d-7992-4058-b0b0-3f7b54a591d9")
 		(property "Reference" "D4"
-			(at 148.59 99.0599 90)
+			(at 148.59 96.5199 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2412,7 +2447,7 @@
 			)
 		)
 		(property "Value" "D"
-			(at 148.59 101.5999 90)
+			(at 148.59 99.0599 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2421,7 +2456,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 151.13 100.33 0)
+			(at 151.13 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2430,7 +2465,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 151.13 100.33 0)
+			(at 151.13 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2439,7 +2474,7 @@
 			)
 		)
 		(property "Description" "Diode"
-			(at 151.13 100.33 0)
+			(at 151.13 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2448,7 +2483,7 @@
 			)
 		)
 		(property "Sim.Device" "D"
-			(at 151.13 100.33 0)
+			(at 151.13 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2457,7 +2492,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 151.13 100.33 0)
+			(at 151.13 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2472,8 +2507,14 @@
 			(uuid "6f6b1b5c-a47c-49d2-bf49-f83e206422a6")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "D4")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "D4")
 					(unit 1)
 				)
@@ -2482,7 +2523,7 @@
 	)
 	(symbol
 		(lib_id "Simulation_SPICE:NMOS")
-		(at 119.38 85.09 0)
+		(at 119.38 82.55 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2492,7 +2533,7 @@
 		(fields_autoplaced yes)
 		(uuid "49ae42d6-f3ba-488a-8f46-abf1d3073de8")
 		(property "Reference" "Q2"
-			(at 113.03 83.8199 0)
+			(at 113.03 81.2799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2501,7 +2542,7 @@
 			)
 		)
 		(property "Value" "NMOS_IRL530"
-			(at 113.03 86.3599 0)
+			(at 113.03 83.8199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2510,7 +2551,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 114.3 82.55 0)
+			(at 114.3 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2519,7 +2560,7 @@
 			)
 		)
 		(property "Datasheet" "https://ngspice.sourceforge.io/docs/ngspice-html-manual/manual.xhtml#cha_MOSFETs"
-			(at 119.38 97.79 0)
+			(at 119.38 95.25 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2528,7 +2569,7 @@
 			)
 		)
 		(property "Description" "N-MOSFET transistor, drain/source/gate"
-			(at 119.38 85.09 0)
+			(at 119.38 82.55 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2537,7 +2578,7 @@
 			)
 		)
 		(property "Sim.Device" "NMOS"
-			(at 119.38 102.235 0)
+			(at 119.38 99.695 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2546,7 +2587,7 @@
 			)
 		)
 		(property "Sim.Type" "VDMOS"
-			(at 119.38 104.14 0)
+			(at 119.38 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2555,7 +2596,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=D 2=G 3=S"
-			(at 119.38 100.33 0)
+			(at 119.38 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2573,8 +2614,14 @@
 			(uuid "cd966f0b-e0aa-46ae-a6d1-a13af419d4b5")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "Q2")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "Q2")
 					(unit 1)
 				)
@@ -2583,7 +2630,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x03_Pin")
-		(at 78.74 17.78 270)
+		(at 78.74 15.24 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2591,7 +2638,7 @@
 		(dnp no)
 		(uuid "4c8ad1b7-babd-4dea-8e9e-8b45fb8649b6")
 		(property "Reference" "Meas_H1"
-			(at 90.678 18.542 90)
+			(at 90.678 16.002 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2599,7 +2646,7 @@
 			)
 		)
 		(property "Value" "Conn_01x03_Pin"
-			(at 90.678 21.082 90)
+			(at 90.678 18.542 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2607,7 +2654,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 78.74 17.78 0)
+			(at 78.74 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2616,7 +2663,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 78.74 17.78 0)
+			(at 78.74 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2625,7 +2672,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x03, script generated"
-			(at 78.74 17.78 0)
+			(at 78.74 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2643,8 +2690,14 @@
 			(uuid "211ab752-8682-40aa-b089-b2eef9308a4a")
 		)
 		(instances
-			(project ""
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "Meas_H1")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "Meas_H1")
 					(unit 1)
 				)
@@ -2653,7 +2706,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 165.1 71.12 270)
+		(at 165.1 68.58 270)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2663,7 +2716,7 @@
 		(fields_autoplaced yes)
 		(uuid "50bfb37c-14ca-4207-a66a-c83d549952b9")
 		(property "Reference" "R5"
-			(at 165.1 64.77 90)
+			(at 165.1 62.23 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2671,7 +2724,7 @@
 			)
 		)
 		(property "Value" "1"
-			(at 165.1 67.31 90)
+			(at 165.1 64.77 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2679,7 +2732,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 165.1 72.898 90)
+			(at 165.1 70.358 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2688,7 +2741,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 165.1 71.12 0)
+			(at 165.1 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2697,7 +2750,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 165.1 71.12 0)
+			(at 165.1 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2712,8 +2765,14 @@
 			(uuid "175f3276-c328-42d4-bd96-7823621f61ac")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "R5")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "R5")
 					(unit 1)
 				)
@@ -2722,7 +2781,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 35.56 17.78 90)
+		(at 35.56 15.24 90)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2732,7 +2791,7 @@
 		(fields_autoplaced yes)
 		(uuid "53d99551-460b-483a-9118-b85d89cc4d98")
 		(property "Reference" "5V_pin3"
-			(at 36.83 17.1449 90)
+			(at 36.83 14.6049 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2741,7 +2800,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01_Pin"
-			(at 36.83 19.6849 90)
+			(at 36.83 17.1449 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2750,7 +2809,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 35.56 17.78 0)
+			(at 35.56 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2759,7 +2818,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 35.56 17.78 0)
+			(at 35.56 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2768,7 +2827,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 35.56 17.78 0)
+			(at 35.56 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2780,8 +2839,14 @@
 			(uuid "32c1b6e5-31cb-454a-a14a-ba7af2d9c573")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "5V_pin3")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "5V_pin3")
 					(unit 1)
 				)
@@ -2790,7 +2855,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 154.94 74.93 0)
+		(at 154.94 72.39 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2800,7 +2865,7 @@
 		(fields_autoplaced yes)
 		(uuid "5422e03f-9359-419b-995a-372f70380c18")
 		(property "Reference" "R6"
-			(at 152.4 73.6599 0)
+			(at 152.4 71.1199 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2809,7 +2874,7 @@
 			)
 		)
 		(property "Value" "1k"
-			(at 152.4 76.1999 0)
+			(at 152.4 73.6599 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2818,7 +2883,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 156.718 74.93 90)
+			(at 156.718 72.39 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2827,7 +2892,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 154.94 74.93 0)
+			(at 154.94 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2836,7 +2901,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 154.94 74.93 0)
+			(at 154.94 72.39 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2851,8 +2916,14 @@
 			(uuid "46389460-8d7f-4053-8932-5da3806e45ed")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "R6")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "R6")
 					(unit 1)
 				)
@@ -2861,7 +2932,7 @@
 	)
 	(symbol
 		(lib_id "Simulation_SPICE:NMOS")
-		(at 119.38 124.46 0)
+		(at 119.38 121.92 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2870,7 +2941,7 @@
 		(dnp no)
 		(uuid "595086f4-0060-4866-b696-d731f8831051")
 		(property "Reference" "Q4"
-			(at 113.03 123.1899 0)
+			(at 113.03 120.6499 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2879,7 +2950,7 @@
 			)
 		)
 		(property "Value" "NMOS_IRL530"
-			(at 113.03 125.7299 0)
+			(at 113.03 123.1899 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2888,7 +2959,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 114.3 121.92 0)
+			(at 114.3 119.38 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2897,7 +2968,7 @@
 			)
 		)
 		(property "Datasheet" "https://ngspice.sourceforge.io/docs/ngspice-html-manual/manual.xhtml#cha_MOSFETs"
-			(at 119.38 137.16 0)
+			(at 119.38 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2906,7 +2977,7 @@
 			)
 		)
 		(property "Description" "N-MOSFET transistor, drain/source/gate"
-			(at 119.38 124.46 0)
+			(at 119.38 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2915,7 +2986,7 @@
 			)
 		)
 		(property "Sim.Device" "NMOS"
-			(at 119.38 141.605 0)
+			(at 119.38 139.065 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2924,7 +2995,7 @@
 			)
 		)
 		(property "Sim.Type" "VDMOS"
-			(at 119.38 143.51 0)
+			(at 119.38 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2933,7 +3004,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=D 2=G 3=S"
-			(at 119.38 139.7 0)
+			(at 119.38 137.16 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2951,8 +3022,14 @@
 			(uuid "7aa391f2-6ea9-497e-bf2f-cf2af5d57b2e")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "Q4")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "Q4")
 					(unit 1)
 				)
@@ -2961,7 +3038,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 168.91 107.95 0)
+		(at 168.91 105.41 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2971,7 +3048,7 @@
 		(fields_autoplaced yes)
 		(uuid "5af78ebf-c7e7-46db-9924-630f4917d753")
 		(property "Reference" "#PWR04"
-			(at 168.91 114.3 0)
+			(at 168.91 111.76 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2980,7 +3057,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 168.91 113.03 0)
+			(at 168.91 110.49 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2988,7 +3065,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 168.91 107.95 0)
+			(at 168.91 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2997,7 +3074,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 168.91 107.95 0)
+			(at 168.91 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3006,7 +3083,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 168.91 107.95 0)
+			(at 168.91 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3018,8 +3095,14 @@
 			(uuid "afbd62e1-dcc7-43de-b3a8-d625c2656a1e")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "#PWR04")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "#PWR04")
 					(unit 1)
 				)
@@ -3028,7 +3111,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 116.84 130.81 0)
+		(at 116.84 128.27 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3038,7 +3121,7 @@
 		(fields_autoplaced yes)
 		(uuid "5ea2ae8c-1358-4bd0-ac08-fa289496d34f")
 		(property "Reference" "#PWR08"
-			(at 116.84 137.16 0)
+			(at 116.84 134.62 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3047,7 +3130,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 116.84 135.89 0)
+			(at 116.84 133.35 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3055,7 +3138,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 130.81 0)
+			(at 116.84 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3064,7 +3147,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 130.81 0)
+			(at 116.84 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3073,7 +3156,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 116.84 130.81 0)
+			(at 116.84 128.27 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3085,8 +3168,14 @@
 			(uuid "e859afff-e598-47c7-8253-c4a91390d28d")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "#PWR08")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "#PWR08")
 					(unit 1)
 				)
@@ -3095,7 +3184,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 184.15 101.6 0)
+		(at 184.15 99.06 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3105,7 +3194,7 @@
 		(fields_autoplaced yes)
 		(uuid "7342c871-9ae1-42e5-8d9d-6b94dc72f685")
 		(property "Reference" "PWM_1_NOT_In1"
-			(at 183.515 96.52 0)
+			(at 183.515 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3113,7 +3202,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01_Pin"
-			(at 183.515 99.06 0)
+			(at 183.515 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3121,7 +3210,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 184.15 101.6 0)
+			(at 184.15 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3130,7 +3219,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 184.15 101.6 0)
+			(at 184.15 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3139,7 +3228,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 184.15 101.6 0)
+			(at 184.15 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3151,8 +3240,14 @@
 			(uuid "01d4337c-68c9-482f-b067-c20d44fce8cb")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "PWM_1_NOT_In1")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "PWM_1_NOT_In1")
 					(unit 1)
 				)
@@ -3161,7 +3256,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 15.24 24.13 0)
+		(at 15.24 21.59 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3170,7 +3265,7 @@
 		(fields_autoplaced yes)
 		(uuid "7611d58c-57b7-4273-9781-a4182457f259")
 		(property "Reference" "#PWR011"
-			(at 15.24 30.48 0)
+			(at 15.24 27.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3179,7 +3274,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 15.24 29.21 0)
+			(at 15.24 26.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3187,7 +3282,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 15.24 24.13 0)
+			(at 15.24 21.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3196,7 +3291,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 15.24 24.13 0)
+			(at 15.24 21.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3205,7 +3300,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 15.24 24.13 0)
+			(at 15.24 21.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3217,8 +3312,14 @@
 			(uuid "db6cdf36-ac09-4331-a1f2-fa2a59a755c3")
 		)
 		(instances
-			(project ""
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "#PWR011")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "#PWR011")
 					(unit 1)
 				)
@@ -3227,7 +3328,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 133.35 124.46 270)
+		(at 133.35 121.92 270)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3237,7 +3338,7 @@
 		(fields_autoplaced yes)
 		(uuid "8972a571-b257-4b32-b08f-f519930063e2")
 		(property "Reference" "R8"
-			(at 133.35 118.11 90)
+			(at 133.35 115.57 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3245,7 +3346,7 @@
 			)
 		)
 		(property "Value" "1"
-			(at 133.35 120.65 90)
+			(at 133.35 118.11 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3253,7 +3354,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 133.35 126.238 90)
+			(at 133.35 123.698 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3262,7 +3363,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 133.35 124.46 0)
+			(at 133.35 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3271,7 +3372,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 133.35 124.46 0)
+			(at 133.35 121.92 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3286,8 +3387,14 @@
 			(uuid "2a668d4a-c8e8-4930-ab6e-398dee2256d3")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "R8")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "R8")
 					(unit 1)
 				)
@@ -3296,7 +3403,7 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x01_Pin")
-		(at 15.24 17.78 90)
+		(at 15.24 15.24 90)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3306,7 +3413,7 @@
 		(fields_autoplaced yes)
 		(uuid "b1f6db46-94af-4684-b203-aadbadbebb41")
 		(property "Reference" "GND_pin3"
-			(at 16.51 17.1449 90)
+			(at 16.51 14.6049 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3315,7 +3422,7 @@
 			)
 		)
 		(property "Value" "Conn_01x01_Pin"
-			(at 16.51 19.6849 90)
+			(at 16.51 17.1449 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3324,7 +3431,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 15.24 17.78 0)
+			(at 15.24 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3333,7 +3440,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 15.24 17.78 0)
+			(at 15.24 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3342,7 +3449,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x01, script generated"
-			(at 15.24 17.78 0)
+			(at 15.24 15.24 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3354,8 +3461,14 @@
 			(uuid "74d23c1d-fc42-47ac-9a39-ccfd93797801")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "GND_pin3")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "GND_pin3")
 					(unit 1)
 				)
@@ -3364,7 +3477,7 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 133.35 95.25 0)
+		(at 133.35 92.71 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3373,7 +3486,7 @@
 		(dnp no)
 		(uuid "b7e469d8-260e-40fe-99d3-61ce4540a38d")
 		(property "Reference" "C2"
-			(at 140.716 93.98 0)
+			(at 140.716 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3382,7 +3495,7 @@
 			)
 		)
 		(property "Value" "820n"
-			(at 140.716 96.52 0)
+			(at 140.716 93.98 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3391,7 +3504,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 132.3848 99.06 0)
+			(at 132.3848 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3400,7 +3513,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 133.35 95.25 0)
+			(at 133.35 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3409,7 +3522,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor"
-			(at 133.35 95.25 0)
+			(at 133.35 92.71 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3424,8 +3537,14 @@
 			(uuid "9a83b39a-df67-487f-8155-a6ef44201d18")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "C2")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "C2")
 					(unit 1)
 				)
@@ -3434,7 +3553,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 38.1 27.94 0)
+		(at 38.1 25.4 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3443,7 +3562,7 @@
 		(fields_autoplaced yes)
 		(uuid "e5fbc20d-43d7-42f8-a7b0-96f1f83328ba")
 		(property "Reference" "#PWR012"
-			(at 38.1 31.75 0)
+			(at 38.1 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3452,7 +3571,7 @@
 			)
 		)
 		(property "Value" "+5V"
-			(at 38.1 22.86 0)
+			(at 38.1 20.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3460,7 +3579,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 38.1 27.94 0)
+			(at 38.1 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3469,7 +3588,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 38.1 27.94 0)
+			(at 38.1 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3478,7 +3597,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 38.1 27.94 0)
+			(at 38.1 25.4 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3490,8 +3609,14 @@
 			(uuid "f48188d7-b533-48c9-93fe-6630750e66e2")
 		)
 		(instances
-			(project ""
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "#PWR012")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "#PWR012")
 					(unit 1)
 				)
@@ -3500,7 +3625,7 @@
 	)
 	(symbol
 		(lib_id "Device:D")
-		(at 177.8 71.12 0)
+		(at 177.8 68.58 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3510,7 +3635,7 @@
 		(fields_autoplaced yes)
 		(uuid "ed47c959-4ff1-4d9d-93e5-b27da94b8938")
 		(property "Reference" "D3"
-			(at 177.8 64.77 0)
+			(at 177.8 62.23 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3518,7 +3643,7 @@
 			)
 		)
 		(property "Value" "D"
-			(at 177.8 67.31 0)
+			(at 177.8 64.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3526,7 +3651,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 177.8 71.12 0)
+			(at 177.8 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3535,7 +3660,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 177.8 71.12 0)
+			(at 177.8 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3544,7 +3669,7 @@
 			)
 		)
 		(property "Description" "Diode"
-			(at 177.8 71.12 0)
+			(at 177.8 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3553,7 +3678,7 @@
 			)
 		)
 		(property "Sim.Device" "D"
-			(at 177.8 71.12 0)
+			(at 177.8 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3562,7 +3687,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 177.8 71.12 0)
+			(at 177.8 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3577,8 +3702,14 @@
 			(uuid "2a295c58-08a3-4550-91b3-61db5fb2ece5")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "D3")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
 					(reference "D3")
 					(unit 1)
 				)
@@ -3587,7 +3718,7 @@
 	)
 	(symbol
 		(lib_id "power:+9V")
-		(at 116.84 78.74 0)
+		(at 116.84 76.2 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3597,7 +3728,7 @@
 		(fields_autoplaced yes)
 		(uuid "f00d4754-166e-453e-b8dd-867c2eb1a8cc")
 		(property "Reference" "#PWR07"
-			(at 116.84 82.55 0)
+			(at 116.84 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3606,7 +3737,7 @@
 			)
 		)
 		(property "Value" "+9V"
-			(at 116.84 73.66 0)
+			(at 116.84 71.12 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3614,7 +3745,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 116.84 78.74 0)
+			(at 116.84 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3623,7 +3754,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 116.84 78.74 0)
+			(at 116.84 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3632,7 +3763,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+9V\""
-			(at 116.84 78.74 0)
+			(at 116.84 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3644,9 +3775,160 @@
 			(uuid "4cf8f35e-7f79-4d6a-a943-c5bd8bfb461b")
 		)
 		(instances
-			(project "Metaldetector"
+			(project "Højre"
 				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
 					(reference "#PWR07")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
+					(reference "#PWR07")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_01x01_Pin")
+		(at 90.17 102.87 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "fd0b23d6-c529-4b53-9a6b-ceb0c9d82af3")
+		(property "Reference" "H_Out"
+			(at 90.805 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "Conn_01x01_Pin"
+			(at 90.805 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 90.17 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 90.17 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x01, script generated"
+			(at 90.17 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "be92b827-cd37-4117-b1b1-c8259b031da6")
+		)
+		(instances
+			(project ""
+				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "H_Out")
+					(unit 1)
+				)
+			)
+			(project ""
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
+					(reference "H_Out")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 105.41 102.87 270)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fe9f0daf-a89b-4406-8c0f-2acc6b651fa0")
+		(property "Reference" "R_Load"
+			(at 105.41 106.172 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47"
+			(at 105.156 108.204 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 105.41 104.648 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 105.41 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 105.41 102.87 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "b1eaea09-7304-4cdb-9dc3-b89aabcee186")
+		)
+		(pin "1"
+			(uuid "8afc6b47-d5e5-472f-bd4f-445f450d3465")
+		)
+		(instances
+			(project "Højre"
+				(path "/1ff50a95-4e06-4ec7-aaf8-e1c2108289fd/b086b006-7178-401c-bdff-4031edfecbb9"
+					(reference "R_Load")
+					(unit 1)
+				)
+			)
+			(project "Højre"
+				(path "/b4841c49-a350-4802-be1b-bbe4cc1b21cc"
+					(reference "R_Load")
 					(unit 1)
 				)
 			)
