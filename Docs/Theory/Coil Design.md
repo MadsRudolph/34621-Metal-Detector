@@ -597,10 +597,14 @@ Interaktivt script til at finde det optimale antal vindinger på bucking spolen 
 | Parameter | Specifikation | Beregnet | Målt | Fejl |
 |-----------|---------------|----------|------|------|
 | TX vindinger | 70, 2 lag, Ø200mm | - | - | - |
-| TX induktans | 0.52mm tråd | 5.5 mH | TBD | TBD |
-| Bucking vindinger | 35→optimal, 1 lag, Ø60mm | - | - | - |
-| Bucking induktans | 0.52mm tråd | 0.32 mH | TBD | TBD |
-| **Total L** | Serie | **5.82 mH** | TBD | TBD |
+| TX induktans | 0.52mm tråd | 5.5 mH | - | - |
+| Bucking vindinger | 35→20 optimal, 1 lag, Ø60mm | - | - | - |
+| Bucking induktans | 0.52mm tråd | 0.32 mH | - | - |
+| **Total L** | Serie | **5.82 mH** | **2.03 mH** | -65% |
+
+> [!warning] Afvigelse fra teori
+> Målt induktans (2.03 mH) er væsentligt lavere end beregnet (5.82 mH).
+> Mulige årsager: Færre vindinger, anden trådtykkelse, eller geometriforskelle.
 
 #### RX Spole
 
@@ -608,11 +612,19 @@ Interaktivt script til at finde det optimale antal vindinger på bucking spolen 
 |-----------|---------------|----------|------|------|
 | Vindinger | 440, 4 lag, Ø50mm | - | - | - |
 | Tråddiameter | 0.15mm | - | - | - |
-| **Induktans** | - | **12.3 mH** | TBD | TBD |
+| **Induktans** | - | **12.3 mH** | **12.25 mH** | **-0.4%** |
 | DC modstand | - | ~52 Ω | TBD | TBD |
 
-> [!warning] Udfyld TBD
-> Opdater tabellen med faktiske målinger når spolerne er viklet.
+> [!success] RX Spole Verificeret
+> RX induktans matcher teoretisk værdi med <1% fejl.
+
+#### Bucking Spole Kalibrering
+
+| Parameter | Værdi |
+|-----------|-------|
+| Start vindinger | 35 |
+| **Optimal vindinger** | **20** |
+| Fjernede vindinger | 15 |
 
 ---
 
