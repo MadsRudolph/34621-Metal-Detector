@@ -485,6 +485,9 @@ MATLAB filer til spoledesign findes i `Docs/Matlab/`:
 | Fil | Formål |
 |-----|--------|
 | `Coil_Design_Multilayer.m` | Hovedscript - beregner og visualiserer spoledesign |
+| `verify_coils.m` | Sammenlign LCR målinger med Wheeler teori |
+| `bucking_calibration.m` | Find optimalt antal vindinger til bucking spole |
+| `coil_functions.m` | Delte funktioner til spoleberegning |
 
 > [!tip] Generer Grafer
 > Kør `Coil_Design_Multilayer.m` i MATLAB for at generere graferne i `Docs/Images/`.
@@ -536,6 +539,80 @@ L = (0.315 * (r*100)^2 * N^2) / (6*r*100 + 9*l*100 + 10*w*100) * 1e-6
 f = 2000; L = 6.33e-3;
 C = 1 / ((2*pi*f)^2 * L)  % Resultat: ~1.0 µF
 ```
+
+### 11.5 Måle-Verifikationsværktøjer
+
+#### verify_coils.m - LCR Sammenligning
+
+Interaktivt script til at sammenligne LCR-meter målinger med Wheeler teori.
+
+**Brug:**
+```matlab
+>> verify_coils
+```
+
+Scriptet guider dig gennem:
+1. Indtastning af spolespecifikationer (vindinger, lag, diameter, trådtykkelse)
+2. Indtastning af LCR-målinger (induktans, impedans)
+3. Automatisk beregning af teoretiske værdier
+4. Sammenligning med PASS/FAIL status
+
+**Eksempel output:**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  COMPARISON (tolerance: +/- 10%)                                │
+├─────────────────────────────────────────────────────────────────┤
+│  Parameter          Theoretical   Measured     Error   Status  │
+├─────────────────────────────────────────────────────────────────┤
+│  TX+Bucking L        5.82 mH       5.65 mH    +3.0%   PASS   │
+│  RX L                12.3 mH       11.8 mH    +4.2%   PASS   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### bucking_calibration.m - Bucking Spole Kalibrering
+
+Interaktivt script til at finde det optimale antal vindinger på bucking spolen for maksimal TX-felt undertrykkelse.
+
+**Brug:**
+```matlab
+>> bucking_calibration
+```
+
+**Procedure:**
+1. Start med flere vindinger end nødvendigt (f.eks. 35)
+2. Mål RX output spænding med oscilloskop
+3. Fjern én vinding ad gangen
+4. Log hver måling i scriptet
+5. Scriptet finder automatisk minimum (optimal null-balance)
+
+**Kalibreringsdata gemmes i:** `bucking_calibration_data.mat`
+
+### 11.6 Prototype Målinger vs Teori
+
+> [!info] Måleudstyr
+> LCR-meter ved 1 kHz, oscilloskop for RX output
+
+#### TX + Bucking Spole (serie)
+
+| Parameter | Specifikation | Beregnet | Målt | Fejl |
+|-----------|---------------|----------|------|------|
+| TX vindinger | 70, 2 lag, Ø200mm | - | - | - |
+| TX induktans | 0.52mm tråd | 5.5 mH | TBD | TBD |
+| Bucking vindinger | 35→optimal, 1 lag, Ø60mm | - | - | - |
+| Bucking induktans | 0.52mm tråd | 0.32 mH | TBD | TBD |
+| **Total L** | Serie | **5.82 mH** | TBD | TBD |
+
+#### RX Spole
+
+| Parameter | Specifikation | Beregnet | Målt | Fejl |
+|-----------|---------------|----------|------|------|
+| Vindinger | 440, 4 lag, Ø50mm | - | - | - |
+| Tråddiameter | 0.15mm | - | - | - |
+| **Induktans** | - | **12.3 mH** | TBD | TBD |
+| DC modstand | - | ~52 Ω | TBD | TBD |
+
+> [!warning] Udfyld TBD
+> Opdater tabellen med faktiske målinger når spolerne er viklet.
 
 ---
 
