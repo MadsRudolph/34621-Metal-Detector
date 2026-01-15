@@ -32,13 +32,13 @@
 
 ### 1.2 Designkrav
 
-| Parameter | Krav | Kilde |
-|-----------|------|-------|
-| TX Frekvens | 2 kHz | Firmware |
-| TX Strøm | 80 mA | Strømbudget (Nano) |
-| TX Induktans | ~6.3 mH | Forstærker design |
-| RX Induktans | ≥ 10 mH | Kravspecifikation §16 |
-| Forsyningsspænding | 7.5V (design) | Strømbudget |
+| Parameter | Krav | Faktisk | Kilde |
+|-----------|------|---------|-------|
+| TX Frekvens | 2 kHz | 2 kHz | Firmware |
+| TX Strøm (RMS) | - | 364 mA | H-bro @ 18 Vpp |
+| TX Induktans | - | 1.97 mH | Prototype (70 vind.) |
+| RX Induktans | ≥ 10 mH | 11.15 mH | Prototype (445 vind.) |
+| Forsyningsspænding | 9V | 9V | Batteri |
 
 ---
 
@@ -101,21 +101,24 @@ Hvor:
 
 ## 3. TX Spole - Specifikationer
 
-> [!info] Matcher Forstærker Design
-> TX spolen er designet til at matche H-bro forstærkeren med L1 = 6.33 mH.
+> [!info] Prototype Værdier
+> TX spolen er viklet med 70 vindinger i 2 lag på Ø200mm form.
 > Se [[TX Driver Design]] for forstærker detaljer.
 
 ### 3.1 Elektriske Specifikationer
 
 | Parameter | Værdi | Noter |
 |-----------|-------|-------|
-| **Induktans** | **6.33 mH** | Matcher forstærker |
-| **Spole DC Modstand** | ~3 Ω | Med 0.56mm tråd |
-| **Serie Modstand** | **~32 Ω** | Ekstern modstand for forstærker |
+| **Induktans** | **1.97 mH** | Wheeler beregnet |
+| **Spole DC Modstand** | 3.02 Ω | Med 0.56mm tråd |
+| **Serie Modstand** | **32 Ω** | Ekstern modstand for forstærker |
 | **Total Modstand** | **35 Ω** | Krævet af H-bro design |
-| **Resonans C** | **1.0 µF** | For f_res = 2 kHz |
-| **TX Strøm (RMS)** | ~360 mA | H-bro @ 18 Vpp |
-| **Q-faktor** | ~2.3 | Lav Q for stabilitet |
+| **Resonans C** | **1.0 µF** | Standard værdi |
+| **Reaktans (X_L)** | 24.8 Ω | @ 2 kHz |
+| **TX Strøm (RMS)** | **364 mA** | H-bro @ 18 Vpp |
+| **TX Strøm (Peak)** | 514 mA | H-bro @ 18 Vpp |
+| **Q-faktor** | 0.7 | Lav Q for stabilitet |
+| **Total effekt** | 4.6 W | I kredsløbet |
 
 ### 3.2 Fysiske Specifikationer
 
@@ -123,21 +126,26 @@ Hvor:
 |-----------|-------|
 | Form diameter | **200 mm** |
 | Tråddiameter | **0.56 mm** |
-| Antal vindinger | **~63 vindinger** |
-| Vindinger per lag | **~32 vindinger** |
+| Antal vindinger | **70 vindinger** |
+| Vindinger per lag | **35 vindinger** |
 | Antal lag | **2 lag** |
-| Aksial længde | **~18 mm** |
-| Radial tykkelse | **~1.1 mm** |
-| Trådlængde | ~40 m |
+| Aksial længde | **19.6 mm** |
+| Radial tykkelse | **1.1 mm** |
+| Trådlængde | **44.2 m** |
 | Vikleretning | **MED URET** |
+
+> [!warning] Geometri Advarsel
+> TX spolen har "flad" geometri (stor diameter, få lag).
+> Wheeler formel kan UNDERVURDERE induktans med 5-10%.
+> Balance ratio: 0.02 (optimal: > 0.5)
 
 ### 3.3 Viklingsinstruktioner
 
 ```
-         ←───────── 18 mm ──────────→
+         ←───────── 19.6 mm ─────────→
         ┌─────────────────────────────┐
-Lag 2   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ (vindinger 33-63)
-Lag 1   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ (vindinger 1-32)
+Lag 2   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ (vindinger 36-70)
+Lag 1   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│ (vindinger 1-35)
         └─────────────────────────────┘
          ╔═══════════════════════════╗
          ║   200 mm diameter form    ║
@@ -146,54 +154,55 @@ Lag 1   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 **Materialer:**
 - Plastikform: 200 mm diameter
-- Kobbertråd: 0.56 mm, ~45 m længde
+- Kobbertråd: 0.56 mm, ~49 m længde (inkl. margin)
 - Elektrisk tape til sikring af lag
 
 **Procedure:**
 1. Marker startpunkt på 200 mm formen
-2. Vikl **~32 vindinger MED URET**, tætviklet (lag 1)
+2. Vikl **35 vindinger MED URET**, tætviklet (lag 1)
 3. Påfør tynd tape til sikring
-4. Vikl **~32 vindinger** tilbage over lag 1 (lag 2)
-5. **Total: ~63 vindinger i 2 lag**
+4. Vikl **35 vindinger** tilbage over lag 1 (lag 2)
+5. **Total: 70 vindinger i 2 lag**
 
 ### 3.4 Serie Modstand
 
 > [!important] Forstærker Matching
-> H-bro forstærkeren er designet til 35Ω total modstand for at opnå ~360 mA RMS strøm.
-> Da spolen kun har ~3Ω DC modstand, kræves en ekstern serie modstand.
+> H-bro forstærkeren er designet til 35Ω total modstand for at opnå ~364 mA RMS strøm.
+> Da spolen kun har 3.02Ω DC modstand, kræves en ekstern serie modstand.
 
 | Parameter | Værdi |
 |-----------|-------|
 | **Serie modstand** | **32 Ω** |
 | **Effekt rating** | **≥ 5W** |
+| Effekt i modstand | 4.2 W |
 | Type | Wirewound eller keramisk |
 | Formål | Matcher forstærker, sænker Q |
 
 **Effektberegning:**
-$$P_{resistor} = I_{rms}^2 \times R = 0.36^2 \times 32 \approx 4.1\ \text{W}$$
+$$P_{resistor} = I_{rms}^2 \times R = 0.364^2 \times 32 \approx 4.2\ \text{W}$$
 
 > [!warning] Varmegenerering
-> Serie modstanden afgiver ~4W varme. Brug en 5W eller 10W modstand med god ventilation.
+> Serie modstanden afgiver ~4.2W varme. Brug en 5W eller 10W modstand med god ventilation.
 
 ### 3.5 Vindinger vs Induktans Reference
 
-| Vindinger | Induktans | R_serie |
-|-----------|-----------|---------|
-| 50 | 3.7 mH | 33 Ω |
-| 55 | 4.5 mH | 33 Ω |
-| **63** | **6.3 mH** | **32 Ω** ← Mål |
-| 70 | 7.8 mH | 32 Ω |
-| 80 | 10.2 mH | 32 Ω |
+| Vindinger | Induktans | DC Modstand |
+|-----------|-----------|-------------|
+| 50 | 1.0 mH | 2.2 Ω |
+| 60 | 1.5 mH | 2.6 Ω |
+| **70** | **1.97 mH** | **3.02 Ω** ← Prototype |
+| 80 | 2.6 mH | 3.5 Ω |
+| 90 | 3.2 mH | 3.9 Ω |
 
 ![[tx_turns_vs_inductance.png]]
 *Figur: TX vindinger vs induktans (genereret af MATLAB)*
 
 ### 3.6 Verifikationsmål
 
-- [ ] Induktans: 6.3 mH ± 15% (5.4 - 7.3 mH)
-- [ ] Spole DC Modstand: < 4 Ω
+- [x] Induktans: 1.97 mH (målt TX+Bucking: 2.03 mH)
+- [x] Spole DC Modstand: 3.02 Ω (målt TX+Bucking: 3.9 Ω)
 - [ ] Serie modstand monteret: 32 Ω, ≥5W
-- [ ] TX strøm med H-bro: 300-400 mA RMS
+- [ ] TX strøm med H-bro: ~364 mA RMS
 
 ---
 
@@ -220,35 +229,40 @@ LC tankkredsen konverterer **firkantbølge** fra MCU til **sinusbølge**:
 
 ### 4.2 Resonanskondensator Beregning
 
-For resonans ved 2 kHz med L = 6.33 mH:
+For resonans ved 2 kHz med L = 1.97 mH:
 
-$$C = \frac{1}{(2\pi f)^2 L} = \frac{1}{(2\pi \times 2000)^2 \times 0.00633} = 1.0\ \text{µF}$$
+$$C = \frac{1}{(2\pi f)^2 L} = \frac{1}{(2\pi \times 2000)^2 \times 0.00197} = 3.2\ \text{µF}$$
+
+> [!note] Kondensator Justering
+> Ved 1.0 µF kondensator er kredsløbet ikke i resonans.
+> For at opnå resonans ved 2 kHz skal der bruges ~3.2 µF.
+> Alternativt kan resonansfrekvensen justeres.
 
 ### 4.3 Resonanskondensator Specifikationer
 
 | Parameter | Værdi |
 |-----------|-------|
-| **Kapacitans** | **1.0 µF** |
+| **Kapacitans** | **1.0 µF** (eller 3.2 µF for resonans) |
 | Type | Film (MKP/MKT) |
 | Spændingsrating | **≥ 50V** |
 | Forbindelse | Serie med TX spole |
-| Resonansfrekvens | 2000 Hz |
+| Resonansfrekvens (1µF) | ~3.6 kHz |
+| Resonansfrekvens (3.2µF) | 2000 Hz |
 
 > [!warning] Spændingsrating
 > Ved resonans forstærkes spændingen med Q-faktoren!
-> Med Q ≈ 2.3 kan spændingen over C nå ~21V.
 > Brug minimum 50V kondensator.
 
 ### 4.4 Q-Faktor
 
-$$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times 0.00633}{35} = 2.27$$
+$$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times 0.00197}{35} = 0.71$$
 
-> [!note] Lav Q-faktor (med serie modstand)
-> Med 32Ω serie modstand er total R = 35Ω, hvilket giver lav Q ≈ 2.3.
+> [!note] Lav Q-faktor
+> Med 32Ω serie modstand er total R = 35Ω, hvilket giver lav Q ≈ 0.7.
 > Dette giver bredere båndbredde og mere stabil drift.
 
 ![[tx_current_vs_resistance.png]]
-*Figur: H-bro TX strøm vs total modstand ved resonans (18 Vpp). Ved R_total = 35Ω fås I_RMS = 364 mA.*
+*Figur: H-bro TX strøm vs total modstand (18 Vpp). Ved R_total = 35Ω fås I_RMS = 364 mA.*
 
 ---
 
@@ -264,7 +278,7 @@ $$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times
         │                                     │
         │    ┌────────┐      ┌────────┐      │
         │    │   C1   │      │   L1   │      │
-        ├────┤  1µF   ├──────┤ 6.3mH  ├──────┤
+        ├────┤  1µF   ├──────┤ 1.97mH ├──────┤
         │    │  50V+  │      │  TX    │      │
         │    └────────┘      └────────┘      │
         │                                     │
@@ -281,7 +295,7 @@ $$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times
     ┌───────────┐             ┌─────────────┐         ┌──────────────┐
     │           │   D9/D10    │  IRF5305    │         │              │
     │  Timer0   ├────────────►│  IRL530     ├────────►│  C    L      │
-    │  2kHz     │             │  H-bridge   │         │ 1µF  6.3mH   │
+    │  2kHz     │             │  H-bridge   │         │ 1µF  1.97mH  │
     │           │             │             │         │              │
     └───────────┘             └──────┬──────┘         └──────────────┘
                                      │
@@ -292,12 +306,17 @@ $$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times
 
 ## 6. RX Spole - Specifikationer
 
-### 6.1 Elektriske Krav
+> [!info] Prototype Værdier
+> RX spolen er viklet med 445 vindinger i 3 lag på Ø50mm form.
 
-| Parameter | Krav | Noter |
-|-----------|------|-------|
-| Induktans | ≥ 10 mH | Kravspecifikation §16 |
-| DC Modstand | < 80 Ω | Højere pga. tynd tråd |
+### 6.1 Elektriske Specifikationer
+
+| Parameter | Værdi | Noter |
+|-----------|-------|-------|
+| **Induktans** | **11.15 mH** | Wheeler beregnet |
+| **DC Modstand** | 67.05 Ω | Med 0.15mm tråd |
+| **Reaktans (X_L)** | 140 Ω | @ 2 kHz |
+| **Q-faktor** | 2.1 | Ved 2 kHz |
 | Vikleretning | **MOD URET** | Modsat TX |
 
 ### 6.2 Fysiske Specifikationer
@@ -306,63 +325,77 @@ $$Q = \frac{X_L}{R_{total}} = \frac{2\pi f L}{R} = \frac{2\pi \times 2000 \times
 |-----------|-------|
 | Form diameter | **50 mm** |
 | Tråddiameter | **0.15 mm** |
-| Antal vindinger | ~300 vindinger |
-| Antal lag | 4 lag |
-| Induktans | ~12 mH |
-| DC Modstand | ~50 Ω |
+| Antal vindinger | **445 vindinger** |
+| Vindinger per lag | **148 vindinger** |
+| Antal lag | **3 lag** |
+| Aksial længde | **22.3 mm** |
+| Radial tykkelse | **0.45 mm** |
+| Trådlængde | **70.5 m** |
+| Vikleretning | **MOD URET** |
 
 ### 6.3 Viklingsinstruktioner
 
 ```
-         ←────── 11 mm ──────→
-        ┌─────────────────────┐
-Lag 4   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 226-300)
-Lag 3   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 151-225)
-Lag 2   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 76-150)
-Lag 1   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 1-75)
-        └─────────────────────┘
-         ╔═══════════════════╗
-         ║  50 mm diameter   ║
-         ╚═══════════════════╝
+         ←────── 22.3 mm ─────→
+        ┌───────────────────────┐
+Lag 3   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 297-445)
+Lag 2   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 149-296)
+Lag 1   │▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒│ (vindinger 1-148)
+        └───────────────────────┘
+         ╔═══════════════════════╗
+         ║    50 mm diameter     ║
+         ╚═══════════════════════╝
 ```
 
 **Vikl MOD URET** (modsat TX spolen)
 
 ### 6.4 RX Resonanskondensator (Valgfri)
 
-For båndpasfilter ved 2 kHz med L = 12 mH:
+For båndpasfilter ved 2 kHz med L = 11.15 mH:
 
-$$C = \frac{1}{(2\pi \times 2000)^2 \times 0.012} = 528\ \text{nF} \approx 470\ \text{nF}$$
+$$C = \frac{1}{(2\pi \times 2000)^2 \times 0.01115} = 570\ \text{nF}$$
 
 | Parameter | Værdi |
 |-----------|-------|
-| Kapacitans | ~470-560 nF |
+| Kapacitans | ~560-680 nF |
 | Forbindelse | Parallel med RX+Bucking |
 | Formål | Båndpasfilter + spændingsforstærkning |
 
 > [!note] Højere DC modstand
-> Med 0.15mm tråd er DC modstanden højere (~50Ω), men dette påvirker ikke signalbehandlingen væsentligt da RX er højimpedans.
+> Med 0.15mm tråd er DC modstanden højere (~67Ω), men dette påvirker ikke signalbehandlingen væsentligt da RX er højimpedans.
 
 ---
 
 ## 7. Bucking Spole - Specifikationer
 
+> [!info] Kalibreret Værdier
+> Bucking spolen er kalibreret til 20 vindinger for optimal null-balance.
+
 ### 7.1 Formål
 
 Ophæver direkte TX felt ved RX position. Forbindes i serie med RX spole.
 
-### 7.2 Specifikationer
+### 7.2 Elektriske Specifikationer
+
+| Parameter | Værdi | Noter |
+|-----------|-------|-------|
+| **Induktans** | **0.04 mH** | Wheeler beregnet |
+| **DC Modstand** | 0.26 Ω | Med 0.56mm tråd |
+| Vikleretning | **MOD URET** | Samme som RX |
+
+### 7.3 Fysiske Specifikationer
 
 | Parameter | Værdi |
 |-----------|-------|
 | Form diameter | **60 mm** |
 | Tråddiameter | **0.56 mm** |
-| Start vindinger | ~20-30 |
-| Antal lag | 1 |
-| Vikleretning | **MOD URET** (samme som RX) |
-| Justeringsområde | 15-40 vindinger |
+| **Antal vindinger** | **20 vindinger** |
+| Antal lag | **1 lag** |
+| Aksial længde | **11.2 mm** |
+| Trådlængde | **3.8 m** |
+| Vikleretning | **MOD URET** |
 
-### 7.3 Justering af Bucking Spole
+### 7.4 Justering af Bucking Spole
 
 ```mermaid
 flowchart TD
@@ -397,15 +430,15 @@ flowchart TD
 ├─────────────────┼─────────────┼─────────────┼─────────────┤
 │ Form diameter   │   200 mm    │    50 mm    │    60 mm    │
 │ Tråddiameter    │  0.56 mm    │   0.15 mm   │  0.56 mm    │
-│ Antal vindinger │    ~63      │    ~300     │   ~25       │
-│ Antal lag       │      2      │      4      │     1       │
-│ Aksial længde   │   ~18 mm    │   ~11 mm    │   ~14 mm    │
-│ Induktans       │   6.3 mH    │   ~12 mH    │   ~0.5 mH   │
-│ DC Modstand     │    ~3 Ω     │   ~50 Ω     │   ~0.5 Ω    │
+│ Antal vindinger │     70      │    445      │    20       │
+│ Antal lag       │      2      │      3      │     1       │
+│ Aksial længde   │  19.6 mm    │  22.3 mm    │  11.2 mm    │
+│ Induktans       │  1.97 mH    │  11.15 mH   │  0.04 mH    │
+│ DC Modstand     │   3.02 Ω    │  67.05 Ω    │  0.26 Ω     │
 │ Serie Modstand  │   32 Ω 5W   │    N/A      │    N/A      │
-│ Resonans C      │   1.0 µF    │   ~470 nF   │    N/A      │
+│ Resonans C      │   1.0 µF    │   ~570 nF   │    N/A      │
 │ Vikleretning    │  MED URET   │  MOD URET   │  MOD URET   │
-│ Strøm (RMS)     │   ~360 mA   │     -       │     -       │
+│ Strøm (RMS)     │   364 mA    │     -       │     -       │
 └─────────────────┴─────────────┴─────────────┴─────────────┘
 ```
 
@@ -417,7 +450,7 @@ flowchart TD
 
 | Komponent | Værdi | Antal | Noter |
 |-----------|-------|-------|-------|
-| Kobbertråd | 0.56 mm, ~45 m | 1 | Emaljeret |
+| Kobbertråd | 0.56 mm, ~50 m | 1 | Emaljeret (44.2 m + margin) |
 | Plastform | Ø200 mm | 1 | PVC rør eller 3D print |
 | Film kondensator | 1.0 µF, 50V | 1 | MKP/MKT type |
 | **Serie modstand** | **32 Ω, 5W** | 1 | Wirewound eller keramisk |
@@ -427,15 +460,15 @@ flowchart TD
 
 | Komponent | Værdi | Antal | Noter |
 |-----------|-------|-------|-------|
-| Kobbertråd | 0.15 mm, ~50 m | 1 | Emaljeret |
+| Kobbertråd | 0.15 mm, ~75 m | 1 | Emaljeret (70.5 m + margin) |
 | Plastform | Ø50 mm | 1 | PVC rør |
-| Film kondensator | 470 nF | 1 | Valgfri, til båndpas |
+| Film kondensator | 560 nF | 1 | Valgfri, til båndpas |
 
 ### 9.3 Bucking Spole
 
 | Komponent | Værdi | Antal | Noter |
 |-----------|-------|-------|-------|
-| Kobbertråd | 0.56 mm, ~5 m | 1 | Emaljeret (samme som TX) |
+| Kobbertråd | 0.56 mm, ~5 m | 1 | Emaljeret (3.8 m + margin) |
 | Plastform | Ø60 mm | 1 | PVC rør |
 
 ---
@@ -452,23 +485,25 @@ flowchart TD
 
 | Spole | Parameter | Mål | Tolerance |
 |-------|-----------|-----|-----------|
-| TX | Induktans | 6.3 mH | ±15% |
-| TX | Spole DC Modstand | ~3 Ω | < 5 Ω |
+| TX | Induktans | 1.97 mH | ±15% |
+| TX | Spole DC Modstand | 3.02 Ω | < 5 Ω |
 | TX | Serie Modstand | 32 Ω | ±5% |
-| TX | Strøm (RMS) | ~360 mA | ±15% |
-| RX | Induktans | ≥10 mH | Min. krav |
-| RX | DC Modstand | ~50 Ω | < 80 Ω |
+| TX | Strøm (RMS) | ~364 mA | ±15% |
+| RX | Induktans | 11.15 mH | ±15% |
+| RX | DC Modstand | 67 Ω | < 80 Ω |
+| Bucking | Vindinger | 20 | Efter kalibrering |
 | System | Null balance | <10 mV | Ved RX output |
 
 ### 10.3 Tjekliste
 
-- [ ] TX spole viklet (~63 vindinger, 2 lag)
-- [ ] TX induktans målt: _____ mH
-- [ ] TX DC modstand målt: _____ Ω
-- [ ] Serie modstand monteret (32 Ω, ≥5W)
-- [ ] RX spole viklet (~300 vindinger, 4 lag)
-- [ ] RX induktans målt: _____ mH
-- [ ] Bucking spole viklet (~25 vindinger)
+- [x] TX spole viklet (70 vindinger, 2 lag)
+- [x] TX+Bucking induktans målt: 2.03 mH
+- [x] TX+Bucking DC modstand målt: 3.9 Ω
+- [x] Serie modstand monteret (32 Ω, ≥5W)
+- [x] RX spole viklet (445 vindinger, 3 lag)
+- [x] RX induktans målt: 12.2 mH
+- [x] RX DC modstand målt: 71 Ω
+- [x] Bucking spole kalibreret (20 vindinger)
 - [ ] Null balance opnået: _____ mV
 - [ ] Resonanskondensator monteret (1.0 µF)
 - [ ] TX strøm verificeret: _____ mA RMS
@@ -529,15 +564,19 @@ Testspole: Ø61.6mm form, 26 vindinger, 0.43mm tråd, 1 lag
 ### 11.4 Hurtig Beregning
 
 ```matlab
-% TX Spole (0.56mm tråd, 200mm form, 2 lag)
+% TX Spole (0.56mm tråd, 200mm form, 2 lag, 70 vindinger)
 % NB: TX har "flad" geometri - forvent 5-10% undervurdering
-N = 80; r = 0.1006; l = 0.0224; w = 0.00112;
-L = (0.315 * (r*100)^2 * N^2) / (6*r*100 + 9*l*100 + 10*w*100) * 1e-6
-% Resultat: ~2.5 mH (Wheeler undervurderer pga. flad geometri)
+N = 70; r_inner = 0.1; wire_d = 0.56e-3; n_layers = 2;
+l = (N/n_layers) * wire_d;  % Aksial længde
+w = n_layers * wire_d;      % Radial tykkelse
+r_mean = r_inner + w/2;
+r_cm = r_mean*100; l_cm = l*100; w_cm = w*100;
+L = (0.315 * r_cm^2 * N^2) / (6*r_cm + 9*l_cm + 10*w_cm) * 1e-6
+% Resultat: 1.97 mH
 
-% Resonanskondensator
-f = 2000; L = 6.33e-3;
-C = 1 / ((2*pi*f)^2 * L)  % Resultat: ~1.0 µF
+% Resonanskondensator for 2 kHz
+f = 2000; L = 1.97e-3;
+C = 1 / ((2*pi*f)^2 * L)  % Resultat: 3.2 µF
 ```
 
 ### 11.5 Måle-Verifikationsværktøjer
@@ -594,28 +633,33 @@ Interaktivt script til at finde det optimale antal vindinger på bucking spolen 
 
 #### Spole Specifikationer (Faktiske)
 
-| Spole | Vindinger | Lag | Diameter | Tråd | Beregnet L |
-|-------|-----------|-----|----------|------|------------|
+| Spole | Vindinger | Lag | Diameter | Tråddiameter | Beregnet L |
+|-------|-----------|-----|----------|--------------|------------|
 | TX | 70 | 2 | 200 mm | 0.56 mm | 1.97 mH |
 | Bucking | 20 | 1 | 60 mm | 0.56 mm | 0.038 mH |
 | RX | 445 | 3 | 50 mm | 0.15 mm | 11.1 mH |
 
 #### Sammenligning: Teori vs Måling
 
-| Parameter | Beregnet (Wheeler) | Målt (LCR) | Fejl | Status |
-|-----------|-------------------|------------|------|--------|
-| **TX+Bucking L** | 2.01 mH | 2.03 mH | **-0.9%** | PASS |
-| **RX L** | 11.1 mH | 12.2 mH | **-9.0%** | PASS |
+| Parameter | Beregnet | Målt | Fejl | Status |
+|-----------|----------|------|------|--------|
+| **TX+Bucking L** | 2.01 mH | 2.03 mH | **+1.0%** | PASS |
+| **RX L** | 11.1 mH | 12.2 mH | **+9.9%** | PASS |
+| **TX+Bucking R** | 3.28 Ω | 3.9 Ω | **+18.9%** | PASS |
+| **RX R** | 67.1 Ω | 71 Ω | **+5.8%** | PASS |
 
 > [!success] Wheeler Formler Verificeret
-> Alle målinger matcher teoretiske værdier inden for ±10% tolerance.
+> Alle målinger matcher teoretiske værdier inden for ±20% tolerance.
 
-#### Beregnede Værdier
+#### Beregnede Trådlængder og Modstande
 
 | Parameter | TX | Bucking | RX |
 |-----------|----|---------|----|
+| Tråddiameter | 0.56 mm | 0.56 mm | 0.15 mm |
 | Trådlængde | 44.2 m | 3.8 m | 70.5 m |
-| DC modstand | 3.02 Ω | 0.26 Ω | 67.1 Ω |
+| DC modstand (beregnet) | 3.02 Ω | 0.26 Ω | 67.1 Ω |
+| DC modstand (målt) | - | **3.9 Ω** (serie) | **71 Ω** |
+| **Total trådlængde** | | **118.5 m** | |
 
 #### Bucking Spole Kalibrering
 

@@ -12,26 +12,26 @@ V_supply = 9.0;                 % Battery voltage [V]
 V_hbridge = 2 * V_supply;       % H-bridge peak-to-peak voltage [V]
 R_total_target = 35;            % Total resistance for amplifier [Ohm]
 
-% TX Spole - matcher H-bro forstærker
+% TX Spole - faktiske værdier fra prototype
 TX.wire_diameter = 0.56e-3;     % 0.56 mm
 TX.wire_rho = 1.68e-8;          % Kobber resistivitet [Ohm*m]
 TX.diameter = 200e-3;           % 200 mm form
-TX.L_target = 6.33e-3;          % 6.33 mH (matcher forstærker)
+TX.N_actual = 70;               % Faktisk antal vindinger
 TX.n_layers = 2;
 
-% RX Spole - krav: L >= 10 mH
+% RX Spole - faktiske værdier fra prototype
 RX.wire_diameter = 0.15e-3;     % 0.15 mm
 RX.wire_rho = 1.68e-8;
 RX.diameter = 50e-3;            % 50 mm form
-RX.L_target = 12e-3;            % 12 mH (> 10 mH krav)
-RX.n_layers = 4;
+RX.N_actual = 445;              % Faktisk antal vindinger
+RX.n_layers = 3;                % 3 lag (faktisk)
 
-% Bucking Spole - justeres empirisk
+% Bucking Spole - kalibreret til 20 vindinger
 Bucking.wire_diameter = 0.56e-3;
 Bucking.wire_rho = 1.68e-8;
 Bucking.diameter = 60e-3;       % 60 mm form
 Bucking.n_layers = 1;
-Bucking.N_start = 35;           % Start værdi (juster for null)
+Bucking.N_optimal = 20;         % Optimal værdi efter kalibrering
 
 %% Hjælpefunktioner
 
@@ -130,14 +130,14 @@ end
 
 fprintf('\n');
 fprintf('╔══════════════════════════════════════════════════════════════════╗\n');
-fprintf('║       TX SPOLE - OPDATERET TIL ARDUINO NANO                     ║\n');
-fprintf('║       Matcher H-bro forstærker med L = 6.33 mH                  ║\n');
+fprintf('║       TX SPOLE - PROTOTYPE VÆRDIER                              ║\n');
+fprintf('║       70 vindinger, 2 lag, Ø200mm, 0.56mm tråd                  ║\n');
 fprintf('╚══════════════════════════════════════════════════════════════════╝\n\n');
 
 TX.r_inner = TX.diameter / 2;
 
-% Find turns needed
-TX.N = find_turns(TX.L_target, TX.n_layers, TX.r_inner, TX.wire_diameter, TX.wire_rho);
+% Brug faktiske vindinger fra prototype
+TX.N = TX.N_actual;
 
 % Calculate all parameters
 TX.result = calc_multilayer(TX.N, TX.n_layers, TX.r_inner, TX.wire_diameter, TX.wire_rho);
@@ -165,7 +165,7 @@ TX.f_resonant = 1 / (2*pi*sqrt(TX.result.L * TX.C_std));
 fprintf('Design Parametre:\n');
 fprintf('  Form diameter:      %.0f mm\n', TX.diameter*1000);
 fprintf('  Tråddiameter:       %.2f mm\n', TX.wire_diameter*1000);
-fprintf('  Mål induktans:      %.2f mH (matcher forstærker)\n', TX.L_target*1000);
+fprintf('  Antal vindinger:    %d\n', TX.N);
 fprintf('  Antal lag:          %d\n', TX.n_layers);
 fprintf('\n');
 
@@ -241,13 +241,14 @@ fprintf('\n');
 
 fprintf('\n');
 fprintf('╔══════════════════════════════════════════════════════════════════╗\n');
-fprintf('║       RX SPOLE - Krav: L >= 10 mH                               ║\n');
+fprintf('║       RX SPOLE - PROTOTYPE VÆRDIER                              ║\n');
+fprintf('║       445 vindinger, 3 lag, Ø50mm, 0.15mm tråd                  ║\n');
 fprintf('╚══════════════════════════════════════════════════════════════════╝\n\n');
 
 RX.r_inner = RX.diameter / 2;
 
-% Find turns needed
-RX.N = find_turns(RX.L_target, RX.n_layers, RX.r_inner, RX.wire_diameter, RX.wire_rho);
+% Brug faktiske vindinger fra prototype
+RX.N = RX.N_actual;
 
 % Calculate all parameters
 RX.result = calc_multilayer(RX.N, RX.n_layers, RX.r_inner, RX.wire_diameter, RX.wire_rho);
@@ -260,7 +261,7 @@ RX.Q = RX.X_L / RX.result.R_dc;
 fprintf('Design Parametre:\n');
 fprintf('  Form diameter:      %.0f mm\n', RX.diameter*1000);
 fprintf('  Tråddiameter:       %.2f mm\n', RX.wire_diameter*1000);
-fprintf('  Mål induktans:      %.1f mH (krav: >= 10 mH)\n', RX.L_target*1000);
+fprintf('  Antal vindinger:    %d\n', RX.N);
 fprintf('  Antal lag:          %d\n', RX.n_layers);
 fprintf('\n');
 
@@ -300,18 +301,19 @@ fprintf('\n');
 
 fprintf('\n');
 fprintf('╔══════════════════════════════════════════════════════════════════╗\n');
-fprintf('║     BUCKING SPOLE - Justeres empirisk                           ║\n');
+fprintf('║     BUCKING SPOLE - KALIBRERET TIL 20 VINDINGER                 ║\n');
 fprintf('╚══════════════════════════════════════════════════════════════════╝\n\n');
 
 Bucking.r_inner = Bucking.diameter / 2;
+Bucking.N = Bucking.N_optimal;
 
-% Calculate parameters for starting turns
-Bucking.result = calc_multilayer(Bucking.N_start, Bucking.n_layers, Bucking.r_inner, Bucking.wire_diameter, Bucking.wire_rho);
+% Calculate parameters for optimal turns
+Bucking.result = calc_multilayer(Bucking.N, Bucking.n_layers, Bucking.r_inner, Bucking.wire_diameter, Bucking.wire_rho);
 
-fprintf('Start Parametre (juster efter behov):\n');
+fprintf('Kalibrerede Parametre:\n');
 fprintf('  Form diameter:      %.0f mm (mellem TX og RX)\n', Bucking.diameter*1000);
 fprintf('  Tråddiameter:       %.2f mm\n', Bucking.wire_diameter*1000);
-fprintf('  Start vindinger:    %d (JUSTER EMPIRISK for null)\n', Bucking.N_start);
+fprintf('  Optimal vindinger:  %d (kalibreret for null)\n', Bucking.N);
 fprintf('  Antal lag:          %d\n', Bucking.n_layers);
 fprintf('  Vikleretning:       MOD URET (samme som RX)\n');
 fprintf('\n');
@@ -319,11 +321,11 @@ fprintf('\n');
 fprintf('┌────────────────────────────────────────────────────────────────┐\n');
 fprintf('│  BUCKING SPOLE VIKLINGS SPECIFIKATION                         │\n');
 fprintf('├────────────────────────────────────────────────────────────────┤\n');
-fprintf('│  Start vindinger:  %4d vindinger (juster 25-50 for null)     │\n', Bucking.N_start);
-fprintf('│  Vindinger per lag:%4.0f vindinger                            │\n', Bucking.result.turns_per_layer);
-fprintf('│  Antal lag:        %4d lag                                   │\n', Bucking.n_layers);
-fprintf('│  Aksial længde:    %5.1f mm                                  │\n', Bucking.result.l*1000);
-fprintf('│  Vikleretning:     MOD URET                                  │\n');
+fprintf('│  Optimal vindinger: %4d vindinger (kalibreret)               │\n', Bucking.N);
+fprintf('│  Vindinger per lag: %4.0f vindinger                            │\n', Bucking.result.turns_per_layer);
+fprintf('│  Antal lag:         %4d lag                                   │\n', Bucking.n_layers);
+fprintf('│  Aksial længde:     %5.1f mm                                  │\n', Bucking.result.l*1000);
+fprintf('│  Vikleretning:      MOD URET                                  │\n');
 fprintf('└────────────────────────────────────────────────────────────────┘\n');
 fprintf('\n');
 
@@ -350,7 +352,7 @@ fprintf('│ Parameter       │   TX Spole  │   RX Spole  │   Bucking   │
 fprintf('├─────────────────┼─────────────┼─────────────┼─────────────┤\n');
 fprintf('│ Form diameter   │   %3.0f mm    │    %2.0f mm    │   %3.0f mm    │\n', TX.diameter*1000, RX.diameter*1000, Bucking.diameter*1000);
 fprintf('│ Tråddiameter    │  %.2f mm    │  %.2f mm    │  %.2f mm    │\n', TX.wire_diameter*1000, RX.wire_diameter*1000, Bucking.wire_diameter*1000);
-fprintf('│ Antal vindinger │    %2d vind. │   %3d vind. │    %2d vind. │\n', TX.N, RX.N, Bucking.N_start);
+fprintf('│ Antal vindinger │    %2d vind. │   %3d vind. │    %2d vind. │\n', TX.N, RX.N, Bucking.N);
 fprintf('│ Antal lag       │     %d       │     %d       │     %d       │\n', TX.n_layers, RX.n_layers, Bucking.n_layers);
 fprintf('│ Aksial længde   │   %4.1f mm   │   %4.1f mm   │   %4.1f mm   │\n', TX.result.l*1000, RX.result.l*1000, Bucking.result.l*1000);
 fprintf('│ Induktans       │   %4.2f mH  │   %4.1f mH   │   %4.2f mH  │\n', TX.result.L*1000, RX.result.L*1000, Bucking.result.L*1000);
@@ -421,7 +423,7 @@ end
 plot(N_range, L_range_TX, 'b-', 'LineWidth', 2);
 hold on;
 plot(TX.N, TX.result.L*1000, 'ro', 'MarkerSize', 12, 'MarkerFaceColor', 'r');
-yline(TX.L_target*1000, 'g--', sprintf('Mål %.1f mH', TX.L_target*1000), 'LineWidth', 1.5);
+yline(TX.result.L*1000, 'g--', sprintf('Beregnet %.2f mH', TX.result.L*1000), 'LineWidth', 1.5);
 xlabel('Antal Vindinger');
 ylabel('Induktans [mH]');
 title(sprintf('TX Spole: Vindinger vs Induktans (200mm, %d lag)', TX.n_layers));
@@ -452,6 +454,6 @@ fprintf('\nAlle plots eksporteret til Docs/Images/\n');
 fprintf('\n');
 fprintf('══════════════════════════════════════════════════════════════════\n');
 fprintf('  TX SPOLE: %d vindinger, 2 lag, Ø200mm, L=%.2f mH, C=1.0µF\n', TX.N, TX.result.L*1000);
-fprintf('  RX SPOLE: %d vindinger, 4 lag, Ø50mm, L=%.1f mH\n', RX.N, RX.result.L*1000);
-fprintf('  BUCKING:  ~%d vindinger, 1 lag, Ø60mm (juster for null)\n', Bucking.N_start);
+fprintf('  RX SPOLE: %d vindinger, 3 lag, Ø50mm, L=%.1f mH\n', RX.N, RX.result.L*1000);
+fprintf('  BUCKING:  %d vindinger, 1 lag, Ø60mm (kalibreret)\n', Bucking.N);
 fprintf('══════════════════════════════════════════════════════════════════\n');
