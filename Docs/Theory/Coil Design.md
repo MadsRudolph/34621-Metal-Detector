@@ -592,31 +592,30 @@ Interaktivt script til at finde det optimale antal vindinger på bucking spolen 
 > [!info] Måleudstyr
 > LCR-meter ved 1 kHz, oscilloskop for RX output
 
-#### TX + Bucking Spole (serie)
+#### Spole Specifikationer (Faktiske)
 
-| Parameter | Specifikation | Beregnet | Målt | Fejl |
-|-----------|---------------|----------|------|------|
-| TX vindinger | 70, 2 lag, Ø200mm | - | - | - |
-| TX induktans | 0.52mm tråd | 5.5 mH | - | - |
-| Bucking vindinger | 35→20 optimal, 1 lag, Ø60mm | - | - | - |
-| Bucking induktans | 0.52mm tråd | 0.32 mH | - | - |
-| **Total L** | Serie | **5.82 mH** | **2.03 mH** | -65% |
+| Spole | Vindinger | Lag | Diameter | Tråd | Beregnet L |
+|-------|-----------|-----|----------|------|------------|
+| TX | 70 | 2 | 200 mm | 0.56 mm | 1.97 mH |
+| Bucking | 20 | 1 | 60 mm | 0.56 mm | 0.038 mH |
+| RX | 445 | 3 | 50 mm | 0.15 mm | 11.1 mH |
 
-> [!warning] Afvigelse fra teori
-> Målt induktans (2.03 mH) er væsentligt lavere end beregnet (5.82 mH).
-> Mulige årsager: Færre vindinger, anden trådtykkelse, eller geometriforskelle.
+#### Sammenligning: Teori vs Måling
 
-#### RX Spole
+| Parameter | Beregnet (Wheeler) | Målt (LCR) | Fejl | Status |
+|-----------|-------------------|------------|------|--------|
+| **TX+Bucking L** | 2.01 mH | 2.03 mH | **-0.9%** | PASS |
+| **RX L** | 11.1 mH | 12.2 mH | **-9.0%** | PASS |
 
-| Parameter | Specifikation | Beregnet | Målt | Fejl |
-|-----------|---------------|----------|------|------|
-| Vindinger | 440, 4 lag, Ø50mm | - | - | - |
-| Tråddiameter | 0.15mm | - | - | - |
-| **Induktans** | - | **12.3 mH** | **12.25 mH** | **-0.4%** |
-| DC modstand | - | ~52 Ω | TBD | TBD |
+> [!success] Wheeler Formler Verificeret
+> Alle målinger matcher teoretiske værdier inden for ±10% tolerance.
 
-> [!success] RX Spole Verificeret
-> RX induktans matcher teoretisk værdi med <1% fejl.
+#### Beregnede Værdier
+
+| Parameter | TX | Bucking | RX |
+|-----------|----|---------|----|
+| Trådlængde | 44.2 m | 3.8 m | 70.5 m |
+| DC modstand | 3.02 Ω | 0.26 Ω | 67.1 Ω |
 
 #### Bucking Spole Kalibrering
 
