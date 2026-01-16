@@ -440,6 +440,7 @@
       "single_global_label": "ignore",
       "unannotated": "error",
       "unconnected_wire_endpoint": "warning",
+      "undefined_netclass": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
       "wire_dangling": "error"
@@ -450,7 +451,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "Dead_Time.kicad_pro",
+    "filename": "Venstre.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -610,7 +611,7 @@
   },
   "sheets": [
     [
-      "a29309b2-6eea-428f-846f-19d18e25e7df",
+      "7b050584-93a3-466e-adef-1578b2583fae",
       "Root"
     ]
   ],
