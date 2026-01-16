@@ -1,0 +1,99 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "00000000-0000-0000-0000-000000000001")
+	(paper "A4")
+	(title_block
+		(title "Metal Detector System Interconnect")
+		(date "2026-01-16")
+		(rev "1.0")
+		(comment 1 "System-level block diagram")
+		(comment 2 "Shows board-to-board connections")
+	)
+	(lib_symbols)
+	(text "METAL DETECTOR SYSTEM\nMulti-Board Architecture"
+		(exclude_from_sim no)
+		(at 148.59 25.4 0)
+		(effects
+			(font
+				(size 5 5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000001")
+	)
+	(text "Dead_Time/\n─────────────────────────\nProject: Dead_Time.kicad_pro\nFunction: PWM dead-time control\nComponents: 74AUC2G04, L272M, etc.\n\nInputs:\n  - PWM_IN (from MCU)\n  - VCC, GND\n\nOutputs:\n  - PWM_HIGH (to Venstre & Højre)\n  - PWM_LOW (to Venstre & Højre)"
+		(exclude_from_sim no)
+		(at 25.4 55.88 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000002")
+	)
+	(text "Venstre/\n─────────────────────────────\nProject: Venstre.kicad_pro\nFunction: Left side MOSFET driver\n\nInputs:\n  - PWM_HIGH (from Dead_Time)\n  - PWM_LOW (from Dead_Time)\n  - VCC, GND, V_POWER\n\nOutputs:\n  - COIL_A (to search coil)"
+		(exclude_from_sim no)
+		(at 25.4 115.57 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000003")
+	)
+	(text "Højre/\n─────────────────────────────\nProject: Højre.kicad_pro\nFunction: Right side MOSFET driver\n\nInputs:\n  - PWM_HIGH (from Dead_Time)\n  - PWM_LOW (from Dead_Time)\n  - VCC, GND, V_POWER\n\nOutputs:\n  - COIL_B (to search coil)"
+		(exclude_from_sim no)
+		(at 25.4 170.18 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000004")
+	)
+	(text "CONNECTOR PINOUT (Recommended)\n════════════════════════════════\n\nBoard-to-Board Connector (6-pin):\n  Pin 1: VCC (+5V logic)\n  Pin 2: GND\n  Pin 3: PWM_HIGH\n  Pin 4: PWM_LOW\n  Pin 5: V_POWER (high voltage)\n  Pin 6: GND_POWER\n\nCoil Connector (2-pin per board):\n  Pin 1: COIL_A or COIL_B\n  Pin 2: GND_POWER"
+		(exclude_from_sim no)
+		(at 165.1 55.88 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000005")
+	)
+	(text "SIGNAL FLOW\n═══════════\n\n   MCU\n    │\n    ▼ PWM\n┌────────────┐\n│ Dead_Time  │\n│            │\n└─────┬──────┘\n      │ PWM_HIGH, PWM_LOW\n      ├─────────────┐\n      ▼             ▼\n┌──────────┐  ┌──────────┐\n│ Venstre  │  │  Højre   │\n│ H-Bridge │  │ H-Bridge │\n│  Left    │  │  Right   │\n└────┬─────┘  └────┬─────┘\n     │             │\n     ▼             ▼\n   COIL_A       COIL_B\n     └─────┬─────┘\n           │\n      Search Coil"
+		(exclude_from_sim no)
+		(at 165.1 115.57 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000006")
+	)
+	(text "FILE LOCATIONS\n══════════════\n\nDead_Time/\n  └── Dead_Time.kicad_pro\n\nVenstre/\n  └── Venstre.kicad_pro\n\nHøjre/\n  └── Højre.kicad_pro\n\nNote: Open each .kicad_pro file\nseparately in KiCad to edit\nindividual boards."
+		(exclude_from_sim no)
+		(at 25.4 215.9 0)
+		(effects
+			(font
+				(size 2.5 2.5)
+			)
+			(justify left)
+		)
+		(uuid "10000000-0000-0000-0000-000000000007")
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
