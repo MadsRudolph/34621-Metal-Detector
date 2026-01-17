@@ -39,6 +39,9 @@
 #define F_SIGNAL 2000       // TX/RX signal frekvens (Hz)
 #define N 64                // Antal samples per DFT vindue (flere = mere præcist, men langsommere)
 
+//for samples periodisk Pi/2 ved vælgelse af k = 16, da dette sikrer at vi ikke behøver at lave udregninger
+// der indeholder Realdel og Imaginærdel samtidig og ydermere betyder dette at vi kan forudregne og slippe for at regne med 
+// andet en positive og negative 1 taller
 #define RePhase1  1 //cos(0)
 #define ImPhase2  1 //sin(Pi/2)
 #define RePhase3 -1 //cos(Pi)
@@ -171,13 +174,13 @@ void DFT_sum(int16_t ADC_Raw){
         if(j == 0 && capture_get_state() == CAPTURE_WAITING){
             capture_set_state(CAPTURE_ACTIVE);
         }
-
+        
         xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
 
         // Gem sample til MATLAB capture hvis aktiv
         capture_store_sample(j, xn);
 
-        switch(j & 3){ // & 3 betyder at vi kun bruger de 3 nederste bits og derfor tæller 0->3 selvom "i" er større
+        switch(j & 3){ // & 3 betyder at vi tæller 0->3 og så forfra igen selvom "i" er større
 
             case 0: // cos(0)*xn = 1*xn
                 Re += RePhase1*xn;
@@ -224,14 +227,13 @@ void DFT_Calc(){
     static uint8_t filt_init = 0; // bruges til at sikre at vi ikke ganger med 0 i første udregning
     //IIR filter som sikrer at vi holder stabile displayværdier for at gøre læsning af denne nemmere
     void IIR_Filt(){
-        
         //opstarts funktion
-        if(!filt_init){ //sat til 1 for at vi ikke ganger med 0 første gang og får forsinkelse i startup
+        if(!filt_init){ //for at undgå forsinkelse ved startup sættes filterresultatet til det målte på den første måling
         mag_filtered = mag;
         ang_filtered = ang;  
         filt_init = 1; // flag sættes og vi udregner nedenfor
         // ellers kører udregningen
-       }else{
+        }else{
         //filtreret magnitude regnet som 32 bit for at undgå overflow
         mag_filtered = (mag_filtered*9 + (uint32_t)mag*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats 
         //filtreret fase
