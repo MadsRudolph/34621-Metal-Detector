@@ -164,10 +164,6 @@ ISR(ADC_vect){
 }
 
 
-
-
-
-
 /* ============ DFT BEREGNING ============ */
 void DFT_sum(int16_t ADC_Raw){
 
@@ -218,8 +214,29 @@ void DFT_sum(int16_t ADC_Raw){
     }
 
 void DFT_Calc(){
-    mag = sqrt(Re_buff*Re_buff + Im_buff*Im_buff)/N;
-    ang = atan2(Im_buff, Re_buff)*57.2957795131;
+    mag = sqrt((float)Re_buff*Re_buff + (float)Im_buff*Im_buff)/N;
+    ang = atan2((float)Im_buff, (float)Re_buff)*57.2957795131;
+}
+
+// IIR filter variable, sat til 1 for at vi ikke ganger med 0 første gang og får forsinkelse i startup
+    volatile uint32_t mag_filtered; //filtreret magnitude, 32 bit for at kunne holde multiplikation
+    volatile int16_t ang_filtered; //filtreret fase i grader
+    static uint8_t filt_init = 0; // bruges til at sikre at vi ikke ganger med 0 i første udregning
+    //IIR filter som sikrer at vi holder stabile displayværdier for at gøre læsning af denne nemmere
+    void IIR_Filt(){
+        
+        //opstarts funktion
+        if(!filt_init){ //sat til 1 for at vi ikke ganger med 0 første gang og får forsinkelse i startup
+        mag_filtered = mag;
+        ang_filtered = ang;  
+        filt_init = 1; // flag sættes og vi udregner nedenfor
+        // ellers kører udregningen
+       }else{
+        //filtreret magnitude regnet som 32 bit for at undgå overflow
+        mag_filtered = (mag_filtered*9 + (uint32_t)mag*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats 
+        //filtreret fase
+        ang_filtered = (ang_filtered*9 + ang*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
+        }
 }
 
 /* ============ DISPLAY ============ */
@@ -236,10 +253,10 @@ void display_dft(void) {
     sprintf(buf, "Im:   %-9ld", Im_buff);
     sendStrXY(buf, 3, 0);
 
-    sprintf(buf, "Mag:  %-9u", mag);
+    sprintf(buf, "Mag:  %-9u", mag_filtered);
     sendStrXY(buf, 5, 0);
 
-    sprintf(buf, "Fase: %-9d", ang);
+    sprintf(buf, "Fase: %-9d", ang_filtered);
     sendStrXY(buf, 6, 0);
 
     // TODO: Vis metal type (Krav 2)
@@ -290,7 +307,7 @@ int main(void) {
         if (DFT_done) {
             DFT_done = 0;
             DFT_Calc();  // Beregn magnitude og fase fra Re_buff/Im_buff
-
+            IIR_Filt(); // filtrerede værdier
             // TODO: Anvend IIR lavpas filter (Krav 8c)
             // TODO: Detekter metal type (Krav 2)
 
