@@ -6,6 +6,8 @@
  *   Pin A0 = RX signal (modtaget signal fra modtagerspole)
  *   Pin A4 = I2C SDA (OLED display)
  *   Pin A5 = I2C SCL (OLED display)
+ *   Pin D2 = Knap (Start/Stop detektor - Krav 9a)
+ *   Pin D3 = Knap (Kalibrering - Krav 9b)
  *   Pin D4 = Knap (skift mellem DFT og Debug skærm)
  *
  * Hvordan det virker:
@@ -14,11 +16,6 @@
  *   3. DFT akkumulerer 64 samples og beregner magnitude og fase
  *   4. Resultater vises på OLED display
  *
- * TODO: Implementer disse features:
- *   - Start/Stop knap på Pin D2 (Krav 9a)
- *   - Kalibrering knap på Pin D3 (Krav 9b)
- *   - IIR filter til glatning af værdier (Krav 8c)
- *   - Metal klassificering - ferro/non-ferro (Krav 2)
  */
 
 #include <avr/io.h>
@@ -50,7 +47,6 @@
 
 /* ============ GLOBALE VARIABLE ============ */
 
-
 //tx og rx variabler
 static uint8_t i = 0;
 int16_t ADC_Raw = 0; // signed ADCRAW værdi
@@ -74,7 +70,7 @@ void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
 
 //timer init
 void timer0_init() {
-// vi vælger mode 4 som er CTC for
+    // vi vælger mode 4 som er CTC mode
     DDRB |=(1<<PB1);
     TCCR0A |= (1<<WGM01); //CTC mode - side 86
     TCCR0B |= (1<<CS01);  // Prescaler 8: CS01=1, CS00=0
@@ -98,7 +94,7 @@ void adc_init(){
     /* Auto-trigger kilde = Timer0 compare match A */
     ADCSRB |=  (1<<ADTS1)|(1<<ADTS0); // Starter en ADC konvertering på Compare match A
 
-       /* Start første konvertering */
+    /* Start første konvertering */
     ADCSRA |= (1 << ADSC);
 }
 
@@ -108,8 +104,13 @@ void init_button(void) {
     // Aktiver intern pull-up modstand (knap forbinder til GND)
     PORTD |= (1 << PD4);
 
-    // TODO: Pin D2 som input - Start/Stop knap (Krav 9a)
-    // TODO: Pin D3 som input - Kalibrering knap (Krav 9b)
+    // Pin D2 som input - Start/Stop knap (Krav 9a)
+    DDRD &= ~(1 << PD2);
+    PORTD |= (1 << PD2);
+
+    // Pin D3 som input - Kalibrering knap (Krav 9b)
+    DDRD &= ~(1 << PD3);
+    PORTD |= (1 << PD3);
 }
 
 /* ============ INTERRUPTS ============ */
@@ -166,55 +167,53 @@ ISR(ADC_vect){
     }
 }
 
-
 /* ============ DFT BEREGNING ============ */
 void DFT_sum(int16_t ADC_Raw){
+    // Start MATLAB capture ved starten af et nyt DFT vindue (j==0)
+    if(j == 0 && capture_get_state() == CAPTURE_WAITING){
+        capture_set_state(CAPTURE_ACTIVE);
+    }
 
-        // Start MATLAB capture ved starten af et nyt DFT vindue (j==0)
-        if(j == 0 && capture_get_state() == CAPTURE_WAITING){
-            capture_set_state(CAPTURE_ACTIVE);
-        }
-        
-        xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
+    xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
 
-        // Gem sample til MATLAB capture hvis aktiv
-        capture_store_sample(j, xn);
+    // Gem sample til MATLAB capture hvis aktiv
+    capture_store_sample(j, xn);
 
-        switch(j & 3){ // & 3 betyder at vi tæller 0->3 og så forfra igen selvom "i" er større
+    switch(j & 3){ // & 3 betyder at vi tæller 0->3 og så forfra igen selvom "i" er større
 
-            case 0: // cos(0)*xn = 1*xn
-                Re += RePhase1*xn;
-            break;
+        case 0: // cos(0)*xn = 1*xn
+            Re += RePhase1*xn;
+        break;
 
-            case 1: // -sin(pi/2)*xn = -1*xn
-                Im += -ImPhase2*xn; //negativt fortegn da imaginærdel
-            break;
+        case 1: // -sin(pi/2)*xn = -1*xn
+            Im += -ImPhase2*xn; //negativt fortegn da imaginærdel
+        break;
 
-            case 2: // cos(Pi)*xn = 1*xn
-                Re += RePhase3*xn;
-            break;
+        case 2: // cos(Pi)*xn = 1*xn
+            Re += RePhase3*xn;
+        break;
 
-            case 3: // -sin(3Pi/2)*xn = -(-1)*xn
-                Im += -ImPhase4*xn; //negativt fortegn da imaginærdel
-            break;
-        }
-        j++;
+        case 3: // -sin(3Pi/2)*xn = -(-1)*xn
+            Im += -ImPhase4*xn; //negativt fortegn da imaginærdel
+        break;
+    }
+    j++;
 
-        if(j>=N){ //hvis vi når N-1 starter vi forfra og gemmer i buffer
-            j = 0;
-            Re_buff = Re; //vi overfører til en buffer inden vi resetter ellers vil vi miste sidste
-            Im_buff = Im;
-            DFT_done = 1 ;
-            Re = 0;
-            Im = 0;
-            rising_edge_Flag = 0; //resetter flag efter DFT er kørt
+    if(j>=N){ //hvis vi når N-1 starter vi forfra og gemmer i buffer
+        j = 0;
+        Re_buff = Re; //vi overfører til en buffer inden vi resetter ellers vil vi miste sidste
+        Im_buff = Im;
+        DFT_done = 1 ;
+        Re = 0;
+        Im = 0;
+        rising_edge_Flag = 0; //resetter flag efter DFT er kørt
 
-            // Marker capture som færdig hvis aktiv
-            if(capture_get_state() == CAPTURE_ACTIVE){
-                capture_set_state(CAPTURE_DONE);
-            }
+        // Marker capture som færdig hvis aktiv
+        if(capture_get_state() == CAPTURE_ACTIVE){
+            capture_set_state(CAPTURE_DONE);
         }
     }
+}
 
 void DFT_Calc(){
     mag = sqrt((float)Re_buff*Re_buff + (float)Im_buff*Im_buff)/N;
@@ -225,6 +224,19 @@ void DFT_Calc(){
     volatile uint32_t mag_filtered; //filtreret magnitude, 32 bit for at kunne holde multiplikation
     volatile int16_t ang_filtered; //filtreret fase i grader
     static uint8_t filt_init = 0; // bruges til at sikre at vi ikke ganger med 0 i første udregning
+
+/* ============ START/STOP STYRING (Krav 9a) ============ */
+static uint8_t detection_active = 1;  // 1=kører, 0=pauset
+
+/* ============ KALIBRERING (Krav 9b) ============ */
+static uint8_t is_calibrated = 0;     // Flag: kalibrering udført
+static uint16_t cal_mag = 0;          // Kalibreret magnitude baseline
+static int16_t cal_ang = 0;           // Kalibreret fase baseline
+
+/* ============ KNAP TILSTAND (Flankdetektering) ============ */
+static uint8_t btn_d2_prev = 1;       // Start/Stop knap forrige tilstand
+static uint8_t btn_d3_prev = 1;       // Kalibrering knap forrige tilstand
+
     //IIR filter som sikrer at vi holder stabile displayværdier for at gøre læsning af denne nemmere
     void IIR_Filt(){
         //opstarts funktion
@@ -235,10 +247,28 @@ void DFT_Calc(){
         // ellers kører udregningen
         }else{
         //filtreret magnitude regnet som 32 bit for at undgå overflow
-        mag_filtered = (mag_filtered*9 + (uint32_t)mag*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats 
+        mag_filtered = (mag_filtered*9 + (uint32_t)mag*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
         //filtreret fase
         ang_filtered = (ang_filtered*9 + ang*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
         }
+}
+
+/* ============ METAL KLASSIFICERING (Krav 2) ============ */
+#define PHASE_THRESHOLD 15  // Grader - juster baseret på test
+
+uint8_t classify_metal(void) {
+    if (!is_calibrated) return 0;
+
+    int16_t phase_diff = ang_filtered - cal_ang;
+
+    // Ferro: stort negativt faseskift
+    // Non-ferro: lille eller positivt faseskift
+    if (phase_diff < -PHASE_THRESHOLD) {
+        return 1;  // FERRO
+    } else if (mag_filtered > cal_mag + 20) {
+        return 2;  // NON-FERRO
+    }
+    return 0;  // Intet metal detekteret
 }
 
 /* ============ DISPLAY ============ */
@@ -247,6 +277,16 @@ static char buf[20];
 static uint8_t show_debug = 0;
 
 void display_dft(void) {
+    if (!detection_active) {
+        sendStrXY("=== PAUSED ===  ", 0, 0);
+        sendStrXY("                ", 2, 0);
+        sendStrXY("Tryk D2 for     ", 3, 0);
+        sendStrXY("at fortsaette   ", 5, 0);
+        sendStrXY("                ", 6, 0);
+        sendStrXY("                ", 7, 0);
+        return;
+    }
+
     sendStrXY("=== DFT ===     ", 0, 0);
 
     sprintf(buf, "Re:   %-9ld", Re_buff);
@@ -255,13 +295,19 @@ void display_dft(void) {
     sprintf(buf, "Im:   %-9ld", Im_buff);
     sendStrXY(buf, 3, 0);
 
-    sprintf(buf, "Mag:  %-9u", mag_filtered);
+    sprintf(buf, "Mag:  %-9lu", mag_filtered);
     sendStrXY(buf, 5, 0);
 
     sprintf(buf, "Fase: %-9d", ang_filtered);
     sendStrXY(buf, 6, 0);
 
-    // TODO: Vis metal type (Krav 2)
+    uint8_t metal = classify_metal();
+    if (metal == 1)
+        sendStrXY("Type: FERRO     ", 7, 0);
+    else if (metal == 2)
+        sendStrXY("Type: NON-FERRO ", 7, 0);
+    else
+        sendStrXY("Type: ---       ", 7, 0);
 }
 
 void display_debug(void) {
@@ -308,10 +354,10 @@ int main(void) {
         // Når DFT vindue er færdigt, beregn og vis resultater
         if (DFT_done) {
             DFT_done = 0;
-            DFT_Calc();  // Beregn magnitude og fase fra Re_buff/Im_buff
-            IIR_Filt(); // filtrerede værdier
-            // TODO: Anvend IIR lavpas filter (Krav 8c)
-            // TODO: Detekter metal type (Krav 2)
+            if (detection_active) {
+                DFT_Calc();  // Beregn magnitude og fase fra Re_buff/Im_buff
+                IIR_Filt(); // filtrerede værdier
+            }
 
             if (show_debug)
                 display_debug();
@@ -328,8 +374,28 @@ int main(void) {
         }
         btn_prev = btn;
 
-        // TODO: Tjek knap D2 - Start/Stop detektor (Krav 9a)
-        // TODO: Tjek knap D3 - Kalibrering (Krav 9b)
+        // Tjek knap D2 - Start/Stop detektor (Krav 9a)
+        uint8_t btn_d2 = (PIND >> PD2) & 1;
+        if (btn_d2_prev && !btn_d2) {   // Falling edge = knap trykket
+            _delay_ms(50);              // Debounce
+            detection_active = !detection_active;
+            clear_display();
+        }
+        btn_d2_prev = btn_d2;
+
+        // Tjek knap D3 - Kalibrering (Krav 9b)
+        uint8_t btn_d3 = (PIND >> PD3) & 1;
+        if (btn_d3_prev && !btn_d3) {   // Falling edge = knap trykket
+            _delay_ms(50);              // Debounce
+            cal_mag = mag_filtered;     // Gem nuværende magnitude som reference
+            cal_ang = ang_filtered;     // Gem nuværende fase som reference
+            is_calibrated = 1;
+            clear_display();
+            sendStrXY("KALIBRERET!     ", 3, 0);
+            _delay_ms(1000);
+            clear_display();
+        }
+        btn_d3_prev = btn_d3;
 
 #if DFT_VERIFICATION_MODE
         // MATLAB capture - tjek for seriel kommando
