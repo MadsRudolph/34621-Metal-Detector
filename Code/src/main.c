@@ -171,14 +171,14 @@ ISR(ADC_vect){
 void DFT_sum(int16_t ADC_Raw){
 
         // Start MATLAB capture ved starten af et nyt DFT vindue (j==0)
-        //if(j == 0 && capture_get_state() == CAPTURE_WAITING){
-        //    capture_set_state(CAPTURE_ACTIVE);
-        //}
+        if(j == 0 && capture_get_state() == CAPTURE_WAITING){
+            capture_set_state(CAPTURE_ACTIVE);
+        }
         
         xn = ADC_Raw - ADC_middelvaerdi; //fjerner DC offset hvis der er et ****** skal genovervejes *********
 
         // Gem sample til MATLAB capture hvis aktiv
-        //capture_store_sample(j, xn);
+        capture_store_sample(j, xn);
 
         switch(j & 3){ // & 3 betyder at vi tæller 0->3 og så forfra igen selvom "i" er større
 
@@ -210,9 +210,9 @@ void DFT_sum(int16_t ADC_Raw){
             rising_edge_Flag = 0; //resetter flag efter DFT er kørt
 
             // Marker capture som færdig hvis aktiv
-            //if(capture_get_state() == CAPTURE_ACTIVE){
-            //    capture_set_state(CAPTURE_DONE);
-            //}
+            if(capture_get_state() == CAPTURE_ACTIVE){
+                capture_set_state(CAPTURE_DONE);
+            }
         }
     }
 
