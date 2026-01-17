@@ -255,14 +255,16 @@ void display_debug(void) {
 /* ============ MAIN ============ */
 
 int main(void) {
-    // Initialiser hardware
-    I2C_Init();
-    InitializeDisplay();
-    clear_display();
+    // Initialiser hardware - Timer og ADC FØRST (uafhængig af display)
     timer0_init();
     adc_init();
     init_button();
     capture_init(115200);  // UART til MATLAB kommunikation (skal matche platformio.ini)
+
+    // Display init SIDST (kan blokere hvis OLED ikke er tilsluttet)
+    I2C_Init();
+    InitializeDisplay();
+    clear_display();
 
     // VIGTIGT: Aktiver globale interrupts!
     sei();
