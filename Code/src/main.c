@@ -77,12 +77,10 @@ void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
     }
 
     ISR(TIMER1_COMPB_vect){
-        if (half == 0){
-            half = 1;
+        if (!do_sleep){
             do_sleep = 1;
         }
         else{
-            half = 0;
             do_sleep = 0;
         }
     }
@@ -156,7 +154,6 @@ ISR(TIMER0_COMPA_vect){
     if(i >= 2){                 // Hver 2. interrupt (4kHz toggle rate)
         PORTB ^=(1<<PB1);       // Toggle TX pin (XOR flipper bit)
         i = 0;                  // Nulstil tæller
-
         // Tjek om TX lige gik høj (rising edge)
         if(PORTB & (1<<PB1)){
             rising_edge_Flag = 1;  // Signal til ADC ISR: start ny DFT periode
@@ -198,7 +195,7 @@ void DFT_sum(int16_t ADC_Raw){
     // Gem sample til MATLAB capture hvis aktiv
     capture_store_sample(j, xn);
 
-    switch(j & 3){ // & 3 betyder at vi tæller 0->3 og så forfra igen selvom "i" er større
+    switch(j & 3){ // & 3 betyder at vi tæller 0->3 og så forfra igen selvom "j" er større
 
         case 0: // cos(0)*xn = 1*xn
             Re += RePhase1*xn;
