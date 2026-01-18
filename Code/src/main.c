@@ -68,7 +68,6 @@ void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
 
 /* ============ HARDWARE INIT ============ */
 /*============== SLEEP MODE =============*/
-    volatile uint8_t half = 0;
     volatile uint8_t do_sleep = 0;
     void Timer1_init(){
     TCCR1A |= (1 << WGM10) |(1 << WGM11); // Phase correct PWM mode, 10-bit
@@ -87,7 +86,6 @@ void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
             do_sleep = 0;
         }
     }
-
 
 //timer init
 void timer0_init() {
