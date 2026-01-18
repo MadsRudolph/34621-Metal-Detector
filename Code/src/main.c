@@ -67,6 +67,27 @@ volatile int16_t ang = 0;  // Fase i grader (-180 til +180)
 void DFT_sum(int16_t ADC_Raw);  // Forward declaration - bruges i ADC ISR
 
 /* ============ HARDWARE INIT ============ */
+/*============== SLEEP MODE =============*/
+    volatile uint8_t half = 0;
+    volatile uint8_t do_sleep = 0;
+    void Timer1_init(){
+    TCCR1A |= (1 << WGM10) |(1 << WGM11); // Phase correct PWM mode, 10-bit
+    TCCR1B = (1 << CS11) | (1 << CS10); // Prescaler 64 (timer clock = 16MHz/64 = 250kHz)
+    OCR1B = 156; // Set compare value
+    TIMSK1 |= (1 << OCIE1B); // Enable Compare Match B Interrupt
+    }
+
+    ISR(TIMER1_COMPB_vect){
+        if (half == 0){
+            half = 1;
+            do_sleep = 1;
+        }
+        else{
+            half = 0;
+            do_sleep = 0;
+        }
+    }
+
 
 //timer init
 void timer0_init() {
@@ -247,9 +268,9 @@ static uint8_t btn_d3_prev = 1;       // Kalibrering knap forrige tilstand
         // ellers kører udregningen
         }else{
         //filtreret magnitude regnet som 32 bit for at undgå overflow
-        mag_filtered = (mag_filtered*9 + (uint32_t)mag*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
+        mag_filtered = (mag_filtered*7 + (uint32_t)mag*3)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
         //filtreret fase
-        ang_filtered = (ang_filtered*9 + ang*1)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
+        ang_filtered = (ang_filtered*7 + ang*3)/10; // vi dividerer med 10 (alfa = 1/10) for at undgå floats
         }
 }
 
@@ -321,6 +342,7 @@ void display_debug(void) {
 
 int main(void) {
     // Initialiser hardware - Timer og ADC FØRST (uafhængig af display)
+    Timer1_init();
     timer0_init();
     adc_init();
     init_button();
@@ -351,6 +373,13 @@ int main(void) {
 
     // Hovedløkke
     while (1) {
+        if (do_sleep) {
+            SMCR |=(1 << SE); // Enable sleep mode (Idle mode) - side 37 i datasheet
+        }
+        else {
+            SMCR &= ~(1 << SE); // Disable sleep mode
+        }
+        
         // Når DFT vindue er færdigt, beregn og vis resultater
         if (DFT_done) {
             DFT_done = 0;
@@ -417,7 +446,6 @@ int main(void) {
             }
         }
 #endif
-
         _delay_ms(50);
     }
 }
