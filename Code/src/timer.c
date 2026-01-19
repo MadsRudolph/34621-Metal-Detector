@@ -44,10 +44,14 @@ void Timer1_init(void) {
     TCCR1B = (1 << CS11) | (1 << CS10);
 
     // Set compare value
-    OCR1B = 156;
+    OCR1B = 512; //sleep every 2 seconds (250kHz/512 = ~488Hz; 488/256 = ~1.9Hz)
 
     // Enable Compare Match B Interrupt
     TIMSK1 |= (1 << OCIE1B);
+
+    // Konfigurer SLEEP_PIN til sleep mode styring
+    DDRD |= (1 << SLEEP_PIN); // Sæt SLEEP_PIN som output
+
 }
 
 /* ============ TIMER0 INTERRUPT ============ */
@@ -85,7 +89,9 @@ ISR(TIMER0_COMPA_vect) {
 ISR(TIMER1_COMPB_vect) {
     if (!do_sleep) {
         do_sleep = 1;
+            PORTD |= (1 << SLEEP_PIN);  // Aktivér pull-up modstand på SLEEP_PIN
     } else {
         do_sleep = 0;
+            PORTD &= ~(1 << SLEEP_PIN); // Deaktivér pull-up modstand på SLEEP_PIN
     }
 }

@@ -53,7 +53,7 @@ void display_dft(void) {
 
     // Signal styrke bar (baseret på magnitude relativt til kalibrering)
     uint16_t signal_strength = 0;
-    uint16_t bar_max = 200;  // Max værdi for fuld bar
+    uint16_t bar_max = 50;   // Max værdi for fuld bar (lavere = mere følsom)
 
     if (is_calibrated && mag_filtered > cal_mag) {
         signal_strength = mag_filtered - cal_mag;

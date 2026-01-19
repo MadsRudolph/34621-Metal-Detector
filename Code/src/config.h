@@ -25,7 +25,7 @@
 #define ADC_MIDDELVAERDI 512  // DC offset kompensation (512 = midt i 10-bit range)
 
 /* ============ METAL KLASSIFICERING ============ */
-#define PHASE_THRESHOLD 15  // Grader - tærskel for ferro/non-ferro klassificering
+#define PHASE_THRESHOLD 5   // Grader - tærskel for ferro/non-ferro klassificering
 
 /* ============ PIN KONFIGURATION ============ */
 // TX signal output
@@ -35,6 +35,7 @@
 #define BTN_START_STOP  PD2 // Start/Stop detektor (Krav 9a)
 #define BTN_CALIBRATE   PD3 // Kalibrering (Krav 9b)
 #define BTN_DEBUG       PD4 // Skift mellem DFT og Debug skærm
+#define SLEEP_PIN       PD5 // Pin 5 = Sleep mode control
 
 // Buzzer output (PWM via Timer2)
 #define BUZZER_PIN      PB3 // Pin 11 = Buzzer (OC2A)

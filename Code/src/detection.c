@@ -26,14 +26,14 @@ int16_t cal_ang = 0;                // Kalibreret fase baseline
  *
  * Metode:
  *   1. Beregn faseforskel fra kalibreret baseline
- *   2. Stort negativt faseskift → Ferro (jernholdigt)
- *   3. Lille/positivt faseskift med øget magnitude → Non-Ferro
+ *   2. Positivt faseskift → Ferro (jernholdigt)
+ *   3. Negativt faseskift → Non-Ferro (kobber, aluminium)
  *
  * Fysik baggrund:
- *   - Ferromagnetiske metaller (jern, stål) skaber modsat rettet felt
- *     der giver negativt faseskift
+ *   - Ferromagnetiske metaller (jern, stål) øger induktans
+ *     der giver positivt faseskift
  *   - Non-ferro metaller (kobber, aluminium) skaber hvirvelstrømme
- *     der giver lille eller positivt faseskift
+ *     der modvirker feltet og giver negativt faseskift
  */
 uint8_t classify_metal(void) {
     // Kan ikke klassificere uden kalibrering
@@ -44,19 +44,21 @@ uint8_t classify_metal(void) {
     // Beregn faseforskel fra baseline
     int16_t phase_diff = ang_filtered - cal_ang;
 
-    // Ferro: stort negativt faseskift
-    if (phase_diff < -PHASE_THRESHOLD) {
+    // Tjek om metal er detekteret (magnitude øget med mindst 20% eller +3)
+    int32_t mag_delta = (int32_t)mag_filtered - (int32_t)cal_mag;
+    int16_t mag_threshold = cal_mag / 5;  // 20% af baseline
+    if (mag_threshold < 3) mag_threshold = 3;  // Minimum threshold
+    if (mag_delta <= mag_threshold) {
+        return METAL_NONE;
+    }
+
+    // Ferro: positivt faseskift (øget induktans)
+    if (phase_diff >= 0) {
         return METAL_FERRO;
     }
 
-    // Non-ferro: magnitude øget væsentligt (metal detekteret)
-    // men faseskift er lille eller positivt
-    if (mag_filtered > cal_mag + 20) {
-        return METAL_NONFERRO;
-    }
-
-    // Intet metal detekteret
-    return METAL_NONE;
+    // Non-ferro: negativt faseskift (hvirvelstrømme)
+    return METAL_NONFERRO;
 }
 
 /* ============ KALIBRERING ============ */
