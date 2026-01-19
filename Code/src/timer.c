@@ -9,6 +9,7 @@
 #include <avr/interrupt.h>
 #include "include/timer.h"
 #include "include/config.h"
+#include "include/detection.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 volatile uint8_t rising_edge_Flag = 0;  // Flag der indikerer TX rising edge
@@ -87,11 +88,17 @@ ISR(TIMER0_COMPA_vect) {
 
 /* ============ TIMER1 INTERRUPT (SLEEP MODE) ============ */
 ISR(TIMER1_COMPB_vect) {
+    // Kun toggle sleep mode når detektor er aktiv
+    // Når stoppet holder detection.c SLEEP_PIN høj permanent
+    if (!detection_active) {
+        return;
+    }
+
     if (!do_sleep) {
         do_sleep = 1;
-            PORTD |= (1 << SLEEP_PIN);  // Aktivér pull-up modstand på SLEEP_PIN
+        PORTD |= (1 << SLEEP_PIN);   // H-bridge sleep
     } else {
         do_sleep = 0;
-            PORTD &= ~(1 << SLEEP_PIN); // Deaktivér pull-up modstand på SLEEP_PIN
+        PORTD &= ~(1 << SLEEP_PIN);  // H-bridge aktiv
     }
 }

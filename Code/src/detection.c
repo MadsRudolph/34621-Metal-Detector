@@ -7,6 +7,7 @@
  *   - Metal klassificering: Ferro vs Non-Ferro (Krav 2)
  */
 
+#include <avr/io.h>
 #include "include/detection.h"
 #include "include/filter.h"
 #include "include/config.h"
@@ -71,4 +72,13 @@ void calibrate(void) {
 /* ============ START/STOP ============ */
 void toggle_detection(void) {
     detection_active = !detection_active;
+
+    // Styr H-bridge via SLEEP_PIN (PD5)
+    if (!detection_active) {
+        // Detektor stoppet: Sæt H-bridge i permanent sleep mode
+        PORTD |= (1 << SLEEP_PIN);
+    } else {
+        // Detektor genstartet: Nulstil SLEEP_PIN så Timer1 kan overtage
+        PORTD &= ~(1 << SLEEP_PIN);
+    }
 }
