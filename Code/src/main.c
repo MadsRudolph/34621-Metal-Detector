@@ -32,6 +32,7 @@
 #include "detection.h"
 #include "display.h"
 #include "buzzer.h"
+#include "jingle.h"
 #include "capture.h"
 #include "drivers/I2C.h"
 #include "drivers/ssd1306.h"
@@ -54,9 +55,10 @@ int main(void) {
     // VIGTIGT: Aktiver globale interrupts!
     sei();
 
-    // Vis opstarts besked
-    sendStrXY("Starter...", 3, 2);
-    _delay_ms(1000);
+    // Splash skærm + opstartslyd
+    display_splash();
+    play_startup_jingle();
+    _delay_ms(500);
     clear_display();
 
     // Knap state til edge detection

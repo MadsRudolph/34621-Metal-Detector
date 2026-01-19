@@ -462,3 +462,112 @@ void dim(bool dim) {
 	ssd1306_command(SSD1306_SETCONTRAST);
 	ssd1306_command(contrast);
 }
+
+/* ============ GRAFISKE FUNKTIONER ============ */
+
+/**
+ * Tegn et 32x24 pixel ikon ved angivet position
+ * @param icon Pointer til 96-byte ikon data i PROGMEM (3 sider x 32 bytes)
+ * @param page Startside (0-5 for 24-pixel højt ikon)
+ * @param col Startkolonne (0-96 for 32-pixel bredt ikon)
+ */
+void draw_icon(const uint8_t *icon, uint8_t page, uint8_t col) {
+    for (uint8_t p = 0; p < 3; p++) {
+        setXY(page + p, col / 8);
+        ssd1306_command(0x00 + (col & 0x0F));        // Low column
+        ssd1306_command(0x10 + ((col >> 4) & 0x0F)); // High column
+        ssd1306_command(0xB0 + page + p);            // Page address
+
+        I2C_Start(_i2c_address);
+        I2C_Write(0x40); // Data tilstand
+        for (uint8_t i = 0; i < 32; i++) {
+            I2C_Write(pgm_read_byte(&icon[p * 32 + i]));
+        }
+        I2C_Stop();
+    }
+}
+
+/**
+ * Tegn en horisontal fremgangsbar
+ * @param page Sidenummer (0-7)
+ * @param col Startkolonne (pixel position 0-127)
+ * @param width Total bredde i pixels
+ * @param fill Fyldningsniveau (0-100 procent)
+ */
+void draw_hbar(uint8_t page, uint8_t col, uint8_t width, uint8_t fill) {
+    // Sæt position
+    ssd1306_command(0x00 + (col & 0x0F));        // Low column
+    ssd1306_command(0x10 + ((col >> 4) & 0x0F)); // High column
+    ssd1306_command(0xB0 + page);                // Page address
+
+    uint8_t filled = (width * fill) / 100;
+    if (fill > 0 && filled == 0) filled = 1;
+
+    I2C_Start(_i2c_address);
+    I2C_Write(0x40); // Data tilstand
+
+    // Tegn bar ramme og fyld
+    for (uint8_t i = 0; i < width; i++) {
+        uint8_t byte;
+        if (i == 0) {
+            // Venstre kant
+            byte = 0x7E;
+        } else if (i == width - 1) {
+            // Højre kant
+            byte = 0x7E;
+        } else if (i <= filled) {
+            // Fyldt del - fuld blok
+            byte = 0x7E;
+        } else {
+            // Tom del - kun top/bund linjer
+            byte = 0x42;
+        }
+        I2C_Write(byte);
+    }
+    I2C_Stop();
+}
+
+/**
+ * Tegn et fyldt rektangel
+ * @param page Sidenummer (0-7)
+ * @param col Startkolonne (0-127)
+ * @param width Bredde i pixels
+ * @param pattern Fyldmønster (0xFF=solid, 0x00=ryd)
+ */
+void fill_rect(uint8_t page, uint8_t col, uint8_t width, uint8_t pattern) {
+    ssd1306_command(0x00 + (col & 0x0F));
+    ssd1306_command(0x10 + ((col >> 4) & 0x0F));
+    ssd1306_command(0xB0 + page);
+
+    I2C_Start(_i2c_address);
+    I2C_Write(0x40);
+    for (uint8_t i = 0; i < width; i++) {
+        I2C_Write(pattern);
+    }
+    I2C_Stop();
+}
+
+/**
+ * Tegn tekst centreret på en specifik side
+ * @param str Streng der skal vises
+ * @param page Sidenummer (0-7)
+ */
+void draw_centered_text(char *str, uint8_t page) {
+    uint8_t len = 0;
+    char *p = str;
+    while (*p++) len++;
+
+    uint8_t start_col = (16 - len) / 2;  // 16 tegn per række
+    if (start_col > 15) start_col = 0;
+
+    // Ryd linjen først
+    setXY(page, 0);
+    for (uint8_t i = 0; i < 16; i++) {
+        for (uint8_t j = 0; j < 8; j++) {
+            SendChar(0x00);
+        }
+    }
+
+    // Tegn tekst
+    sendStrXY(str, page, start_col);
+}

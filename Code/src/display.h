@@ -38,4 +38,9 @@ void display_calibrated(void);
  */
 void toggle_display_mode(void);
 
+/*
+ * Vis splash screen ved opstart
+ */
+void display_splash(void);
+
 #endif /* DISPLAY_H */

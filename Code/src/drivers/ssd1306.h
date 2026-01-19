@@ -154,4 +154,10 @@ void dim(bool dim);
 void invertDisplay(uint8_t i);
 void print_fonts(void);
 
+// Graphical Drawing Functions
+void draw_icon(const uint8_t *icon, uint8_t page, uint8_t col);
+void draw_hbar(uint8_t page, uint8_t col, uint8_t width, uint8_t fill);
+void fill_rect(uint8_t page, uint8_t col, uint8_t width, uint8_t pattern);
+void draw_centered_text(char *str, uint8_t page);
+
 #endif // SSD1306_DRIVER_H
