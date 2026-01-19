@@ -6,10 +6,10 @@
  */
 
 #include <math.h>
-#include "dft.h"
-#include "config.h"
-#include "timer.h"
-#include "capture.h"
+#include "include/dft.h"
+#include "include/config.h"
+#include "include/timer.h"
+#include "include/capture.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 // DFT akkumulator variable

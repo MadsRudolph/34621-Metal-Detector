@@ -8,8 +8,8 @@
  */
 
 #include <avr/io.h>
-#include "button.h"
-#include "config.h"
+#include "include/button.h"
+#include "include/config.h"
 
 /* ============ BUTTON INIT ============ */
 void button_init(void) {

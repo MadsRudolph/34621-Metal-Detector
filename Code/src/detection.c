@@ -7,9 +7,9 @@
  *   - Metal klassificering: Ferro vs Non-Ferro (Krav 2)
  */
 
-#include "detection.h"
-#include "filter.h"
-#include "config.h"
+#include "include/detection.h"
+#include "include/filter.h"
+#include "include/config.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 // Detektor tilstand

@@ -6,9 +6,9 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "adc.h"
-#include "timer.h"
-#include "dft.h"
+#include "include/adc.h"
+#include "include/timer.h"
+#include "include/dft.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 int16_t ADC_Raw = 0;    // Rå ADC værdi (signed for DFT beregning)

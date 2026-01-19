@@ -23,17 +23,17 @@
 #include <util/delay.h>
 
 /* ============ MODUL INCLUDES ============ */
-#include "config.h"
-#include "timer.h"
-#include "adc.h"
-#include "button.h"
-#include "dft.h"
-#include "filter.h"
-#include "detection.h"
-#include "display.h"
-#include "buzzer.h"
-#include "jingle.h"
-#include "capture.h"
+#include "include/config.h"
+#include "include/timer.h"
+#include "include/adc.h"
+#include "include/button.h"
+#include "include/dft.h"
+#include "include/filter.h"
+#include "include/detection.h"
+#include "include/display.h"
+#include "include/buzzer.h"
+#include "include/jingle.h"
+#include "include/capture.h"
 #include "drivers/I2C.h"
 #include "drivers/ssd1306.h"
 

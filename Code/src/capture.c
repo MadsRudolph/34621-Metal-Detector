@@ -3,7 +3,7 @@
  * Captures raw ADC samples and outputs via UART for verification
  */
 
-#include "capture.h"
+#include "include/capture.h"
 
 #if DFT_VERIFICATION_MODE
 

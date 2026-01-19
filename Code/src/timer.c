@@ -7,8 +7,8 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "timer.h"
-#include "config.h"
+#include "include/timer.h"
+#include "include/config.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 volatile uint8_t rising_edge_Flag = 0;  // Flag der indikerer TX rising edge

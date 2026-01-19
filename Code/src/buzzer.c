@@ -7,8 +7,8 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "buzzer.h"
-#include "config.h"
+#include "include/buzzer.h"
+#include "include/config.h"
 
 /* ============ LOKALE VARIABLE ============ */
 static uint8_t buzzer_enabled = 1;

@@ -4,8 +4,8 @@
  * Lavpasfilter der glatter DFT resultater for stabil displayvisning
  */
 
-#include "filter.h"
-#include "dft.h"
+#include "include/filter.h"
+#include "include/dft.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 volatile uint32_t mag_filtered = 0;     // Filtreret magnitude (32 bit for multiplikation)

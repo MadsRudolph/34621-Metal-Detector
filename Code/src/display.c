@@ -6,12 +6,12 @@
  */
 
 #include <stdio.h>
-#include "display.h"
+#include "include/display.h"
 #include "drivers/ssd1306.h"
-#include "dft.h"
-#include "filter.h"
-#include "detection.h"
-#include "adc.h"
+#include "include/dft.h"
+#include "include/filter.h"
+#include "include/detection.h"
+#include "include/adc.h"
 
 // Eksternt ikon data (defineret i data.h, inkluderet af ssd1306.c)
 extern const char icon_ferro[];

@@ -4,8 +4,8 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "jingle.h"
-#include "config.h"
+#include "include/jingle.h"
+#include "include/config.h"
 
 /* ============ TONE FUNKTION ============ */
 static void tone(uint16_t freq, uint16_t ms) {
