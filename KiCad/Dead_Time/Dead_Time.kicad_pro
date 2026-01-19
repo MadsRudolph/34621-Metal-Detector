@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.8,
-          "height": 1.27,
-          "width": 2.54
+          "drill": 1.0,
+          "height": 1.7,
+          "width": 1.7
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -451,14 +451,14 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "Metaldetector.kicad_pro",
+    "filename": "Dead_Time.kicad_pro",
     "version": 3
   },
   "net_settings": {
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.8,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -469,7 +469,7 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
+        "track_width": 0.8,
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
@@ -487,7 +487,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "../PCB DXF filer/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
@@ -560,12 +560,54 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Library",
+          "name": "Sim.Library",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Name",
+          "name": "Sim.Name",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Type",
+          "name": "Sim.Type",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Device",
+          "name": "Sim.Device",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
-      "name": "Default Editing",
+      "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
     },
@@ -611,20 +653,8 @@
   },
   "sheets": [
     [
-      "1ff50a95-4e06-4ec7-aaf8-e1c2108289fd",
+      "a29309b2-6eea-428f-846f-19d18e25e7df",
       "Root"
-    ],
-    [
-      "b80dba98-989c-412e-b2d5-678b32918f90",
-      "Venstre side af H_Bro"
-    ],
-    [
-      "b086b006-7178-401c-bdff-4031edfecbb9",
-      "Højre side af H_Bro"
-    ],
-    [
-      "6213d659-1224-4e09-b0ce-067080e6a783",
-      "Dead time generator"
     ]
   ],
   "text_variables": {}
