@@ -165,7 +165,7 @@ Byg en spændingsdeler til at måle batterispændingen sikkert via **A1**.
 
 **Kredsløbsdiagram:**
 
-```
+```text
 VIN (9V batteri +) ──┬──> Til Arduino VIN (via spoledriver)
                      │
                 R1  ─┴─  46.3kΩ
@@ -179,7 +179,7 @@ VIN (9V batteri +) ──┬──> Til Arduino VIN (via spoledriver)
 
 **Breadboard Layout:**
 
-```
+```text
     9V+  ───────┬─────────────────────────
                 │
            ┌────┴────┐

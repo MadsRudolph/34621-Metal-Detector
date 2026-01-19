@@ -42,6 +42,13 @@ void battery_init(void) {
 }
 
 uint16_t battery_read(void) {
+    // Gem ADCSRA og slå auto-trigger og interrupt fra for at undgå race
+    uint8_t old_adcsra = ADCSRA;
+    ADCSRA &= ~((1 << ADATE) | (1 << ADIE));
+
+    // Vent på evt. igangværende konvertering
+    while (ADCSRA & (1 << ADSC));
+
     // Gem nuværende ADMUX indstillinger
     uint8_t old_admux = ADMUX;
 
@@ -51,10 +58,8 @@ uint16_t battery_read(void) {
     // Vent på settling (ADC sample/hold)
     _delay_us(100);
 
-    // Manuel konvertering (stop auto-trigger midlertidigt)
-    uint8_t old_adcsra = ADCSRA;
-    ADCSRA &= ~(1 << ADATE);        // Slå auto-trigger fra
-    ADCSRA |= (1 << ADSC);          // Start konvertering
+    // Start manuel konvertering
+    ADCSRA |= (1 << ADSC);
 
     // Vent på konvertering færdig
     while (ADCSRA & (1 << ADSC));
@@ -62,7 +67,7 @@ uint16_t battery_read(void) {
     // Læs resultat
     uint16_t raw = ADC;
 
-    // Gendan original ADMUX og ADCSRA
+    // Gendan original ADMUX og ADCSRA (inkl. ADATE og ADIE)
     ADMUX = old_admux;
     ADCSRA = old_adcsra;
 
