@@ -141,18 +141,20 @@
 ├── Code/                     # Main firmware (PlatformIO)
 │   └── src/
 │       ├── main.c            # Main program loop
-│       ├── config.h          # Global configuration
-│       ├── timer.c/h         # Timer0/Timer1 setup
-│       ├── adc.c/h           # ADC auto-trigger sampling
-│       ├── dft.c/h           # DFT calculation
-│       ├── filter.c/h        # IIR filtering
-│       ├── detection.c/h     # Metal classification
-│       ├── display.c/h       # OLED output
-│       ├── button.c/h        # Button handling
-│       ├── buzzer.c/h        # Audio feedback
-│       ├── capture.c/h       # MATLAB serial interface
+│       ├── adc.c             # ADC auto-trigger sampling
+│       ├── button.c          # Button handling with debounce
+│       ├── buzzer.c          # Audio feedback (beeps)
+│       ├── capture.c         # MATLAB serial interface
+│       ├── detection.c       # Metal classification
+│       ├── dft.c             # DFT calculation
+│       ├── display.c         # OLED output with graphical HUD
+│       ├── filter.c          # IIR filtering
+│       ├── jingle.c          # Startup melody
+│       ├── timer.c           # Timer0/Timer1 setup
+│       ├── include/          # Header files
+│       │   ├── config.h      # Global configuration
+│       │   └── *.h           # Module headers
 │       └── drivers/          # I2C, SSD1306 drivers
-├── coil_winder/              # Coil winding helper firmware
 ├── Docs/                     # Project documentation
 │   ├── Theory/               # Technical analysis
 │   ├── Guides/               # Implementation guides

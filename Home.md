@@ -38,28 +38,28 @@
 ## Project Requirements (Kravspecifikation)
 
 ### Priority 1 (Must Have)
-- [ ] **1.** Amplitude/phase detection
-- [ ] **2.** Distinguish ferrous/non-ferrous metals
-- [ ] **3.** Detect iron (r=15mm, l=50mm) at 50mm depth
-- [ ] **4.** 9V battery powered (single 6LR61)
-- [ ] **5.** 100 min runtime, >6V remaining
-- [ ] **6a.** Arduino-based processor
-- [ ] **6b.** Discrete components for coil drive/amp
-- [ ] **8a.** Display amplitude & phase
-- [ ] **8b.** Display readability (stable values)
-- [ ] **9a.** Start/stop button
-- [ ] **9b.** Calibration button (zero when no metal)
-- [ ] **10.** VLF detection principle
-- [ ] **11.** Sampling frequency 8 kHz
-- [ ] **12.** Detection frequency 2 kHz
-- [ ] **16.** RX coil inductance >= 10 mH
+- [x] **1.** Amplitude/phase detection
+- [x] **2.** Distinguish ferrous/non-ferrous metals
+- [ ] **3.** Detect iron (r=15mm, l=50mm) at 50mm depth *(hardware)*
+- [ ] **4.** 9V battery powered (single 6LR61) *(hardware)*
+- [ ] **5.** 100 min runtime, >6V remaining *(hardware)*
+- [x] **6a.** Arduino-based processor
+- [ ] **6b.** Discrete components for coil drive/amp *(hardware)*
+- [x] **8a.** Display amplitude & phase
+- [x] **8b.** Display readability (stable values)
+- [x] **9a.** Start/stop button
+- [x] **9b.** Calibration button (zero when no metal)
+- [x] **10.** VLF detection principle
+- [x] **11.** Sampling frequency 8 kHz
+- [x] **12.** Detection frequency 2 kHz
+- [ ] **16.** RX coil inductance >= 10 mH *(hardware)*
 
 ### Priority 2 (Should Have)
-- [ ] **7.** Timer interrupt ADC control
-- [ ] **8c.** IIR filter for display smoothing
-- [ ] **13.** Enclosure
-- [ ] **14.** Coil mount
-- [ ] **15.** Centered coil design (TX outer, RX inner)
+- [x] **7.** Timer interrupt ADC control
+- [x] **8c.** IIR filter for display smoothing
+- [ ] **13.** Enclosure *(hardware)*
+- [ ] **14.** Coil mount *(hardware)*
+- [ ] **15.** Centered coil design (TX outer, RX inner) *(hardware)*
 
 ---
 

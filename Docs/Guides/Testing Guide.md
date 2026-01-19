@@ -338,7 +338,7 @@ Im = imag(X_2kHz) * N;
 
 ### 4.8 Firmware Konfiguration
 
-I `Code/src/main.c`:
+I `Code/src/include/capture.h`:
 
 ```c
 #define CAPTURE_SAMPLES 1    // Aktiver capture mode

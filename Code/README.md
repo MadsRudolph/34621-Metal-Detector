@@ -8,13 +8,29 @@ Arduino Nano (ATmega328P @ 16MHz) firmware til VLF metaldetektion.
 
 ```
 src/
-├── main.c            # Al firmware i én fil
-└── drivers/          # Givne drivere (modificer ikke)
-    ├── I2C.c/h
-    └── ssd1306.c/h
+├── main.c            # Hovedprogram, initialisering, hovedløkke
+├── adc.c             # ADC sampling og auto-trigger
+├── button.c          # Knaphåndtering med debounce
+├── buzzer.c          # Buzzer feedback (beeps ved detektion)
+├── capture.c         # MATLAB serial capture interface
+├── detection.c       # Metal klassificering (ferro/non-ferro)
+├── dft.c             # DFT beregning og akkumulering
+├── display.c         # OLED display med grafisk HUD og ikoner
+├── filter.c          # IIR filter til udglatning
+├── jingle.c          # Startup-melodi
+├── timer.c           # Timer0/Timer1 konfiguration
+│
+├── include/          # Header filer
+│   ├── config.h      # Globale konstanter og konfiguration
+│   ├── adc.h, button.h, buzzer.h, capture.h
+│   ├── detection.h, dft.h, display.h, filter.h
+│   ├── jingle.h, timer.h
+│
+└── drivers/          # Hardware drivere (modificer ikke)
+    ├── I2C.c/h       # TWI master driver
+    ├── ssd1306.c/h   # OLED display driver
+    └── data.h        # Font og ikon data (PROGMEM)
 ```
-
-> **Note:** Koden er pt. samlet i `main.c` for hurtig prototyping. Se [Project_Roadmap.md](../Docs/Project_Roadmap.md) for planlagt modularisering.
 
 ## Implementeret Funktionalitet
 
@@ -24,12 +40,15 @@ src/
 | ADC Sampling | ✅ Færdig | 8 kHz auto-trigger fra Timer0 |
 | DFT Beregning | ✅ Færdig | Single-bin DFT med 4× oversampling |
 | Magnitude/Fase | ✅ Færdig | Beregning fra Re/Im komponenter |
-| OLED Display | ✅ Færdig | Viser Re, Im, Mag, Fase |
+| OLED Display | ✅ Færdig | Grafisk HUD med ikoner og progress bar |
 | Debug Knap | ✅ Færdig | D4 skifter mellem DFT/Debug skærm |
-| Start/Stop Knap | ❌ TODO | Krav 9a - skal implementeres |
-| Kalibrering Knap | ❌ TODO | Krav 9b - skal implementeres |
-| Metalklassificering | ❌ TODO | Krav 2 - ferro/non-ferro |
-| IIR Filter | ❌ TODO | Krav 8c - display udglatning |
+| Start/Stop Knap | ✅ Færdig | D2 toggle detektor on/off |
+| Kalibrering Knap | ✅ Færdig | D3 gemmer baseline (luft-aflæsning) |
+| Metalklassificering | ✅ Færdig | Ferro/non-ferro baseret på fase |
+| IIR Filter | ✅ Færdig | Udglatning af display værdier |
+| Buzzer Feedback | ✅ Færdig | Bip ved metal detektion |
+| Startup Jingle | ✅ Færdig | Melodi ved opstart |
+| Splash Screen | ✅ Færdig | Logo ved opstart |
 
 ## Build
 
@@ -44,12 +63,13 @@ pio device monitor   # Seriel monitor
 | Pin | Funktion | Retning |
 |-----|----------|---------|
 | 9 (PB1) | TX signal output (2kHz) | OUTPUT |
+| 11 (PB3) | Buzzer output (PWM tone) | OUTPUT |
 | A0 (PC0) | RX signal input (ADC) | INPUT |
 | A4 (PC4) | I2C SDA (OLED) | I/O |
 | A5 (PC5) | I2C SCL (OLED) | OUTPUT |
+| D2 (PD2) | Start/Stop knap | INPUT (pull-up) |
+| D3 (PD3) | Kalibrering knap | INPUT (pull-up) |
 | D4 (PD4) | Debug knap | INPUT (pull-up) |
-| D2 (PD2) | Start/Stop knap (TODO) | INPUT (pull-up) |
-| D3 (PD3) | Kalibrering knap (TODO) | INPUT (pull-up) |
 
 ## Signalflow
 
@@ -65,24 +85,35 @@ Timer0 (8kHz) ──┬──> TX Pin Toggle (hver 2. interrupt = 2kHz)
                     DFT Akkumulering (64 samples)
                           │
                           ▼
-                    Hovedløkke: DFT_Calc() → Display
+                    IIR Filter → Klassificering → Display + Buzzer
 ```
 
 ## Konfigurationsparametre
 
 ```c
+// Fra include/config.h
 #define F_SAMPLE 8000     // Sample frekvens (Hz)
 #define F_SIGNAL 2000     // TX/RX signal frekvens (Hz)
 #define N 64              // Samples per DFT vindue
+#define IIR_ALPHA 0.15f   // Filter udglatning
+#define FERRO_THRESHOLD -10   // Fase tærskel for ferro (grader)
+#define DETECT_THRESHOLD 5    // Min. magnitude ændring for detektion
 ```
 
-## Næste Skridt
+## Moduler
 
-Se TODO-kommentarer i `main.c` for detaljeret implementeringsvejledning:
-- `Krav 9a`: Start/Stop knap på D2
-- `Krav 9b`: Kalibrering knap på D3 + baseline lagring
-- `Krav 2`: Metalklassificering baseret på faseforskel
-- `Krav 8c`: IIR lavpas filter til stabil visning
+| Modul | Beskrivelse |
+|-------|-------------|
+| `timer.c` | Timer0 (8kHz interrupt, TX toggle) og Timer1 (buzzer PWM) |
+| `adc.c` | ADC auto-trigger setup og sample håndtering |
+| `dft.c` | Optimeret single-bin DFT (kun bin k=16 ved 2kHz) |
+| `filter.c` | IIR lavpas filter for stabil visning |
+| `detection.c` | Kalibrering og metal klassificering (ferro/non-ferro) |
+| `display.c` | Grafisk HUD med ikoner, progress bar, splash screen |
+| `button.c` | Debounced knaphåndtering for D2, D3, D4 |
+| `buzzer.c` | Tone-generering via Timer1 PWM |
+| `jingle.c` | Startup-melodi sekvens |
+| `capture.c` | MATLAB serial interface til DFT verifikation |
 
 ## Relaterede Dokumenter
 

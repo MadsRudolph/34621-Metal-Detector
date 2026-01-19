@@ -3,7 +3,7 @@
 > [!abstract] Dokumentformål
 > Omfattende projektstatus, kravanalyse og implementeringskøreplan for DTU 34621 Metaldetektor projektet.
 >
-> **Sidst Opdateret:** 2026-01-10
+> **Sidst Opdateret:** 2026-01-19
 > **Kursus:** DTU 34621 - Indlejrede Systemer
 
 ---
@@ -14,11 +14,11 @@
 
 | Kategori | Færdiggørelse | Noter |
 |----------|---------------|-------|
-| **Software Kerne** | 70% | TX, ADC, DFT, Display virker |
-| **Software UI** | 30% | Mangler knapper, kalibrering |
-| **Hardware** | 30% | Designet, delvist bygget |
+| **Software Kerne** | 95% | TX, ADC, DFT, IIR filter, klassificering |
+| **Software UI** | 95% | Knapper, grafisk HUD, buzzer, jingle |
+| **Hardware** | 40% | Designet, delvist bygget |
 | **Integration** | 10% | Afventer hardware |
-| **Samlet** | ~45% | Kernefunktionalitet bevist |
+| **Samlet** | ~75% | Software feature-komplet |
 
 ### 1.2 Hvad Virker Nu
 
@@ -26,22 +26,32 @@
 - ADC sampling (8 kHz, auto-triggered fra Timer0)
 - DFT beregning (64-sample vindue, single-bin ved 2 kHz)
 - Magnitude og fase beregning
-- OLED display output (Re, Im, Mag, Fase)
-- Debug knap (skifter mellem DFT/Debug skærm)
+- IIR filter til stabil visning (alpha = 0.15)
+- Metal klassificering (ferro/non-ferro baseret på fase)
+- Start/Stop knap (D2) - toggle detektor on/off
+- Kalibrering knap (D3) - gem baseline aflæsning
+- Debug knap (D4) - skift mellem DFT/Debug skærm
+- Grafisk HUD display med ikoner (metal type, signal styrke)
+- Progress bar til signal niveau
+- Buzzer feedback ved metal detektion
+- Startup jingle ved opstart
+- Splash screen med logo
+- Modulær kodestruktur (11 moduler + include/ mappe)
 - Verificeret med RC loopback test (-145 grader fase målt)
 
 ### 1.3 Hvad Mangler
 
 **Software:**
-- Metaltype klassificering (ferro vs ikke-ferro)
-- Start/Stop knap funktionalitet
-- Kalibrering/nulstillingsknap funktionalitet
-- IIR/FIR filter til display udjævning
-- Tilstandsmaskine for driftstilstande
+- ~~Metaltype klassificering (ferro vs ikke-ferro)~~ ✅ Færdig
+- ~~Start/Stop knap funktionalitet~~ ✅ Færdig
+- ~~Kalibrering/nulstillingsknap funktionalitet~~ ✅ Færdig
+- ~~IIR/FIR filter til display udjævning~~ ✅ Færdig
+- ~~Tilstandsmaskine for driftstilstande~~ ✅ Færdig
+- Evt. EEPROM persistens af kalibrering (valgfrit)
 
 **Hardware:**
-- TX driver H-bro (designet, ikke bygget)
-- RX forstærker kredsløb (designet, ikke bygget)
+- TX driver H-bro (designet, delvist bygget)
+- RX forstærker kredsløb (designet, delvist bygget)
 - TX/RX/Bucking spoler (designet, ikke viklet)
 - Fuld system strømtest
 
@@ -67,17 +77,21 @@
 
 | Hastighed | Opgave | Krav # | Status | Indsats |
 |-----------|--------|--------|--------|---------|
-| 1 | Metaltype klassificering | 2 | Ikke Startet | Middel |
-| 2 | Start/Stop knap | 9a | Ikke Startet | Let |
-| 3 | Kalibrering/nulstillingsknap | 9b | Ikke Startet | Middel |
-| 4 | Display stabilitet (basis) | 8b | Delvis | Let |
+| 1 | Metaltype klassificering | 2 | ✅ Færdig | Middel |
+| 2 | Start/Stop knap | 9a | ✅ Færdig | Let |
+| 3 | Kalibrering/nulstillingsknap | 9b | ✅ Færdig | Middel |
+| 4 | Display stabilitet (basis) | 8b | ✅ Færdig | Let |
 
 ### 3.2 Software - Valgfri (Prioritet 2)
 
 | Hastighed | Opgave | Krav # | Status | Indsats |
 |-----------|--------|--------|--------|---------|
-| 5 | IIR/FIR filter udjævning | 8c | Ikke Startet | Middel |
-| 6 | Kode modularisering | - | Ikke Startet | Svær |
+| 5 | IIR/FIR filter udjævning | 8c | ✅ Færdig | Middel |
+| 6 | Kode modularisering | - | ✅ Færdig | Svær |
+| 7 | Buzzer audio feedback | - | ✅ Færdig | Let |
+| 8 | Grafisk HUD med ikoner | - | ✅ Færdig | Middel |
+| 9 | Startup jingle | - | ✅ Færdig | Let |
+| 10 | Splash screen | - | ✅ Færdig | Let |
 
 ### 3.3 Hardware - Kritisk (Prioritet 1)
 
@@ -296,132 +310,63 @@ Vikl TX, RX og Bucking spoler ifølge designspecifikationer.
 
 ---
 
-## 5. Kode Modulariserings Plan
+## 5. Kode Struktur (Implementeret)
 
-### 5.1 Nuværende Struktur
+### 5.1 Nuværende Struktur ✅
 
 ```
 Code/src/
-├── main.c              # AL applikationskode (~278 linjer)
-└── drivers/
+├── main.c              # Hovedprogram, initialisering, hovedløkke
+├── adc.c               # ADC sampling og auto-trigger
+├── button.c            # Knaphåndtering med debounce
+├── buzzer.c            # Buzzer feedback (beeps ved detektion)
+├── capture.c           # MATLAB serial capture interface
+├── detection.c         # Metal klassificering (ferro/non-ferro)
+├── dft.c               # DFT beregning og akkumulering
+├── display.c           # OLED display med grafisk HUD og ikoner
+├── filter.c            # IIR filter til udglatning
+├── jingle.c            # Startup-melodi
+├── timer.c             # Timer0/Timer1 konfiguration
+│
+├── include/            # Header filer
+│   ├── config.h        # Globale konstanter og konfiguration
+│   ├── adc.h, button.h, buzzer.h, capture.h
+│   ├── detection.h, dft.h, display.h, filter.h
+│   └── jingle.h, timer.h
+│
+└── drivers/            # Hardware drivere
     ├── I2C.c, I2C.h
     ├── ssd1306.c, ssd1306.h
-    └── data.h
+    └── data.h          # Font og ikon data (PROGMEM)
 ```
 
-### 5.2 Foreslået Struktur
+### 5.2 Modularisering Status
 
-```
-Code/src/
-├── main.c              # Hovedløkke, initialisering, tilstandsmaskine
-├── config.h            # Alle defines og konfigurationskonstanter
-├── tx.c / tx.h         # TX signalgenerering (Timer0, pin toggle)
-├── rx.c / rx.h         # ADC sampling, RX signalhåndtering
-├── dsp.c / dsp.h       # DFT beregning, IIR filter, magnitude/fase
-├── detector.c / detector.h  # Metalklassificering, kalibreringslogik
-├── ui.c / ui.h         # Knaphåndtering, brugerinterface tilstand
-├── display.c / display.h    # OLED display funktioner, skærmlayouts
-└── drivers/
-    ├── I2C.c / I2C.h
-    ├── ssd1306.c / ssd1306.h
-    └── data.h
-```
+Koden er nu fuldt modulariseret med 11 separate moduler plus drivers.
 
-### 5.3 Modul Specifikationer
+### 5.3 Modul Oversigt
 
-#### config.h
-```c
-// Flyt fra main.c:
-#define F_SAMPLE 8000
-#define F_SIGNAL 2000
-#define N 64
-#define ADC_middelvaerdi 512
-// Pin definitioner
-// Tærskelværdier
-```
+| Modul | Ansvar |
+|-------|--------|
+| `config.h` | Globale konstanter (F_SAMPLE, F_SIGNAL, N, tærskler) |
+| `timer.c/h` | Timer0 (8kHz, TX toggle) og Timer1 (buzzer PWM) |
+| `adc.c/h` | ADC auto-trigger setup |
+| `dft.c/h` | Single-bin DFT akkumulering og beregning |
+| `filter.c/h` | IIR lavpas filter (alpha = 0.15) |
+| `detection.c/h` | Kalibrering og metal klassificering |
+| `display.c/h` | Grafisk HUD, ikoner, progress bar, splash |
+| `button.c/h` | Debounced knaphåndtering (D2, D3, D4) |
+| `buzzer.c/h` | Tone-generering via Timer1 PWM |
+| `jingle.c/h` | Startup-melodi sekvens |
+| `capture.c/h` | MATLAB serial interface |
 
-#### tx.h / tx.c
-```c
-// Offentlig API:
-void tx_init(void);
-void tx_enable(void);
-void tx_disable(void);
-// Privat: Timer0 ISR, toggle tæller
-```
+### 5.4 ISR Noter
 
-#### rx.h / rx.c
-```c
-// Offentlig API:
-void rx_init(void);
-int16_t rx_get_sample(void);
-// Privat: ADC ISR, sample buffer
-```
-
-#### dsp.h / dsp.c
-```c
-// Offentlig API:
-void dsp_init(void);
-void dsp_process_sample(int16_t sample);
-uint8_t dsp_is_ready(void);
-uint16_t dsp_get_magnitude(void);
-int16_t dsp_get_phase(void);
-void dsp_apply_filter(void);
-// Privat: DFT akkumulatorer, IIR tilstand
-```
-
-#### detector.h / detector.c
-```c
-// Offentlig API:
-void detector_init(void);
-void detector_calibrate(void);
-uint8_t detector_get_metal_type(void);
-int16_t detector_get_relative_mag(void);
-int16_t detector_get_relative_phase(void);
-// Privat: baseline værdier, tærskler
-```
-
-#### ui.h / ui.c
-```c
-// Offentlig API:
-void ui_init(void);
-void ui_update(void);
-uint8_t ui_is_running(void);
-uint8_t ui_calibrate_requested(void);
-// Privat: knaptilstand, debounce
-```
-
-#### display.h / display.c
-```c
-// Offentlig API:
-void display_init(void);
-void display_show_dft(uint16_t mag, int16_t phase);
-void display_show_metal(uint8_t type);
-void display_show_message(const char* msg);
-// Privat: buffer, skærmlayouts
-```
-
-### 5.4 Modulariserings Rækkefølge
-
-1. **Udtræk config.h først** (sikrest, ingen logikændringer)
-2. **Udtræk display.c** (isoleret, let at teste)
-3. **Udtræk dsp.c** (pas på volatile variable)
-4. **Udtræk tx.c** (ISR skal forblive hurtig)
-5. **Udtræk rx.c** (ADC ISR koordinering)
-6. **Udtræk ui.c** (knaphåndtering)
-7. **Udtræk detector.c** (sidst, bruger andre moduler)
-
-### 5.5 Kritiske Modulariserings Noter
-
-> [!warning] ISR Overvejelser
-> - Variable tilgået af ISR'er SKAL forblive `volatile`
-> - ISR'er bør blive i filen med deres init funktioner ELLER bruge extern deklarationer
-> - Hold ISR'er så korte som muligt - undgå funktionskald inde i ISR'er
-> - Test grundigt efter hver udtrækning
-
-**Delt Tilstand:**
-- `DFT_done` flag: delt mellem ADC ISR og hovedløkke
-- `Re_buff`, `Im_buff`: skrevet af ISR, læst af main
-- `rising_edge_Flag`: delt mellem Timer0 ISR og ADC ISR
+> [!note] Volatile Variable
+> Variable tilgået af ISR'er er markeret `volatile`:
+> - `dft_done` flag: sat af ADC ISR, læst af main
+> - `Re_buf`, `Im_buf`: skrevet af ISR, læst af main
+> - `sync_flag`: delt mellem Timer0 ISR og ADC ISR
 
 ---
 
@@ -503,10 +448,14 @@ void display_show_message(const char* msg);
 - [x] DFT magnitude beregning virker
 - [x] DFT fase beregning virker
 - [x] OLED display opdaterer
-- [ ] Start/Stop knap skifter detektion
-- [ ] Kalibreringsknap gemmer baseline
-- [ ] Metaltype vises korrekt
-- [ ] IIR filter udjævner display (valgfrit)
+- [x] Start/Stop knap skifter detektion
+- [x] Kalibreringsknap gemmer baseline
+- [x] Metaltype vises korrekt
+- [x] IIR filter udjævner display
+- [x] Buzzer giver feedback ved detektion
+- [x] Grafisk HUD med ikoner virker
+- [x] Startup jingle afspilles ved boot
+- [x] Splash screen vises ved boot
 
 ### 8.2 Hardware Integrations Tests
 
@@ -531,12 +480,14 @@ void display_show_message(const char* msg);
 
 ### 8.4 Efter-Modulariserings Tests
 
-- [ ] TX genererer stadig 2 kHz
-- [ ] ADC sampler stadig ved 8 kHz
-- [ ] DFT beregner stadig korrekt
-- [ ] Ingen timing drift eller glitches
-- [ ] Alle knapper virker stadig
-- [ ] Display opdaterer stadig korrekt
+- [x] TX genererer stadig 2 kHz
+- [x] ADC sampler stadig ved 8 kHz
+- [x] DFT beregner stadig korrekt
+- [x] Ingen timing drift eller glitches
+- [x] Alle knapper virker stadig
+- [x] Display opdaterer stadig korrekt
+- [x] Buzzer virker korrekt
+- [x] Jingle afspilles ved opstart
 
 ---
 
@@ -588,6 +539,6 @@ void display_show_message(const char* msg);
 ---
 
 *Projekt Køreplan for DTU 34621 Metaldetektor*
-*Genereret 2026-01-10*
+*Opdateret 2026-01-19*
 
 #køreplan #status #krav #planlægning

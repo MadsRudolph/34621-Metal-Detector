@@ -2,7 +2,7 @@
 
 > [!abstract] Dokumentformål
 > Dette dokument giver en teknisk gennemgang af VLF metaldetektor firmwaren.
-> **Nuværende Status:** Fuldt funktionel version med metaldetektion, klassificering og kalibrering.
+> **Nuværende Status:** Fuldt funktionel og modulær version med metaldetektion, klassificering, kalibrering, grafisk HUD, buzzer feedback og startup jingle.
 >
 > **Mål:** ATmega328P (Arduino Nano)
 > **Kursus:** DTU 34621 - Indlejrede Systemer
@@ -16,7 +16,7 @@
 3. [[#3. Hardware Konfiguration]]
 4. [[#4. Signalbehandling]]
 5. [[#5. Metal Klassificering]]
-6. [[#6. EEPROM Kalibrering]]
+6. [[#6. Buzzer og Jingle]]
 7. [[#7. Kompilering og Upload]]
 8. [[#8. Brugergrænseflade]]
 9. [[#9. Fejlfinding]]
@@ -27,23 +27,43 @@
 
 ### 1.1 Nuværende Arkitektur
 
-Firmwaren er en fuldt funktionel metaldetektor med følgende funktioner:
+Firmwaren er en fuldt funktionel og modulær metaldetektor med følgende funktioner:
 - TX signalgenerering (2 kHz firkantbølge)
 - RX signal sampling og DFT analyse
 - IIR filtrering for stabil visning
 - Metal klassificering (ferro/non-ferro baseret på fase)
-- EEPROM kalibrering med persistens
+- Kalibrering med baseline lagring
 - Start/Stop kontrol
 - Debug display mode
+- Grafisk HUD med ikoner og progress bar
+- Buzzer feedback ved metal detektion
+- Startup jingle ved opstart
+- Splash screen ved boot
 
 ```
 Code/src/
-├── main.c                 # Al applikationskode (~450 linjer)
+├── main.c              # Hovedprogram, initialisering, hovedløkke
+├── adc.c               # ADC sampling og auto-trigger
+├── button.c            # Knaphåndtering med debounce
+├── buzzer.c            # Buzzer feedback (beeps ved detektion)
+├── capture.c           # MATLAB serial capture interface
+├── detection.c         # Metal klassificering (ferro/non-ferro)
+├── dft.c               # DFT beregning og akkumulering
+├── display.c           # OLED display med grafisk HUD og ikoner
+├── filter.c            # IIR filter til udglatning
+├── jingle.c            # Startup-melodi
+├── timer.c             # Timer0/Timer1 konfiguration
 │
-└── drivers/               # Hardware drivere
-    ├── I2C.c, I2C.h       # TWI master driver
-    ├── ssd1306.c, .h      # OLED display driver
-    └── data.h             # Font data (PROGMEM)
+├── include/            # Header filer
+│   ├── config.h        # Globale konstanter og konfiguration
+│   ├── adc.h, button.h, buzzer.h, capture.h
+│   ├── detection.h, dft.h, display.h, filter.h
+│   └── jingle.h, timer.h
+│
+└── drivers/            # Hardware drivere
+    ├── I2C.c, I2C.h    # TWI master driver
+    ├── ssd1306.c, .h   # OLED display driver
+    └── data.h          # Font og ikon data (PROGMEM)
 ```
 
 ### 1.2 Signalflow
@@ -81,100 +101,50 @@ flowchart TB
 | Pin | AVR Port | Funktion | Noter |
 |-----|----------|----------|-------|
 | 9 | PB1 | TX signal | 2 kHz firkantbølge |
+| 11 | PB3 | Buzzer output | PWM tone via Timer1 |
 | A0 | PC0/ADC0 | RX signal indgang | 10-bit ADC |
 | A4 | PC4 | I2C SDA | OLED display |
 | A5 | PC5 | I2C SCL | OLED display |
 | D2 | PD2 | Start/Stop knap | Toggle detektor on/off |
-| D3 | PD3 | Kalibrering knap | Gem baseline i EEPROM |
+| D3 | PD3 | Kalibrering knap | Gem baseline |
 | D4 | PD4 | Debug knap | Skift mellem DFT og debug skærm |
 
 ---
 
 ## 2. Kodestruktur
 
-### 2.1 main.c Oversigt
+### 2.1 Modulær Arkitektur
 
-**Placering:** `Code/src/main.c` (~450 linjer)
+Firmwaren er opdelt i 11 separate moduler med tilhørende header-filer i `include/` mappen:
 
-Filen indeholder al applikationslogik:
-- Hardware initialisering (Timer, ADC, Knapper)
-- Interrupt Service Routines (Timer0, ADC)
-- DFT beregning og akkumulering
-- IIR filtrering
-- Metal klassificering
-- EEPROM håndtering
-- Display funktioner
-- Hovedløkke med knaphåndtering
+| Modul | Ansvar |
+|-------|--------|
+| `main.c` | Hovedløkke, initialisering, tilstandshåndtering |
+| `timer.c` | Timer0 (8kHz interrupt, TX toggle) og Timer1 (buzzer PWM) |
+| `adc.c` | ADC auto-trigger setup og initialisering |
+| `dft.c` | Single-bin DFT akkumulering og beregning |
+| `filter.c` | IIR lavpas filter for udglatning |
+| `detection.c` | Kalibrering og metal klassificering |
+| `display.c` | Grafisk HUD, ikoner, progress bar, splash screen |
+| `button.c` | Debounced knaphåndtering |
+| `buzzer.c` | Tone-generering via Timer1 PWM |
+| `jingle.c` | Startup-melodi sekvens |
+| `capture.c` | MATLAB serial interface |
 
-#### Includes og Konstanter
+#### Konfiguration (include/config.h)
 
 ```c
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/eeprom.h>
-#include <util/delay.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-
-#include "drivers/I2C.h"
-#include "drivers/ssd1306.h"
-
-#define F_SAMPLE 8000
-#define F_SIGNAL 2000
-#define N 64
-#define ADC_OFFSET 512
+#define F_SAMPLE 8000         // Sample frekvens (Hz)
+#define F_SIGNAL 2000         // TX/RX signal frekvens (Hz)
+#define N 64                  // Samples per DFT vindue
+#define ADC_OFFSET 512        // DC offset
 
 /* Metal Klassificering */
-#define FERRO_THRESHOLD -10     /* Fase tærskel for ferro/non-ferro (grader) */
-#define DETECT_THRESHOLD 5      /* Min. magnitude ændring for detektion */
-#define METAL_NONE    0
-#define METAL_FERRO   1
-#define METAL_NONFERRO 2
+#define FERRO_THRESHOLD -10   // Fase tærskel (grader)
+#define DETECT_THRESHOLD 5    // Min. magnitude ændring
 
 /* IIR Filter */
-#define IIR_ALPHA 0.15f
-
-/* EEPROM Adresser og Magic Value */
-#define EEPROM_MAGIC_ADDR     0
-#define EEPROM_MAG_ADDR       2
-#define EEPROM_PHASE_ADDR     4
-#define EEPROM_MAGIC_VALUE    0xCAFE
-```
-
-#### Globale Variable
-
-```c
-/* TX og ADC */
-static uint8_t tx_count = 0;
-volatile int16_t adc_raw = 0;
-volatile uint8_t sync_flag = 0;
-
-/* DFT akkumulatorer */
-volatile uint8_t dft_index = 0;
-volatile int32_t Re = 0, Im = 0;
-volatile int32_t Re_buf = 0, Im_buf = 0;
-volatile uint8_t dft_done = 0;
-
-/* Resultater */
-volatile uint16_t mag = 0;
-volatile int16_t phase = 0;
-
-/* Detektor tilstand */
-static uint8_t detector_running = 0;
-static uint8_t show_debug = 0;
-
-/* Metal Klassificering */
-static int16_t baseline_phase = 0;
-static uint16_t baseline_mag = 0;
-static uint8_t is_calibrated = 0;
-static uint8_t metal_type = METAL_NONE;
-static uint8_t metal_detected = 0;
-
-/* IIR Filtrerede værdier */
-static float mag_filtered = 0.0f;
-static float phase_filtered = 0.0f;
+#define IIR_ALPHA 0.15f       // Udglatningsfaktor
 ```
 
 > [!WARNING] Signed Typer Påkrævet
@@ -506,64 +476,41 @@ Kalibrering bør udføres med detektoren i luften, væk fra metal.
 
 ---
 
-## 6. EEPROM Kalibrering
+## 6. Buzzer og Jingle
 
-Kalibrering gemmes i EEPROM så den bevares ved genstart og strømafbrydelse.
+### 6.1 Buzzer Feedback
 
-### 6.1 EEPROM Layout
+Buzzeren giver audio feedback ved metal detektion og bruges til startup jingle.
 
-| Adresse | Indhold | Størrelse |
-|---------|---------|-----------|
-| 0-1 | Magic value (0xCAFE) | 2 bytes |
-| 2-3 | Baseline magnitude | 2 bytes |
-| 4-5 | Baseline fase | 2 bytes |
+**Hardware:**
+- Pin 11 (PB3/OC2A) - PWM output
+- Passiv buzzer (piezo eller magnetisk)
 
-Magic value bruges til at verificere at EEPROM indeholder gyldig kalibrering.
-
-### 6.2 EEPROM Flowchart
-
-```mermaid
-flowchart TD
-    subgraph "Ved Opstart"
-        BOOT[Boot] --> READ[Læs Magic Value]
-        READ --> CHECK{Magic == 0xCAFE?}
-        CHECK -->|Ja| LOAD[Indlæs baseline_mag<br>Indlæs baseline_phase<br>is_calibrated = 1]
-        CHECK -->|Nej| NOCAL[is_calibrated = 0]
-    end
-    
-    subgraph "Ved Kalibrering D3"
-        CAL[D3 Tryk] --> SAVE[Gem baseline_mag<br>Gem baseline_phase<br>Gem Magic = 0xCAFE]
-    end
-```
-
-### 6.3 Gem Kalibrering
+**Funktioner (buzzer.c):**
 
 ```c
-void eeprom_save_calibration(void) {
-    eeprom_update_word((uint16_t*)EEPROM_MAGIC_ADDR, EEPROM_MAGIC_VALUE);
-    eeprom_update_word((uint16_t*)EEPROM_MAG_ADDR, baseline_mag);
-    eeprom_update_word((uint16_t*)EEPROM_PHASE_ADDR, (uint16_t)baseline_phase);
-}
+void buzzer_init(void);        // Initialiser Timer1 for PWM
+void buzzer_beep(uint16_t freq, uint16_t duration_ms);  // Afspil tone
+void buzzer_off(void);         // Stop buzzer
 ```
 
-`eeprom_update_word()` skriver kun hvis værdien er ændret, hvilket minimerer EEPROM slitage.
+### 6.2 Startup Jingle
 
-### 6.4 Indlæs Kalibrering
+Ved opstart afspilles en kort melodi via `jingle.c`:
 
 ```c
-uint8_t eeprom_load_calibration(void) {
-    uint16_t magic = eeprom_read_word((uint16_t*)EEPROM_MAGIC_ADDR);
-    if (magic != EEPROM_MAGIC_VALUE) {
-        return 0;  /* Ingen gyldig kalibrering fundet */
-    }
-    baseline_mag = eeprom_read_word((uint16_t*)EEPROM_MAG_ADDR);
-    baseline_phase = (int16_t)eeprom_read_word((uint16_t*)EEPROM_PHASE_ADDR);
-    is_calibrated = 1;
-    return 1;
-}
+void jingle_play(void);        // Afspil startup-melodi
 ```
 
-Kaldes automatisk ved opstart i `main()`.
+Jinglen består af en sekvens af toner der afspilles efter splash screen.
+
+### 6.3 Metal Detektion Feedback
+
+Når metal detekteres, bipper buzzeren for at give audio feedback:
+- **Ferro metal (Fe/Stål):** Lavere tone
+- **Non-ferro metal (Cu/Al):** Højere tone
+
+Feedback hjælper brugeren med at identificere metal uden at kigge på displayet.
 
 ---
 
@@ -673,60 +620,44 @@ btn_prev = btn;
 
 ### 8.4 Display Skærme
 
+Displayet bruger en grafisk HUD med ikoner og progress bar.
+
+**Splash Screen (ved opstart):**
+- Vises i ~2 sekunder ved boot
+- Projekt logo/navn
+- Efterfulgt af startup jingle
+
+**Hovedskærm (Grafisk HUD):**
+- Ikon for metal type (ferro/non-ferro/ingen)
+- Progress bar for signal styrke
+- Numeriske værdier for magnitude og fase
+- Kalibreringsindikator
+
+**Skærmelementer:**
+```
+┌─────────────────────────┐
+│  [IKON]  METAL TYPE     │
+│                         │
+│  MAG: ████████░░  120   │
+│  PHA: -45°              │
+│                         │
+│  [CAL]  Status tekst    │
+└─────────────────────────┘
+```
+
+**Metal Type Ikoner:**
+- Intet metal: Tom cirkel eller "---"
+- Ferro (Fe/Stål): Magnet-ikon
+- Non-ferro (Cu/Al): Ring-ikon
+
 **Stoppet Skærm:**
-```
-=== STOPPET ===
+- Viser "STOPPET" med instruktion
+- Tryk D2 for at starte
 
-  Tryk D2 for
-    at starte
-
- (Kal. indlæst)
-```
-
-**DFT Skærm (Normal drift):**
-```
-=== DFT ===
-Re:  1234
-Im:  -567
-Mag: 89
-Pha: -45
-Søger...
-```
-
-**Metal Detekteret (Ferro):**
-```
-=== DFT ===
-Re:  2345
-Im:  -890
-Mag: 120
-Pha: -55
-FERRO (Fe/Stl)
-```
-
-**Metal Detekteret (Non-ferro):**
-```
-=== DFT ===
-Re:  1890
-Im:  -234
-Mag: 95
-Pha: -5
-NON-FERRO (Cu)
-```
-
-**Debug Skærm:**
-```
-=== DEBUG ===
-ADC: 512
-Raw: 95
-Flt: 89
-Dlt: 30
-```
-
-Debug skærmen viser:
-- ADC: Rå ADC værdi (0-1023)
-- Raw: Ufiltreret magnitude
-- Flt: Filtreret magnitude
-- Dlt: Delta fra baseline (kun hvis kalibreret)
+**Debug Skærm (D4 toggle):**
+- Rå ADC værdi (0-1023)
+- Ufiltreret vs filtreret magnitude
+- Delta fra baseline
 
 ---
 
@@ -777,7 +708,10 @@ Debug skærmen viser:
 
 Følgende funktioner kan tilføjes senere:
 
-- [ ] Buzzer output med Timer2 PWM for audio feedback
+- [x] ~~Buzzer output med Timer1 PWM for audio feedback~~ ✅ Implementeret
+- [x] ~~Grafisk HUD med ikoner~~ ✅ Implementeret
+- [x] ~~Startup jingle~~ ✅ Implementeret
+- [ ] EEPROM persistens af kalibrering
 - [ ] Seriel debug output for PC-baseret analyse
 - [ ] Justerbare tærskelværdier via menu system
 - [ ] Batteriniveau visning
@@ -795,7 +729,8 @@ Følgende funktioner kan tilføjes senere:
 | 2.1 | 2025-01 | Opdateret til at afspejle ADC auto-trigger mode (ADATE) |
 | 2.2 | 2025-01 | Ændret til floating-point sqrt()/atan2() |
 | 3.0 | 2025-01 | Forenklet til minimal testversion (enkelt main.c) |
-| 4.0 | 2025-01 | Fuldt funktionel version med metal klassificering, IIR filter, EEPROM kalibrering, Start/Stop kontrol |
+| 4.0 | 2025-01 | Fuldt funktionel version med metal klassificering, IIR filter, Start/Stop kontrol |
+| 5.0 | 2026-01 | Modularisering: 11 moduler + include/ mappe. Tilføjet buzzer, jingle, grafisk HUD med ikoner og splash screen |
 
 ---
 
