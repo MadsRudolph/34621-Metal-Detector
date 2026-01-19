@@ -12,6 +12,7 @@
 #include "include/filter.h"
 #include "include/detection.h"
 #include "include/adc.h"
+#include "include/battery.h"
 
 // Eksternt ikon data (defineret i data.h, inkluderet af ssd1306.c)
 extern const char icon_ferro[];
@@ -115,8 +116,9 @@ void display_dft(void) {
     // Række 5: Tom/mellemrum
     fill_rect(5, 0, 128, 0x00);
 
-    // Række 6: Kun faseværdi (procent vises stort ovenover)
-    sprintf(buf, "      Fase:%+4d", ang_filtered);
+    // Række 6: Faseværdi og batteri spænding
+    sprintf(buf, "Fase:%+4d %d.%dV", ang_filtered,
+            battery_voltage / 1000, (battery_voltage % 1000) / 100);
     sendStrXY(buf, 6, 0);
 
     // Række 7: Separator linje (tegn én gang efter tilstandsændring)
@@ -153,9 +155,10 @@ void display_debug(void) {
         sendStrXY("Ikke kalibreret ", 5, 0);
     }
 
-    sprintf(buf, "%s  %s         ",
+    sprintf(buf, "%s %s %d.%dV",
             detection_active ? "RUN" : "PAU",
-            is_calibrated ? "CAL" : "---");
+            is_calibrated ? "CAL" : "---",
+            battery_voltage / 1000, (battery_voltage % 1000) / 100);
     sendStrXY(buf, 6, 0);
 
     sendStrXY("----------------", 7, 0);
