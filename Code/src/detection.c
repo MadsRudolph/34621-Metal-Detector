@@ -53,12 +53,14 @@ uint8_t classify_metal(void) {
         return METAL_NONE;
     }
 
-    // Ferro: positivt faseskift (øget induktans)
-    if (phase_diff >= 0) {
+    // Klassificer baseret på faseskift
+    // Ferro (jern): fase tættere på baseline (lille negativt skift)
+    // Non-ferro (aluminium, kobber): fase langt fra baseline (stort negativt skift)
+    // Tærskel baseret på empiriske målinger: Fe=-22, Al=-130
+    if (phase_diff > -70) {
         return METAL_FERRO;
     }
 
-    // Non-ferro: negativt faseskift (hvirvelstrømme)
     return METAL_NONFERRO;
 }
 
