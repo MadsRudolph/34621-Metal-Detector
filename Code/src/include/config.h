@@ -40,4 +40,11 @@
 // Buzzer output (PWM via Timer2)
 #define BUZZER_PIN      PB3 // Pin 11 = Buzzer (OC2A)
 
+/* ============ BATTERI MONITOR ============ */
+// Spændingsdeler: 46.3k/10k giver ratio 10/(46.3+10) = 0.1776
+#define BATTERY_PIN     PC1     // A1 = Batteri spændingsdeler
+#define BATTERY_LOW_MV  6000    // 6.0V = 0% batteri
+#define BATTERY_FULL_MV 9000    // 9.0V = 100% batteri
+#define BATTERY_WARN_MV 6500    // 6.5V = lavt batteri advarsel
+
 #endif /* CONFIG_H */

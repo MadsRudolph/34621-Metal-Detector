@@ -34,6 +34,7 @@
 #include "include/buzzer.h"
 #include "include/jingle.h"
 #include "include/capture.h"
+#include "include/battery.h"
 #include "drivers/I2C.h"
 #include "drivers/ssd1306.h"
 
@@ -45,6 +46,7 @@ int main(void) {
     adc_init();
     button_init();
     buzzer_init();
+    battery_init();
     capture_init(115200);  // UART til MATLAB kommunikation
 
     // Display init SIDST (kan blokere hvis OLED ikke er tilsluttet)
@@ -65,6 +67,9 @@ int main(void) {
     uint8_t btn_debug_prev = 1;
     uint8_t btn_start_prev = 1;
     uint8_t btn_cal_prev = 1;
+
+    // Batteri aflæsning tæller (læs hvert 500ms = 10 × 50ms)
+    uint8_t battery_counter = 0;
 
 #if DFT_VERIFICATION_MODE
     uint16_t ready_counter = 0;  // Tæller til periodisk READY signal
@@ -136,6 +141,13 @@ int main(void) {
             clear_display();
         }
         btn_cal_prev = btn_cal;
+
+        // Læs batteri spænding periodisk (hvert 500ms)
+        battery_counter++;
+        if (battery_counter >= 10) {
+            battery_read();
+            battery_counter = 0;
+        }
 
 #if DFT_VERIFICATION_MODE
         // MATLAB capture - tjek for seriel kommando
