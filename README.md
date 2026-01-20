@@ -8,12 +8,13 @@
 [![Course](https://img.shields.io/badge/DTU-34621-red?style=for-the-badge)](https://www.dtu.dk)
 [![Platform](https://img.shields.io/badge/Platform-Arduino%20Nano-00979D?style=for-the-badge&logo=arduino)](https://www.arduino.cc/)
 [![License](https://img.shields.io/badge/License-Educational-blue?style=for-the-badge)](LICENSE)
+[![Timeline](https://img.shields.io/badge/Project-Timeline-purple?style=for-the-badge)](https://madsrudolph.github.io/34621-Metal-Detector/)
 
 <br>
 
 *A Very Low Frequency induction balance metal detector with real-time DFT-based phase detection*
 
-[Features](#features) | [Hardware](#hardware) | [Getting Started](#getting-started) | [Progress](#progress) | [Team](#team)
+[Features](#features) | [Hardware](#hardware) | [Getting Started](#getting-started) | [Progress](#progress) | [Team](#team) | [Timeline](https://madsrudolph.github.io/34621-Metal-Detector/)
 
 ---
 
