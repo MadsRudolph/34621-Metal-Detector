@@ -1,0 +1,2907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VLF Metal Detector - Project Timeline</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Core Colors */
+            --bg-primary: #05090e;
+            --bg-secondary: rgba(22, 27, 34, 0.6);
+            --bg-tertiary: rgba(33, 38, 45, 0.6);
+            --glass-border: rgba(240, 246, 252, 0.1);
+            --glass-border-hover: rgba(240, 246, 252, 0.2);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+
+            /* Text */
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+
+            /* Accents (Default: Copper Blue) */
+            --accent-primary: #58a6ff;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-purple: #bc8cff;
+            --accent-orange: #d29922;
+            --accent-red: #ff7b72;
+            --accent-pink: #db61a2;
+
+            /* Gradients */
+            --grad-primary: linear-gradient(135deg, #58a6ff, #1f6feb);
+            --grad-blue: linear-gradient(135deg, #58a6ff, #1f6feb);
+            --grad-purple: linear-gradient(135deg, #bc8cff, #8957e5);
+            --grad-green: linear-gradient(135deg, #3fb950, #238636);
+            --grad-orange: linear-gradient(135deg, #d29922, #9e6a03);
+            --grad-glow: radial-gradient(circle at top center, rgba(var(--accent-rgb, 88, 166, 255), 0.15), transparent 70%);
+            --accent-rgb: 88, 166, 255;
+        }
+
+        /* Themes */
+        [data-theme="iron"] {
+            --accent-primary: #8b949e;
+            --grad-primary: linear-gradient(135deg, #8b949e, #484f58);
+            --accent-rgb: 139, 148, 158;
+        }
+
+        [data-theme="gold"] {
+            --accent-primary: #d29922;
+            --grad-primary: linear-gradient(135deg, #d29922, #9e6a03);
+            --accent-rgb: 210, 153, 34;
+        }
+
+        [data-theme="radar"] {
+            --accent-primary: #3fb950;
+            --grad-primary: linear-gradient(135deg, #3fb950, #238636);
+            --accent-rgb: 63, 185, 80;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #magnetic-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-color);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 2kHz Pulse Waveform */
+        .header-wave {
+            width: 100px;
+            height: 30px;
+            margin-top: 1rem;
+            stroke: var(--accent-primary);
+            fill: none;
+            stroke-width: 2;
+            opacity: 0.6;
+            filter: drop-shadow(0 0 5px var(--accent-primary));
+        }
+
+        .header-wave path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: wavePulse 4s linear infinite;
+        }
+
+        @keyframes wavePulse {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(88, 166, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(88, 166, 255, 0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .fade-in-entry {
+            opacity: 0;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 4rem 0 3rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        }
+
+        header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(88, 166, 255, 0.3);
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .date-range {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.75rem;
+            background: transparent;
+            border: 1px solid transparent;
+            /* fixed border width prevents jumping */
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--glass-highlight);
+        }
+
+        .tab.active {
+            background: var(--bg-tertiary);
+            color: var(--accent-blue);
+            border-color: rgba(88, 166, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Generic Card Style */
+        .glass-card,
+        .team-card,
+        .gantt-container,
+        .stat-card,
+        .tech-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* Team Cards */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .team-card {
+            padding: 2rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--glass-border-hover);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(180deg, rgba(33, 38, 45, 0.8) 0%, rgba(22, 27, 34, 0.6) 100%);
+        }
+
+        .team-card:hover::before {
+            opacity: 1;
+        }
+
+        .team-card.selected {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 2px rgba(63, 185, 80, 0.3), 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .team-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .avatar.mads {
+            background: var(--grad-blue);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar.sigurd {
+            background: var(--grad-purple);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar.andreas {
+            background: var(--grad-green);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar.jonas {
+            background: var(--grad-orange);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .team-card .role {
+            color: var(--accent-blue);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .team-card .contributions {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* Member-specific selection colors */
+        .team-card[data-member="mads"].selected {
+            border-color: #58a6ff;
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.2);
+        }
+
+        .team-card[data-member="sigurd"].selected {
+            border-color: #a371f7;
+            box-shadow: 0 0 20px rgba(163, 113, 247, 0.2);
+        }
+
+        .team-card[data-member="andreas"].selected {
+            border-color: #3fb950;
+            box-shadow: 0 0 20px rgba(63, 185, 80, 0.2);
+        }
+
+        .team-card[data-member="jonas"].selected {
+            border-color: #d29922;
+            box-shadow: 0 0 20px rgba(210, 153, 34, 0.2);
+        }
+
+        .commit-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .commit-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+        }
+
+        .commit-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Gantt Chart */
+        .gantt-container {
+            padding: 2.5rem;
+            overflow-x: auto;
+        }
+
+        /* Filter Pills */
+        .filter-pills {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            padding: 0.5rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .pill.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #05090e;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.4);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+        }
+
+        .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Milestones */
+        .milestones {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .milestones::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-blue), transparent);
+        }
+
+        .milestone {
+            position: relative;
+            padding: 1.5rem 0 1.5rem 2rem;
+        }
+
+        .milestone::before {
+            content: '';
+            position: absolute;
+            left: -2.1rem;
+            top: 1.7rem;
+            width: 14px;
+            height: 14px;
+            background: var(--bg-primary);
+            border-radius: 50%;
+            border: 3px solid var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(88, 166, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .milestone:hover::before {
+            background: var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-blue);
+        }
+
+        .milestone-date {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .milestone-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .milestone-owner {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Matrix Table */
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: rgba(22, 27, 34, 0.4);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .matrix-table th {
+            background: rgba(255, 255, 255, 0.03);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+        }
+
+        .matrix-table tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .matrix-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .owner-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Contribution Heatmap */
+        .heatmap-wrapper {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            margin-top: 1.5rem;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            overflow-x: auto;
+        }
+
+        .heatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .heatmap-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-columns: repeat(22, 1fr);
+            grid-template-rows: repeat(7, 1fr);
+            gap: 1.5px;
+            min-width: 320px;
+        }
+
+        /* Architecture Hotspots */
+        .arch-hotspot {
+            fill: var(--accent-primary);
+            filter: drop-shadow(0 0 5px var(--accent-primary));
+            cursor: pointer;
+            transition: all 0.3s ease;
+            pointer-events: all;
+        }
+
+        .arch-hotspot:hover {
+            fill: white;
+            r: 8px !important;
+            filter: drop-shadow(0 0 10px var(--accent-primary));
+        }
+
+        /* Hitbox for hotspots */
+        .hotspot-hitbox {
+            fill: transparent;
+            cursor: pointer;
+        }
+
+        .hotspot-hitbox:hover + .arch-hotspot {
+            fill: white;
+            r: 8px !important;
+            filter: drop-shadow(0 0 10px var(--accent-primary));
+        }
+
+
+
+        /* Hardware Architecture Visualization */
+        .arch-viz-wrapper {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .arch-viz-wrapper h2 {
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .arch-svg {
+            max-width: 1000px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        .arch-block {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .arch-block:hover {
+            filter: drop-shadow(0 0 10px var(--accent-blue));
+        }
+
+        .arch-label {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            fill: var(--text-primary);
+            pointer-events: none;
+        }
+
+        .arch-arrow {
+            fill: none;
+            stroke: var(--glass-border);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s ease forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .arch-info-overlay {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(88, 166, 255, 0.05);
+            border-radius: 12px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 1px dashed var(--glass-border);
+        }
+
+        .arch-info-overlay h4 {
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-info-overlay p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 600px;
+        }
+
+        .heatmap-cell {
+            width: 100%;
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.2);
+            filter: brightness(1.5);
+            z-index: 10;
+        }
+
+        .heatmap-cell[data-level="1"] {
+            background: #0e4429;
+        }
+
+        .heatmap-cell[data-level="2"] {
+            background: #006d32;
+        }
+
+        .heatmap-cell[data-level="3"] {
+            background: #26a641;
+        }
+
+        .heatmap-cell[data-level="4"] {
+            background: #39d353;
+        }
+
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        .heatmap-legend .cell {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        /* Tech Stack */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            perspective: 1000px;
+        }
+
+        .tech-item {
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            transition: transform 0.1s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+            overflow: hidden;
+        }
+
+        .tech-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1) 0%, transparent 80%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .tech-item:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(88, 166, 255, 0.15);
+        }
+
+        .tech-item:hover::before {
+            opacity: 1;
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            transform: translateZ(30px);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            transform: translateZ(20px);
+        }
+
+        .tech-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transform: translateZ(10px);
+        }
+
+        .github-btn {
+            background: #24292e;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .github-btn:hover {
+            background: #2f363d;
+            border-color: var(--text-secondary);
+            transform: translateY(-2px);
+        }
+
+        /* Detail Items */
+        .detail-item {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .detail-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+            border-color: var(--accent-blue);
+        }
+
+        .detail-item .content {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .detail-item .icon {
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+
+        .detail-item .link-icon {
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .detail-item:hover .link-icon {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Spotlight Modal Styles */
+        .spotlight-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .spotlight-section {
+            margin-bottom: 2rem;
+        }
+
+        .spotlight-section h4 {
+            color: var(--accent-blue);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .spotlight-section p {
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .spotlight-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .spotlight-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--accent-blue);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(88, 166, 255, 0.2);
+        }
+
+        .result-metric {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0.5rem 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .result-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-category {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        @media (max-width: 768px) {
+            .spotlight-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 9, 14, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.open {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal.open .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            color: var(--accent-blue);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: white;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #0d1117;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+
+        #modal-code {
+            color: #e6edf3;
+            white-space: pre-wrap;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .tech-item:hover .tech-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .tech-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .tech-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Section Headers */
+        .section-header {
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Gantt Custom Styles */
+        .gantt-dates {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .gantt-section-title {
+            color: var(--accent-blue);
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Missing Gantt Styles */
+        .gantt-header {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .gantt-dates {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .gantt-row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            gap: 1rem;
+        }
+
+        .gantt-task-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .gantt-bar-container {
+            position: relative;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            width: 100%;
+        }
+
+        .gantt-bar {
+            position: absolute;
+            height: 100%;
+            border-radius: 6px;
+            top: 0;
+            display: flex;
+            align-items: center;
+            padding-left: 0.8rem;
+            font-size: 0.75rem;
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gantt-bar.mads {
+            background: var(--grad-blue);
+        }
+
+        .gantt-bar.sigurd {
+            background: var(--grad-purple);
+        }
+
+        .gantt-bar.andreas {
+            background: var(--grad-green);
+        }
+
+        .gantt-bar.jonas {
+            background: var(--grad-orange);
+        }
+
+        .gantt-section {
+            margin-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 1rem;
+        }
+
+        .gantt-legend {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .gantt-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .gantt-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        /* Missing Badge Colors */
+        .owner-badge.mads {
+            background: rgba(56, 139, 253, 0.15);
+            color: #58a6ff;
+            border: 1px solid rgba(56, 139, 253, 0.3);
+        }
+
+        .owner-badge.sigurd {
+            background: rgba(163, 113, 247, 0.15);
+            color: #a371f7;
+            border: 1px solid rgba(163, 113, 247, 0.3);
+        }
+
+        .owner-badge.andreas {
+            background: rgba(63, 185, 80, 0.15);
+            color: #3fb950;
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+
+        .owner-badge.jonas {
+            background: rgba(210, 153, 34, 0.15);
+            color: #d29922;
+            border: 1px solid rgba(210, 153, 34, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            .tabs {
+                width: 100%;
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding: 1rem;
+            }
+
+            .tab {
+                white-space: nowrap;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="magnetic-canvas"></canvas>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div>
+                    <h1>VLF Metal Detector</h1>
+                    <p>Project Development Timeline</p>
+                </div>
+                <svg class="header-wave" viewBox="0 0 100 30">
+                    <path d="M0,15 C10,5 20,25 30,15 C40,5 50,25 60,15 C70,5 80,25 90,15 L100,15" />
+                </svg>
+            </div>
+            <div class="date-range">January 5 - 19, 2026</div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-section="overview">Overview</button>
+            <button class="tab" data-section="timeline">Timeline</button>
+            <button class="tab" data-section="team">Team</button>
+            <button class="tab" data-section="milestones">Milestones</button>
+            <button class="tab" data-section="meetings">Meetings</button>
+            <button class="tab" data-section="matrix">Responsibilities</button>
+            <button class="tab" data-section="tech">Tech Stack</button>
+            <button class="tab" data-section="arch">System Architecture</button>
+        </nav>
+
+        <!-- Overview Section -->
+        <div id="overview" class="section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Development Days</div>
+                </div>
+                <a href="https://github.com/MadsRudolph/34621-Metal-Detector/commits/master" target="_blank"
+                    class="stat-card" style="text-decoration: none; display: block;">
+                    <div class="stat-value">99</div>
+                    <div class="stat-label">Total Commits</div>
+                </a>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Team Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">H-Bridge Efficiency</div>
+                </div>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card" data-member="mads" onclick="showMemberDetails('mads')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar mads">
+                            <img src="https://github.com/MadsRudolph.png" alt="Mads"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Mads</h3>
+                            <div class="role">Project Lead</div>
+                        </div>
+                    </div>
+                    <div class="contributions">Firmware, documentation, integration, user features</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 65%; background: linear-gradient(90deg, #58a6ff, #1f6feb);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>64 commits</span>
+                        <span>65%</span>
+                    </div>
+                </div>
+
+                <div class="team-card" data-member="sigurd" onclick="showMemberDetails('sigurd')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar sigurd">
+                            <img src="https://github.com/gigurd.png" alt="Sigurd"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Sigurd</h3>
+                            <div class="role">Hardware Engineer</div>
+                        </div>
+                    </div>
+                    <div class="contributions">QSPICE simulations, H-bridge design, KiCad schematics</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 11%; background: linear-gradient(90deg, #a371f7, #8957e5);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>11 commits</span>
+                        <span>11%</span>
+                    </div>
+                </div>
+
+                <div class="team-card" data-member="andreas" onclick="showMemberDetails('andreas')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar andreas">
+                            <img src="https://github.com/AndreasSJacobsen.png" alt="Andreas"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Andreas</h3>
+                            <div class="role">Signal Processing</div>
+                        </div>
+                    </div>
+                    <div class="contributions">DSP algorithms, RX amplifier design, IIR filter</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 11%; background: linear-gradient(90deg, #3fb950, #238636);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>11 commits</span>
+                        <span>11%</span>
+                    </div>
+                </div>
+
+                <div class="team-card" data-member="jonas" onclick="showMemberDetails('jonas')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar jonas">
+                            <img src="https://github.com/MotherFrogher.png" alt="Jonas"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Jonas</h3>
+                            <div class="role">Theory & Review</div>
+                        </div>
+                    </div>
+                    <div class="contributions">Maple calculations, coil theory, code reviews</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 7%; background: linear-gradient(90deg, #d29922, #9e6a03);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>7 commits</span>
+                        <span>7%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contribution Heatmap (Smaller & Compact) -->
+            <div class="heatmap-wrapper">
+                <div class="heatmap-header">
+                    <h3>Contribution Activity</h3>
+                    <div style="font-size: 0.85rem; color: var(--accent-blue);">99 commits in 15 days</div>
+                </div>
+                <div id="heatmap-grid" class="heatmap-grid">
+                    <!-- JS Grid Injection -->
+                </div>
+                <div class="heatmap-legend">
+                    <span>Less</span>
+                    <div class="cell" style="background: rgba(255, 255, 255, 0.05);"></div>
+                    <div class="cell" style="background: #0e4429;"></div>
+                    <div class="cell" style="background: #006d32;"></div>
+                    <div class="cell" style="background: #26a641;"></div>
+                    <div class="cell" style="background: #39d353;"></div>
+                    <span>More</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Section -->
+        <div id="timeline" class="section">
+            <div class="section-header">
+                <h2>Development Gantt Chart</h2>
+                <p>Filter by team member to highlight their contributions</p>
+            </div>
+
+            <div class="filter-pills">
+                <button class="pill active" data-filter="all">All</button>
+                <button class="pill" data-filter="mads">Mads</button>
+                <button class="pill" data-filter="sigurd">Sigurd</button>
+                <button class="pill" data-filter="andreas">Andreas</button>
+                <button class="pill" data-filter="jonas">Jonas</button>
+            </div>
+
+            <div class="gantt-container">
+                <!-- Date Header -->
+                <div class="gantt-header">
+                    <div></div>
+                    <div class="gantt-dates">
+                        <span>Jan 5</span>
+                        <span>Jan 7</span>
+                        <span>Jan 9</span>
+                        <span>Jan 11</span>
+                        <span>Jan 13</span>
+                        <span>Jan 15</span>
+                        <span>Jan 17</span>
+                        <span>Jan 19</span>
+                    </div>
+                </div>
+
+                <div class="gantt">
+                    <!-- Infrastructure -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">Infrastructure (Mads)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Project Setup</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 0%; width: 14%;">Jan 5-6</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Documentation</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 28%; width: 14%;">Jan 9-10</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Theory -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">Theory (Jonas)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Maple Calculations</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar jonas" style="left: 7%; width: 21%;">Jan 6-8</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">B-Fields & Inductance</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar jonas" style="left: 14%; width: 14%;">Jan 7-8</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DSP -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">DSP (Andreas)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Signal Processing</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar andreas" style="left: 14%; width: 14%;">Jan 7-8</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">TX/RX Chain</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar andreas" style="left: 21%; width: 14%;">Jan 8-9</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">IIR Filter</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar andreas" style="left: 71%; width: 21%;">Jan 15-17</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulation -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">Circuit Simulation (Sigurd)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">QSPICE Model</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar sigurd" style="left: 21%; width: 14%;">Jan 8-9</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">H-Bridge (98% eff)</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar sigurd" style="left: 43%; width: 14%;">Jan 11-12</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">KiCad Schematic</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar sigurd" style="left: 71%; width: 14%;">Jan 15-16</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RX Amplifier -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">RX Amplifier (Andreas)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Circuit Design</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar andreas" style="left: 50%; width: 21%;">Jan 12-14</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">KiCad RX + MCU</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar andreas" style="left: 93%; width: 7%;">Jan 18</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hardware -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">Hardware (Mads)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">TX Driver Design</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 14%; width: 28%;">Jan 7-10</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Coil Verification</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 28%; width: 50%;">Jan 9-15</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Power Budget</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 14%; width: 86%;">Jan 7-19</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firmware -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">Firmware (Mads + Jonas)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Debug System</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 14%; width: 14%;">Jan 7-8</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Arduino Nano Port</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 21%; width: 14%;">Jan 8-9</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Code Modularization</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 93%; width: 7%;">Jan 18-19</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Features -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">User Features (Mads)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Start/Stop & Calibration</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 86%; width: 14%;">Jan 17-18</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Metal Classification</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 86%; width: 21%;">Jan 17-19</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">HUD & Audio</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 100%; width: 7%;">Jan 19</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testing -->
+                    <div class="gantt-section">
+                        <div class="gantt-section-title">Testing (Mads)</div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">MATLAB Tools</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 50%; width: 28%;">Jan 12-15</div>
+                            </div>
+                        </div>
+                        <div class="gantt-row">
+                            <div class="gantt-task-name">Bug Fixes</div>
+                            <div class="gantt-bar-container">
+                                <div class="gantt-bar mads" style="left: 100%; width: 7%;">Jan 19</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="gantt-legend">
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(90deg, #58a6ff, #1f6feb);">
+                        </div>
+                        <span>Mads</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(90deg, #a371f7, #8957e5);">
+                        </div>
+                        <span>Sigurd</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(90deg, #3fb950, #238636);">
+                        </div>
+                        <span>Andreas</span>
+                    </div>
+                    <div class="gantt-legend-item">
+                        <div class="gantt-legend-color" style="background: linear-gradient(90deg, #d29922, #9e6a03);">
+                        </div>
+                        <span>Jonas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <div id="team" class="section">
+            <div class="section-header">
+                <h2>Team Contributions</h2>
+                <p>Click on a team member to see their detailed contributions</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card" data-member="mads" onclick="showMemberDetails('mads')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar mads">
+                            <img src="https://github.com/MadsRudolph.png" alt="Mads"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Mads</h3>
+                            <div class="role">Project Lead</div>
+                        </div>
+                    </div>
+                    <div class="contributions">Firmware architecture, documentation, integration, user features</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 60%; background: linear-gradient(90deg, #58a6ff, #1f6feb);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>52 commits</span>
+                        <span>60%</span>
+                    </div>
+                </div>
+
+                <div class="team-card" data-member="sigurd" onclick="showMemberDetails('sigurd')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar sigurd">
+                            <img src="https://github.com/gigurd.png" alt="Sigurd"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Sigurd</h3>
+                            <div class="role">Hardware Engineer</div>
+                        </div>
+                    </div>
+                    <div class="contributions">QSPICE simulations, H-bridge design, KiCad schematics</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 14%; background: linear-gradient(90deg, #a371f7, #8957e5);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>12 commits</span>
+                        <span>14%</span>
+                    </div>
+                </div>
+
+                <div class="team-card" data-member="andreas" onclick="showMemberDetails('andreas')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar andreas">
+                            <img src="https://github.com/AndreasSJacobsen.png" alt="Andreas"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Andreas</h3>
+                            <div class="role">Signal Processing</div>
+                        </div>
+                    </div>
+                    <div class="contributions">DSP algorithms, RX amplifier design, IIR filter</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 13%; background: linear-gradient(90deg, #3fb950, #238636);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>11 commits</span>
+                        <span>13%</span>
+                    </div>
+                </div>
+
+                <div class="team-card" data-member="jonas" onclick="showMemberDetails('jonas')">
+                    <div class="team-card-header">
+                        <a href="https://github.com/MadsRudolph/34621-Metal-Detector/graphs/contributors"
+                            target="_blank" class="avatar jonas">
+                            <img src="https://github.com/MotherFrogher.png" alt="Jonas"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                        <div>
+                            <h3>Jonas</h3>
+                            <div class="role">Theory & Review</div>
+                        </div>
+                    </div>
+                    <div class="contributions">Maple calculations, coil theory, code reviews</div>
+                    <div class="commit-bar">
+                        <div class="commit-fill"
+                            style="width: 8%; background: linear-gradient(90deg, #d29922, #9e6a03);"></div>
+                    </div>
+                    <div class="commit-count">
+                        <span>7 commits</span>
+                        <span>8%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="member-details" style="margin-top: 2rem; display: none;">
+                <div class="gantt-container">
+                    <h3 id="details-title" style="margin-bottom: 1rem;"></h3>
+                    <ul id="details-list" style="list-style: none; color: var(--text-secondary);"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Milestones Section -->
+        <div id="milestones" class="section">
+            <div class="section-header">
+                <h2>Key Milestones</h2>
+                <p>Major achievements throughout the project</p>
+            </div>
+
+            <div class="milestones">
+                <div class="milestone">
+                    <div class="milestone-date">January 5, 2026</div>
+                    <div class="milestone-title">Project Infrastructure & Repo Setup</div>
+                    <div class="milestone-owner"><span class="owner-badge mads">Mads</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 7, 2026</div>
+                    <div class="milestone-title">VLF Resonance & Induction Theory</div>
+                    <div class="milestone-owner"><span class="owner-badge jonas">Jonas</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 8, 2026</div>
+                    <div class="milestone-title">QSPICE Power Stage Validation</div>
+                    <div class="milestone-owner"><span class="owner-badge sigurd">Sigurd</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 9, 2026</div>
+                    <div class="milestone-title">High-Performance DFT Processing</div>
+                    <div class="milestone-owner"><span class="owner-badge andreas">Andreas</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 11, 2026</div>
+                    <div class="milestone-title">H-Bridge Efficiency Benchmark (98%)</div>
+                    <div class="milestone-owner"><span class="owner-badge sigurd">Sigurd</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 14, 2026</div>
+                    <div class="milestone-title">Precision RX Signal Chain Designed</div>
+                    <div class="milestone-owner"><span class="owner-badge andreas">Andreas</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 15, 2026</div>
+                    <div class="milestone-title">Master Coil Nulling Accuracy Achieved</div>
+                    <div class="milestone-owner"><span class="owner-badge jonas">Jonas</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 17, 2026</div>
+                    <div class="milestone-title">Metal Classification Algorithms</div>
+                    <div class="milestone-owner"><span class="owner-badge mads">Mads</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 18, 2026</div>
+                    <div class="milestone-title">Graphic HUD & Visual Indicators</div>
+                    <div class="milestone-owner"><span class="owner-badge mads">Mads</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 19, 2026</div>
+                    <div class="milestone-title">Full System Integration & QA</div>
+                    <div class="milestone-owner"><span class="owner-badge mads">Mads</span></div>
+                </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 20, 2026</div>
+                    <div class="milestone-title">Mechanical Assembly & Field Success</div>
+                    <div class="milestone-owner">
+                        <span class="owner-badge mads">Mads</span>
+                        <span class="owner-badge sigurd">Sigurd</span>
+                        <span class="owner-badge andreas">Andreas</span>
+                        <span class="owner-badge jonas">Jonas</span>
+                    </div>
+                    <div class="milestone-desc" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 5px;">
+                        Full assembly with PCBs in enclosure, mounted on wooden dowel. Fully functional metal detector.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Responsibility Matrix Section -->
+        <div id="matrix" class="section">
+            <div class="section-header">
+                <h2>Responsibility Matrix</h2>
+                <p>Who owns what across the project</p>
+            </div>
+
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Primary Owner</th>
+                        <th>Support</th>
+                        <th>Commits</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Infrastructure</strong></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td>-</td>
+                        <td>12</td>
+                        <td>Project setup, documentation structure, build systems</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Theoretical Foundation</strong></td>
+                        <td><span class="owner-badge jonas">Jonas</span></td>
+                        <td>-</td>
+                        <td>5</td>
+                        <td>Mathematical models, Maple calculations, EM theory</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DSP Theory & Algorithms</strong></td>
+                        <td><span class="owner-badge andreas">Andreas</span></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td>6</td>
+                        <td>Signal processing design, DFT analysis, filter specs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Circuit Simulation</strong></td>
+                        <td><span class="owner-badge sigurd">Sigurd</span></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td>9</td>
+                        <td>QSPICE/LTspice modeling, efficiency optimization</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RX Amplifier Design</strong></td>
+                        <td><span class="owner-badge andreas">Andreas</span></td>
+                        <td>-</td>
+                        <td>6</td>
+                        <td>Receiver amplifier design, KiCad schematic</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hardware Integration</strong></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td><span class="owner-badge sigurd">Sigurd</span></td>
+                        <td>10</td>
+                        <td>TX driver, coil design, power budget</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Firmware Development</strong></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td><span class="owner-badge jonas">Jonas</span></td>
+                        <td>15</td>
+                        <td>ATmega328P code, timers, modular architecture</td>
+                    </tr>
+                    <tr>
+                        <td><strong>User Features</strong></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td>-</td>
+                        <td>8</td>
+                        <td>Detection modes, calibration, display, audio</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Testing & Verification</strong></td>
+                        <td><span class="owner-badge mads">Mads</span></td>
+                        <td>-</td>
+                        <td>6</td>
+                        <td>MATLAB verification, test plans, bug fixes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tech Stack Section -->
+        <div id="tech" class="section">
+            <div class="section-header">
+                <h2>Technology Stack</h2>
+                <p>Tools and technologies used in this project</p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-icon">🔧</div>
+                    <div class="tech-name">C (AVR-GCC)</div>
+                    <div class="tech-desc">Firmware for ATmega328P</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📊</div>
+                    <div class="tech-name">MATLAB</div>
+                    <div class="tech-desc">DSP verification & analysis</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🧮</div>
+                    <div class="tech-name">Maple</div>
+                    <div class="tech-desc">Symbolic calculations</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">⚡</div>
+                    <div class="tech-name">QSPICE</div>
+                    <div class="tech-desc">Circuit simulation</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📈</div>
+                    <div class="tech-name">LTspice</div>
+                    <div class="tech-desc">Analog simulation</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🔌</div>
+                    <div class="tech-name">KiCad</div>
+                    <div class="tech-desc">PCB design & schematics</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📝</div>
+                    <div class="tech-name">Markdown</div>
+                    <div class="tech-desc">Documentation</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">📄</div>
+                    <div class="tech-name">LaTeX/Overleaf</div>
+                    <div class="tech-desc">Report generation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meetings Section -->
+        <div id="meetings" class="section">
+            <div class="section-header">
+                <h2>Meeting Notes & Decisions</h2>
+                <p>Key discussions and decisions from team meetings</p>
+            </div>
+
+            <div class="meetings-grid" style="display: grid; gap: 1.5rem;">
+                <!-- Meeting 1 -->
+                <div class="meeting-card"
+                    style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div
+                            style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            📋</div>
+                        <div>
+                            <h3 style="margin: 0;">Meeting #1</h3>
+                            <div style="color: var(--accent-blue); font-size: 0.9rem;">January 6, 2026</div>
+                        </div>
+                    </div>
+                    <div style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        <strong style="color: var(--text-primary);">Focus:</strong> Initial planning and TX components
+                    </div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-green);">✓</span>
+                            <span>Investigated how different parts of the metal detector should be designed</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-green);">✓</span>
+                            <span>Focus on TX components established as priority</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-blue);">→</span>
+                            <span><strong>Action:</strong> Mads to prepare power consumption draft</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-blue);">→</span>
+                            <span><strong>Action:</strong> Decide on coil design by next day</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Meeting 2 -->
+                <div class="meeting-card"
+                    style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <div
+                            style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            📋</div>
+                        <div>
+                            <h3 style="margin: 0;">Meeting #2</h3>
+                            <div style="color: var(--accent-green); font-size: 0.9rem;">January 8, 2026</div>
+                        </div>
+                    </div>
+                    <div style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        <strong style="color: var(--text-primary);">Focus:</strong> Progress review and milestone
+                        planning
+                    </div>
+
+                    <h4 style="margin: 1rem 0 0.5rem; color: var(--accent-purple);">Completed Items</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-green);">✓</span>
+                            <span>Coil design completed (tuning may occur)</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-green);">✓</span>
+                            <span>Simulated various coil dimension variants</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-green);">✓</span>
+                            <span>TX, RX, and DSP software ready for testing</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-green);">✓</span>
+                            <span>Working H-bridge amplifier for AP amplifier</span>
+                        </li>
+                    </ul>
+
+                    <h4 style="margin: 1rem 0 0.5rem; color: var(--accent-orange);">Key Decisions</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-orange);">⚡</span>
+                            <span><strong>Coil diameter:</strong> Fixed at 20cm outer diameter for 3D model</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-red);">⚠</span>
+                            <span><strong>Known issue:</strong> PMOS transistors may exit saturation as battery
+                                drains</span>
+                        </li>
+                    </ul>
+
+                    <h4 style="margin: 1rem 0 0.5rem; color: var(--accent-blue);">Deadlines Set</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-blue);">📅</span>
+                            <span><strong>Jan 9:</strong> Prototype software for DSP, TX, RX, and AP control</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-blue);">📅</span>
+                            <span><strong>Week 3 start:</strong> RX amplifier basic design complete</span>
+                        </li>
+                        <li
+                            style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-blue);">📅</span>
+                            <span><strong>Week 3:</strong> Everything ready for testing and redesign</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; gap: 0.5rem;">
+                            <span style="color: var(--accent-blue);">📅</span>
+                            <span><strong>Ongoing:</strong> Begin writing SOTA and analysis in report</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Decision Timeline -->
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Decision Timeline</h3>
+                <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem;">
+                    <div
+                        style="min-width: 200px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center;">
+                        <div style="color: var(--accent-blue); font-size: 0.85rem;">Jan 6</div>
+                        <div style="font-weight: 600; margin: 0.5rem 0;">TX Focus</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Priority on transmitter
+                            components</div>
+                    </div>
+                    <div
+                        style="min-width: 200px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center;">
+                        <div style="color: var(--accent-green); font-size: 0.85rem;">Jan 8</div>
+                        <div style="font-weight: 600; margin: 0.5rem 0;">20cm Coil</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Outer diameter locked</div>
+                    </div>
+                    <div
+                        style="min-width: 200px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center;">
+                        <div style="color: var(--accent-purple); font-size: 0.85rem;">Jan 8</div>
+                        <div style="font-weight: 600; margin: 0.5rem 0;">H-Bridge Design</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">AP amplifier confirmed</div>
+                    </div>
+                    <div
+                        style="min-width: 200px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center;">
+                        <div style="color: var(--accent-orange); font-size: 0.85rem;">Jan 9</div>
+                        <div style="font-weight: 600; margin: 0.5rem 0;">Prototype Target</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Software milestone</div>
+                    </div>
+                    <div
+                        style="min-width: 200px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: center;">
+                        <div style="color: var(--accent-red); font-size: 0.85rem;">Week 3</div>
+                        <div style="font-weight: 600; margin: 0.5rem 0;">Test Phase</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Full system testing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Architecture Section -->
+        <div id="arch" class="section">
+            <div class="section-header">
+                <h2>Hardware Architecture</h2>
+                <p>Interactive signal flow from TX activation to Digital Processing</p>
+            </div>
+
+            <div class="arch-viz-wrapper">
+                <svg viewBox="0 0 1000 400" class="arch-svg">
+                    <!-- Definitions for markers -->
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="var(--glass-border)" />
+                        </marker>
+                    </defs>
+
+                    <!-- TX Path -->
+                    <g class="arch-block" data-name="ATMega328P (MCU)" data-owner="Mads"
+                        data-desc="Central controller running the main loop and 2kHz timer interrupts.">
+                        <rect x="50" y="150" width="120" height="100" rx="10" fill="rgba(88, 166, 255, 0.1)"
+                            stroke="var(--accent-blue)" stroke-width="2" />
+                        <text x="110" y="205" class="arch-label" text-anchor="middle">MCU</text>
+                    </g>
+
+                    <path d="M 170 200 L 230 200" class="arch-arrow" marker-end="url(#arrowhead)" />
+                    <circle cx="200" cy="200" r="20" class="hotspot-hitbox" />
+                    <circle cx="200" cy="200" r="4" class="arch-hotspot" data-signal="PWM Drive: 2kHz Square Wave" />
+
+                    <g class="arch-block" data-name="H-Bridge" data-owner="Sigurd"
+                        data-desc="High-efficiency power stage (98%) driving the transmitter coil.">
+                        <rect x="240" y="150" width="120" height="100" rx="10" fill="rgba(188, 140, 255, 0.1)"
+                            stroke="var(--accent-purple)" stroke-width="2" />
+                        <text x="300" y="205" class="arch-label" text-anchor="middle">H-Bridge</text>
+                    </g>
+
+                    <path d="M 360 200 L 420 200" class="arch-arrow" marker-end="url(#arrowhead)" />
+                    <circle cx="390" cy="200" r="20" class="hotspot-hitbox" />
+                    <circle cx="390" cy="200" r="4" class="arch-hotspot" data-signal="AC Load: 12Vpp VLF Signal" />
+
+                    <g class="arch-block" data-name="TX Coil" data-owner="Jonas"
+                        data-desc="Primary induction coil designed for optimal flux density at 2kHz.">
+                        <circle cx="480" cy="200" r="50" fill="rgba(210, 153, 34, 0.1)" stroke="var(--accent-orange)"
+                            stroke-width="2" />
+                        <text x="480" y="205" class="arch-label" text-anchor="middle">TX Coil</text>
+                    </g>
+
+                    <!-- RX Path -->
+                    <g class="arch-block" data-name="RX Coil" data-owner="Jonas"
+                        data-desc="Bucking coil setup achieved perfect nulling for maximum sensitivity.">
+                        <circle cx="620" cy="200" r="50" fill="rgba(210, 153, 34, 0.1)" stroke="var(--accent-orange)"
+                            stroke-width="2" />
+                        <text x="620" y="205" class="arch-label" text-anchor="middle">RX Coil</text>
+                    </g>
+
+                    <path d="M 670 200 L 730 200" class="arch-arrow" marker-end="url(#arrowhead)" />
+                    <circle cx="700" cy="200" r="20" class="hotspot-hitbox" />
+                    <circle cx="700" cy="200" r="4" class="arch-hotspot" data-signal="Induced EMF: Microvolt range" />
+
+                    <g class="arch-block" data-name="Op-Amp Amp" data-owner="Andreas"
+                        data-desc="Precision low-noise amplification stage for the microvolt RX signal.">
+                        <rect x="740" y="150" width="120" height="100" rx="10" fill="rgba(63, 185, 80, 0.1)"
+                            stroke="var(--accent-green)" stroke-width="2" />
+                        <text x="800" y="205" class="arch-label" text-anchor="middle">Amplifier</text>
+                    </g>
+
+                    <path d="M 800 150 L 800 100 L 110 100 L 110 140" class="arch-arrow" marker-end="url(#arrowhead)" />
+                    <circle cx="455" cy="100" r="20" class="hotspot-hitbox" />
+                    <circle cx="455" cy="100" r="4" class="arch-hotspot"
+                        data-signal="Filtered Signal: DC-offset Analog" />
+                </svg>
+
+                <div id="arch-info" class="arch-info-overlay">
+                    <h4 id="arch-info-title">Interactive Diagram</h4>
+                    <p id="arch-info-desc">Hover over any component to explore the hardware details and lead engineers.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Spotlight Modal -->
+        <div id="file-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span class="modal-category" id="modal-category">Project Contribution</span>
+                        <h3 id="modal-title">Feature Title</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <a id="modal-source-btn" href="#" target="_blank" class="github-btn">
+                            <span>View Source</span>
+                            <span style="font-family: sans-serif;">↗</span>
+                        </a>
+                        <button class="close-modal" onclick="closeModal()">×</button>
+                    </div>
+                </div>
+                <div class="modal-body glass-panel">
+                    <div class="spotlight-grid">
+                        <div class="spotlight-main">
+                            <div class="spotlight-section">
+                                <h4><span class="icon">🎯</span> Context</h4>
+                                <p id="modal-context">Why this was needed...</p>
+                            </div>
+                            <div class="spotlight-section">
+                                <h4><span class="icon">⚙️</span> Technical Implementation</h4>
+                                <p id="modal-tech">How it works...</p>
+                            </div>
+                        </div>
+                        <div class="spotlight-sidebar">
+                            <div class="spotlight-card">
+                                <h4>Results</h4>
+                                <div class="result-metric text-gradient" id="modal-result">98%</div>
+                                <p class="result-label" id="modal-result-label">Efficiency</p>
+                            </div>
+                            <div class="spotlight-tags" id="modal-tags">
+                                <!-- Tags injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <script>
+            // Magnetic Background Particle System
+            (function () {
+                const canvas = document.getElementById('magnetic-canvas');
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                let mouse = { x: null, y: null, radius: 150 };
+
+                function init() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    particles = [];
+                    const numberOfParticles = (canvas.width * canvas.height) / 15000;
+                    for (let i = 0; i < numberOfParticles; i++) {
+                        particles.push(new Particle());
+                    }
+                }
+
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.size = Math.random() * 2 + 0.5;
+                        this.baseX = this.x;
+                        this.baseY = this.y;
+                        this.density = (Math.random() * 30) + 1;
+                        this.color = Math.random() > 0.5 ? '#58a6ff' : '#bc8cff';
+                    }
+                    draw() {
+                        ctx.fillStyle = this.color;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    update() {
+                        let dx = mouse.x - this.x;
+                        let dy = mouse.y - this.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let maxDistance = mouse.radius;
+                        let force = (maxDistance - distance) / maxDistance;
+                        let directionX = forceDirectionX * force * this.density;
+                        let directionY = forceDirectionY * force * this.density;
+
+                        if (distance < mouse.radius) {
+                            this.x -= directionX;
+                            this.y -= directionY;
+                            // Scanning Lens Effect
+                            this.color = 'var(--accent-primary)';
+                            this.size = Math.random() * 3 + 1;
+                        } else {
+                            this.color = Math.random() > 0.5 ? 'rgba(255,255,255,0.05)' : 'var(--accent-primary)';
+                            this.size = Math.random() * 2 + 0.5;
+                            if (this.x !== this.baseX) {
+                                let dx = this.x - this.baseX;
+                                this.x -= dx / 10;
+                            }
+                            if (this.y !== this.baseY) {
+                                let dy = this.y - this.baseY;
+                                this.y -= dy / 10;
+                            }
+                        }
+                    }
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let i = 0; i < particles.length; i++) {
+                        particles[i].update();
+                        particles[i].draw();
+                    }
+                    requestAnimationFrame(animate);
+                }
+
+                window.addEventListener('mousemove', (e) => {
+                    mouse.x = e.clientX;
+                    mouse.y = e.clientY;
+                });
+
+                window.addEventListener('resize', () => {
+                    init();
+                });
+
+                init();
+                animate();
+            })();
+
+            // Initialize Scroll Observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in-entry');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Animate elements on load
+            document.querySelectorAll('.stat-card, .team-card, .meeting-card, .section-header, .tech-item').forEach((el, index) => {
+                el.classList.add('fade-in-entry');
+                el.style.animationDelay = `${index * 0.1}s`;
+                // For sections already visible, observer might not trigger if we don't observe
+                observer.observe(el);
+            });
+
+            // Tab Navigation
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const sectionId = tab.dataset.section;
+                    document.querySelectorAll('.section').forEach(s => {
+                        if (s.classList.contains('active')) {
+                            s.classList.remove('active');
+                        }
+                    });
+
+                    const activeSection = document.getElementById(sectionId);
+                    activeSection.classList.add('active');
+
+                    // Re-trigger animations for the new section
+                    activeSection.querySelectorAll('.fade-in-entry').forEach((el, index) => {
+                        el.style.animation = 'none';
+                        el.offsetHeight; /* trigger reflow */
+                        el.style.animation = null;
+                        el.style.animationDelay = `${index * 0.05}s`;
+                    });
+                });
+            });
+
+
+
+            // Architecture Hotspots
+            document.querySelectorAll('.arch-hotspot').forEach(spot => {
+                spot.addEventListener('mouseenter', () => {
+                    document.getElementById('arch-info-title').textContent = spot.dataset.signal;
+                    document.getElementById('arch-info-desc').textContent = "Signal intensity and phase measured at this point in the circuit.";
+                });
+                spot.addEventListener('mouseleave', () => {
+                    document.getElementById('arch-info-title').textContent = "Interactive Diagram";
+                    document.getElementById('arch-info-desc').textContent = "Hover over any component to explore the hardware details and lead engineers.";
+                });
+            });
+
+            // Filter Pills for Gantt - highlight by team member
+            const memberColors = {
+                mads: 'mads',
+                sigurd: 'sigurd',
+                andreas: 'andreas',
+                jonas: 'jonas'
+            };
+
+            document.querySelectorAll('.pill').forEach(pill => {
+                pill.addEventListener('click', () => {
+                    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    const filter = pill.dataset.filter;
+
+                    document.querySelectorAll('.gantt-bar').forEach(bar => {
+                        if (filter === 'all') {
+                            bar.style.opacity = '1';
+                            bar.style.filter = 'none';
+                        } else {
+                            const isMatch = bar.classList.contains(filter);
+                            bar.style.opacity = isMatch ? '1' : '0.1';
+                            bar.style.filter = isMatch ? 'brightness(1.2)' : 'grayscale(100%)';
+                        }
+                    });
+
+                    document.querySelectorAll('.gantt-section').forEach(section => {
+                        if (filter === 'all') {
+                            section.style.opacity = '1';
+                            section.style.display = 'block';
+                        } else {
+                            const title = section.querySelector('.gantt-section-title').textContent.toLowerCase();
+                            if (title.includes(filter)) {
+                                section.style.opacity = '1';
+                                section.style.display = 'block';
+                            } else {
+                                section.style.opacity = '0.3';
+                            }
+                        }
+                    });
+                });
+            });
+
+            // Contribution Heatmap Generation
+            (function () {
+                const grid = document.getElementById('heatmap-grid');
+                const totalCells = 22 * 7;
+                const commitDays = 15;
+                const totalCommits = 99;
+
+                // Mock data distribution over the last 15 days
+                const commitMap = new Array(totalCells).fill(0);
+                const startIndex = totalCells - commitDays - 5; // End near the right
+
+                for (let i = 0; i < commitDays; i++) {
+                    // Randomize intensity for the 15 days
+                    commitMap[startIndex + i] = Math.floor(Math.random() * 10) + 2;
+                }
+
+                for (let i = 0; i < totalCells; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    const commits = commitMap[i];
+
+                    let level = 0;
+                    if (commits > 8) level = 4;
+                    else if (commits > 5) level = 3;
+                    else if (commits > 3) level = 2;
+                    else if (commits > 0) level = 1;
+
+                    if (level > 0) cell.dataset.level = level;
+                    grid.appendChild(cell);
+                }
+            })();
+
+            // 3D Tilt Logic for Tech Items
+            document.querySelectorAll('.tech-item').forEach(item => {
+                item.addEventListener('mousemove', e => {
+                    const rect = item.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = (centerY - y) / 10;
+                    const rotateY = (x - centerX) / 10;
+
+                    item.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    item.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+                    item.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+                });
+
+                item.addEventListener('mouseleave', () => {
+                    item.style.transform = 'rotateX(0) rotateY(0)';
+                });
+            });
+
+            // Spotlight Functions
+            function openSpotlight(memberId, itemIndex) {
+                const data = memberDetails[memberId].items[itemIndex];
+                const modal = document.getElementById('file-modal');
+                const REPO_URL = "https://github.com/MadsRudolph/34621-Metal-Detector";
+
+                // Populate content
+                document.getElementById('modal-title').textContent = data.text;
+                document.getElementById('modal-category').textContent = data.category || "Project Contribution";
+                document.getElementById('modal-context').textContent = data.context || "No context provided.";
+                document.getElementById('modal-tech').textContent = data.tech_desc || "No implementation details.";
+
+                // Set GitHub Link
+                const linkBtn = document.getElementById('modal-source-btn');
+                if (data.path) {
+                    const type = data.path.includes('.') ? 'blob' : 'tree';
+                    linkBtn.href = `${REPO_URL}/${type}/master/${data.path}`;
+                    linkBtn.style.display = 'flex';
+                } else {
+                    linkBtn.style.display = 'none';
+                }
+
+                // Result Card
+                document.getElementById('modal-result').textContent = data.result || "Done";
+                document.getElementById('modal-result-label').textContent = data.result_label || "Status";
+
+                // Tags
+                const tagsContainer = document.getElementById('modal-tags');
+                tagsContainer.innerHTML = (data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join('');
+
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('file-modal');
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            window.onclick = function (event) {
+                const modal = document.getElementById('file-modal');
+                if (event.target == modal) {
+                    closeModal();
+                }
+            }
+
+            // Member Details Data - Rich Content
+            const memberDetails = {
+                'mads': {
+                    role: "Project Lead & Firmware Architect",
+                    items: [
+                        {
+                            text: "Repo Management",
+                            category: "Management",
+                            link: "#",
+                            path: "README.md",
+                            tags: ["git", "workflow", "CI/CD"],
+                            context: "The project required a robust version control strategy to handle parallel hardware and firmware development without conflicts.",
+                            tech_desc: "Established a structured git workflow with feature branches and pull requests. Configured `.gitignore` for KiCad/PlatformIO, and managed the `master` branch protections. Handled all complex merges between hardware schematics and firmware logic.",
+                            result: "Zero Conflicts",
+                            result_label: "Repo Stability"
+                        },
+                        {
+                            text: "Timer 0 Implementation",
+                            category: "Firmware",
+                            link: "#",
+                            path: "Code/src/timer.c",
+                            tags: ["C", "AVR", "Interrupts"],
+                            context: "Precise timing was critical for the metal detector's excitment signal and ADC sampling windows.",
+                            tech_desc: "Configured ATMega328P Timer0 to generate interrupts at exactly 2kHz. This interrupt drives the TX coil frequency and triggers the ADC conversion for synchronous sampling, ensuring phase alignment.",
+                            result: "<1% Jitter",
+                            result_label: "Timing Precision"
+                        },
+                        {
+                            text: "Main Detection Logic",
+                            category: "Core Logic",
+                            link: "#",
+                            path: "Code/src/detection.c",
+                            tags: ["Algorithms", "State Machine"],
+                            context: "The system needed to coordinate user input, calibration, and continuous metal discrimination.",
+                            tech_desc: "Architected the main event loop and state machine. Developed the logic that interprets processed DFT data (Magnitude/Phase) to determine metal type (Ferrous vs. Non-Ferrous) and updates the UI accordingly.",
+                            result: "High Accuracy",
+                            result_label: "Core Functionality"
+                        },
+                        {
+                            text: "HUD & Display",
+                            category: "UI/UX",
+                            link: "#",
+                            path: "Code/src/display.c",
+                            tags: ["OLED", "Graphics", "I2C"],
+                            context: "Users needed real-time visual feedback on signal strength and metal classification.",
+                            tech_desc: "Wrote a custom graphics driver for the SSD1306 OLED. Implemented double-buffering for flicker-free updates. Designed the HUD with dynamic signal bars, icons, and battery status indicators.",
+                            result: "30 FPS",
+                            result_label: "Visual Performance"
+                        }
+                    ]
+                },
+                'sigurd': {
+                    role: "Hardware Engineer & PCB Designer",
+                    items: [
+                        {
+                            text: "QSPICE Model",
+                            category: "Simulation",
+                            link: "#",
+                            path: "QSPICE",
+                            tags: ["SPICE", "Analog", "Physics"],
+                            context: "Before manufacturing, the resonant tank circuit and H-bridge needed theoretical validation.",
+                            tech_desc: "Built a comprehensive simulation model in QSPICE to predict current flow, voltage spikes, and MOSFET switching characteristics. Tuned component values to maximize resonance at 2kHz.",
+                            result: "Validated",
+                            result_label: "Design Validation"
+                        },
+                        {
+                            text: "H-Bridge Design",
+                            category: "Power Electronics",
+                            link: "#",
+                            path: "KiCad/Metaldetector",
+                            tags: ["KiCad", "PCB", "MOSFETs"],
+                            context: "Driving the coil required a high-efficiency power stage capable of handling high currents.",
+                            tech_desc: "Designed a compact H-Bridge using discrete N-channel and P-channel MOSFETs. Optimized trace widths for thermal management and minimized parasitic inductance in the layout.",
+                            result: "98% Eff.",
+                            result_label: "Power Efficiency"
+                        },
+                        {
+                            text: "Coil Housing 3D Design",
+                            category: "Mechanical",
+                            link: "#",
+                            path: "KiCad/Metaldetector",
+                            tags: ["CAD", "3D Printing", "Mechanical"],
+                            context: "The search coil needed a sturdy, non-conductive housing to protect the windings and maintain geometry.",
+                            tech_desc: "Modeled the coil body in CAD, ensuring correct dimensions for the TX and RX windings. Designed mounting points for the shaft and strain relief for the cable. Mads quality checked the design and handled printing on the school's 3D printers.",
+                            result: "Stable 3D",
+                            result_label: "Mechanical Stability"
+                        }
+                    ]
+                },
+                'andreas': {
+                    role: "Signal Processing Specialist",
+                    items: [
+                        {
+                            text: "IIR Filter Implementation",
+                            category: "DSP",
+                            link: "#",
+                            path: "Code/src/filter.c",
+                            tags: ["DSP", "Filtering", "Math"],
+                            context: "Raw DFT data was too noisy for a stable user display.",
+                            tech_desc: "Designed and implemented a first-order IIR (Infinite Impulse Response) filter using efficient integer math. Tuned the alpha coefficient to balance responsiveness with noise rejection.",
+                            result: "85% Less Jitter",
+                            result_label: "Signal Stability"
+                        },
+                        {
+                            text: "RX Amplifier",
+                            category: "Analog",
+                            link: "#",
+                            path: "KiCad/Metaldetector",
+                            tags: ["Op-Amp", "Gain", "Noise"],
+                            context: "The received signal from the coil is in the microvolt range and needs massive amplification.",
+                            tech_desc: "Designed a low-noise, high-gain amplification stage using precision Op-Amps. Calculated the gain bandwidth product to ensure stability at 2kHz.",
+                            result: "Low Noise",
+                            result_label: "Signal Quality"
+                        },
+                        {
+                            text: "DFT & IIR Optimization",
+                            category: "Firmware Optimization",
+                            link: "#",
+                            path: "Code/src/dft.c",
+                            tags: ["Optimization", "C", "Math"],
+                            context: "Running DFT and filters on an 8-bit MCU required careful resource management.",
+                            tech_desc: "Pair programmed with Jonas to refine the DFT and IIR filter algorithms. Also co-implemented the sleep timer logic to ensure the device powers down correctly when idle.",
+                            result: "Opt. Timing",
+                            result_label: "CPU Load"
+                        }
+                    ]
+                },
+                'jonas': {
+                    role: "Theoretical Physicist & Reviewer",
+                    items: [
+                        {
+                            text: "Coil Design & Nulling",
+                            category: "Physics",
+                            link: "#",
+                            path: "Docs/Maple",
+                            tags: ["Electromagnetism", "Maple", "Tuning"],
+                            context: "The system relies on 'Induction Balance', where the TX field must not directly induce voltage in the RX coil.",
+                            tech_desc: "Calculated optimal winding counts and geometry using Maple. Achieved perfect nulling by manually removing windings from the bucking coil, turn-by-turn, until zero interference was observed.",
+                            result: "Zero Baseline",
+                            result_label: "Sensitivity"
+                        },
+                        {
+                            text: "Timer 0 Implementation",
+                            category: "Firmware",
+                            link: "#",
+                            path: "Code/src/timer.c",
+                            tags: ["C", "Hardware", "Review"],
+                            context: "Setting up hardware timers correctly is notoriously difficult on bare-metal AVR.",
+                            tech_desc: "Configured ATMega328P Timer0 to generate interrupts at exactly 2kHz. This interrupt drives the TX coil frequency and triggers the ADC conversion.",
+                            result: "2kHz Verified",
+                            result_label: "Code Quality"
+                        },
+                        {
+                            text: "Sleep Mode & Power Optimization",
+                            category: "Low Power",
+                            link: "#",
+                            path: "Code/src/main.c",
+                            tags: ["Power Management", "System Design"],
+                            context: "To extend battery life, the device needs to sleep when inactive.",
+                            tech_desc: "Collaborated with Andreas to implement deep sleep modes, shutting down the ADC, Timers, and Display after a timeout period, significantly reducing average power consumption.",
+                            result: "40% Ext. Life",
+                            result_label: "Power Savings"
+                        }
+                    ]
+                }
+            };      // Show Details Function
+            function showMemberDetails(member) {
+                const details = memberDetails[member];
+                const container = document.getElementById('member-details');
+                const title = document.getElementById('details-title');
+                const list = document.getElementById('details-list');
+
+                // Toggle selection
+                document.querySelectorAll('.team-card').forEach(card => {
+                    const isSelected = card.dataset.member === member;
+                    card.classList.toggle('selected', isSelected);
+                });
+
+                // Smooth reveal
+                container.style.opacity = '0';
+                setTimeout(() => {
+                    title.textContent = details.title;
+                    list.innerHTML = details.items.map((item, index) => `
+                    <li class="detail-item" onclick="openSpotlight('${member}', ${index})">
+                        <div class="content">
+                            <span class="icon">›</span>
+                            <span>${item.text}</span>
+                        </div>
+                        <span class="link-icon">View 👁️</span>
+                    </li>
+                `).join('');
+
+                    container.style.display = 'block';
+                    // Trigger reflow
+                    container.getBoundingClientRect();
+                    container.style.transition = 'opacity 0.5s ease';
+                    container.style.opacity = '1';
+
+                    // Scroll to details if on mobile
+                    if (window.innerWidth < 768) {
+                        container.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 200);
+            }
+
+            // Animate commit bars on load
+            window.addEventListener('load', () => {
+                showMemberDetails('mads'); // Default selection
+                setTimeout(() => {
+                    document.querySelectorAll('.commit-fill').forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0';
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 300);
+                    });
+                }, 500);
+            });
+            // Hardware Architecture Interaction
+            document.querySelectorAll('.arch-block').forEach(block => {
+                block.addEventListener('mouseenter', () => {
+                    document.getElementById('arch-info-title').textContent = `${block.dataset.name} | Lead: ${block.dataset.owner}`;
+                    document.getElementById('arch-info-desc').textContent = block.dataset.desc;
+                });
+
+                block.addEventListener('mouseleave', () => {
+                    document.getElementById('arch-info-title').textContent = "Interactive Diagram";
+                    document.getElementById('arch-info-desc').textContent = "Hover over any component to explore the hardware details and lead engineers.";
+                });
+            });
+        </script>
+</body>
+
+</html>
