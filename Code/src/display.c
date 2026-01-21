@@ -18,9 +18,6 @@ extern const char icon_ferro[];
 extern const char icon_nonferro[];
 extern const char icon_search[];
 
-/* ============ GLOBALE VARIABLE ============ */
-uint8_t show_debug = 0;
-
 // Lokal buffer til tekstformatering
 static char buf[20];
 
@@ -127,40 +124,6 @@ void display_dft(void) {
     }
 }
 
-/* ============ DEBUG DISPLAY ============ */
-void display_debug(void) {
-    sendStrXY("---- DEBUG ---- ", 0, 0);
-
-    sprintf(buf, "ADC:  %-9d", ADC_Raw);
-    sendStrXY(buf, 1, 0);
-
-    sprintf(buf, "Mag:  %-9u", mag);
-    sendStrXY(buf, 2, 0);
-
-    sprintf(buf, "Fase: %-9d", ang);
-    sendStrXY(buf, 3, 0);
-
-    if (is_calibrated) {
-        sprintf(buf, "Cal: M%-4u A%-3d", cal_mag, cal_ang);
-        sendStrXY(buf, 4, 0);
-
-        int16_t d_mag = (int16_t)mag_filtered - (int16_t)cal_mag;
-        int16_t d_ang = ang_filtered - cal_ang;
-        sprintf(buf, "dM:%-4d dA:%-4d", d_mag, d_ang);
-        sendStrXY(buf, 5, 0);
-    } else {
-        sendStrXY("Cal:  ---       ", 4, 0);
-        sendStrXY("Ikke kalibreret ", 5, 0);
-    }
-
-    sprintf(buf, "%s  %s         ",
-            detection_active ? "RUN" : "PAU",
-            is_calibrated ? "CAL" : "---");
-    sendStrXY(buf, 6, 0);
-
-    sendStrXY("----------------", 7, 0);
-}
-
 /* ============ KALIBRERINGS BESKED ============ */
 void display_calibrated(void) {
     clear_display();
@@ -168,13 +131,6 @@ void display_calibrated(void) {
     sendStrXY("================", 2, 0);
     sendStrXY("  KALIBRERET!   ", 3, 0);
     sendStrXY("================", 4, 0);
-}
-
-/* ============ SKIFT DISPLAY TILSTAND ============ */
-void toggle_display_mode(void) {
-    show_debug = !show_debug;
-    last_metal = 255;  // Tving gentegning ved tilstandsskift
-    last_active = 255;
 }
 
 /* ============ SPLASH SKÆRM ============ */

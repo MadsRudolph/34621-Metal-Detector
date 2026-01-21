@@ -9,7 +9,6 @@
 #include "include/dft.h"
 #include "include/config.h"
 #include "include/timer.h"
-#include "include/capture.h"
 
 /* ============ GLOBALE VARIABLE ============ */
 // DFT akkumulator variable
@@ -49,16 +48,8 @@ static volatile int16_t xn = 0;
  * til simple additioner og subtraktioner.
  */
 void DFT_sum(int16_t ADC_Raw) {
-    // Start MATLAB capture ved starten af et nyt DFT vindue (j==0)
-    if (j == 0 && capture_get_state() == CAPTURE_WAITING) {
-        capture_set_state(CAPTURE_ACTIVE);
-    }
-
     // Fjern DC offset
     xn = ADC_Raw - ADC_MIDDELVAERDI;
-
-    // Gem sample til MATLAB capture hvis aktiv
-    capture_store_sample(j, xn);
 
     // Akkumuler til Real og Imaginær del baseret på sample position
     // (j & 3) giver værdier 0,1,2,3,0,1,2,3,... uanset j's størrelse
@@ -98,11 +89,6 @@ void DFT_sum(int16_t ADC_Raw) {
 
         // Reset sync flag - venter på næste TX rising edge
         rising_edge_Flag = 0;
-
-        // Marker capture som færdig hvis aktiv
-        if (capture_get_state() == CAPTURE_ACTIVE) {
-            capture_set_state(CAPTURE_DONE);
-        }
     }
 }
 

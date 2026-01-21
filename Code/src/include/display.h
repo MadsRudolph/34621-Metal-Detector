@@ -9,10 +9,6 @@
 
 #include <stdint.h>
 
-/* ============ GLOBALE VARIABLE ============ */
-// Display mode flag
-extern uint8_t show_debug;      // 0=DFT visning, 1=Debug visning
-
 /* ============ FUNKTIONER ============ */
 
 /*
@@ -23,20 +19,9 @@ extern uint8_t show_debug;      // 0=DFT visning, 1=Debug visning
 void display_dft(void);
 
 /*
- * Vis debug information på display
- * Viser: Rå ADC værdi
- */
-void display_debug(void);
-
-/*
  * Vis kalibrerings-bekræftelse
  */
 void display_calibrated(void);
-
-/*
- * Toggle mellem DFT og debug visning
- */
-void toggle_display_mode(void);
 
 /*
  * Vis splash screen ved opstart

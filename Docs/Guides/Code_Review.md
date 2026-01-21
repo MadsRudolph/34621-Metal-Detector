@@ -34,7 +34,6 @@ Firmwaren er en fuldt funktionel og modulær metaldetektor med følgende funktio
 - Metal klassificering (ferro/non-ferro baseret på fase)
 - Kalibrering med baseline lagring
 - Start/Stop kontrol
-- Debug display mode
 - Grafisk HUD med ikoner og progress bar
 - Buzzer feedback ved metal detektion
 - Startup jingle ved opstart
@@ -46,7 +45,6 @@ Code/src/
 ├── adc.c               # ADC sampling og auto-trigger
 ├── button.c            # Knaphåndtering med debounce
 ├── buzzer.c            # Buzzer feedback (beeps ved detektion)
-├── capture.c           # MATLAB serial capture interface
 ├── detection.c         # Metal klassificering (ferro/non-ferro)
 ├── dft.c               # DFT beregning og akkumulering
 ├── display.c           # OLED display med grafisk HUD og ikoner
@@ -56,7 +54,7 @@ Code/src/
 │
 ├── include/            # Header filer
 │   ├── config.h        # Globale konstanter og konfiguration
-│   ├── adc.h, button.h, buzzer.h, capture.h
+│   ├── adc.h, button.h, buzzer.h
 │   ├── detection.h, dft.h, display.h, filter.h
 │   └── jingle.h, timer.h
 │
@@ -107,7 +105,6 @@ flowchart TB
 | A5 | PC5 | I2C SCL | OLED display |
 | D2 | PD2 | Start/Stop knap | Toggle detektor on/off |
 | D3 | PD3 | Kalibrering knap | Gem baseline |
-| D4 | PD4 | Debug knap | Skift mellem DFT og debug skærm |
 
 ---
 
@@ -115,7 +112,7 @@ flowchart TB
 
 ### 2.1 Modulær Arkitektur
 
-Firmwaren er opdelt i 11 separate moduler med tilhørende header-filer i `include/` mappen:
+Firmwaren er opdelt i 10 separate moduler med tilhørende header-filer i `include/` mappen:
 
 | Modul | Ansvar |
 |-------|--------|
@@ -129,7 +126,6 @@ Firmwaren er opdelt i 11 separate moduler med tilhørende header-filer i `includ
 | `button.c` | Debounced knaphåndtering |
 | `buzzer.c` | Tone-generering via Timer1 PWM |
 | `jingle.c` | Startup-melodi sekvens |
-| `capture.c` | MATLAB serial interface |
 
 #### Konfiguration (include/config.h)
 
@@ -187,16 +183,14 @@ void adc_init(void) {
 
 ```c
 void button_init(void) {
-    DDRD &= ~(1 << PD4);          /* D4 Debug - input */
-    PORTD |= (1 << PD4);          /* Pull-up aktiveret */
-    DDRD &= ~(1 << PD3);          /* D3 Calibrate - input */
-    PORTD |= (1 << PD3);          /* Pull-up aktiveret */
     DDRD &= ~(1 << PD2);          /* D2 Start/Stop - input */
     PORTD |= (1 << PD2);          /* Pull-up aktiveret */
+    DDRD &= ~(1 << PD3);          /* D3 Calibrate - input */
+    PORTD |= (1 << PD3);          /* Pull-up aktiveret */
 }
 ```
 
-Alle tre knapper bruger interne pull-up modstande. Knapperne er active-low (forbundet til GND ved tryk).
+Begge knapper bruger interne pull-up modstande. Knapperne er active-low (forbundet til GND ved tryk).
 
 #### Timer0 ISR (TX Generering)
 
@@ -562,9 +556,8 @@ pio device monitor
 |------|-----|----------|-------|
 | D2 | PD2 | Start/Stop | Toggle detektor on/off |
 | D3 | PD3 | Kalibrering | Gem baseline (kun når kørende) |
-| D4 | PD4 | Debug | Skift mellem DFT og debug skærm |
 
-Alle knapper har 50ms debounce delay og bruger falling-edge detection.
+Begge knapper har 50ms debounce delay og bruger falling-edge detection.
 
 ### 8.2 Tilstandsdiagram
 
@@ -573,14 +566,11 @@ stateDiagram-v2
     [*] --> Stoppet: Boot
     Stoppet --> Kørende: D2 Tryk
     Kørende --> Stoppet: D2 Tryk
-    
+
     state Kørende {
-        [*] --> DFT_Skærm
-        DFT_Skærm --> Debug_Skærm: D4 Tryk
-        Debug_Skærm --> DFT_Skærm: D4 Tryk
-        DFT_Skærm --> Kalibrering: D3 Tryk
-        Debug_Skærm --> Kalibrering: D3 Tryk
-        Kalibrering --> DFT_Skærm: Auto
+        [*] --> HUD_Skærm
+        HUD_Skærm --> Kalibrering: D3 Tryk
+        Kalibrering --> HUD_Skærm: Auto
     }
 ```
 
@@ -608,14 +598,6 @@ if (btn3_prev && !btn3 && detector_running) {
     /* Vis bekræftelse */
 }
 btn3_prev = btn3;
-
-/* Debug knap (D4) */
-uint8_t btn = (PIND >> PD4) & 1;
-if (btn_prev && !btn && detector_running) {
-    _delay_ms(50);
-    show_debug = !show_debug;
-}
-btn_prev = btn;
 ```
 
 ### 8.4 Display Skærme
@@ -651,13 +633,8 @@ Displayet bruger en grafisk HUD med ikoner og progress bar.
 - Non-ferro (Cu/Al): Ring-ikon
 
 **Stoppet Skærm:**
-- Viser "STOPPET" med instruktion
+- Viser "PAUSE" med instruktion
 - Tryk D2 for at starte
-
-**Debug Skærm (D4 toggle):**
-- Rå ADC værdi (0-1023)
-- Ufiltreret vs filtreret magnitude
-- Delta fra baseline
 
 ---
 
@@ -700,7 +677,7 @@ Displayet bruger en grafisk HUD med ikoner og progress bar.
 
 1. Kalibrer igen i et område uden metal
 2. Tjek at FERRO_THRESHOLD (-10) er passende
-3. Verificer at fasen er stabil (brug debug skærm)
+3. Verificer at fasen er stabil
 
 ---
 
@@ -712,7 +689,6 @@ Følgende funktioner kan tilføjes senere:
 - [x] ~~Grafisk HUD med ikoner~~ ✅ Implementeret
 - [x] ~~Startup jingle~~ ✅ Implementeret
 - [ ] EEPROM persistens af kalibrering
-- [ ] Seriel debug output for PC-baseret analyse
 - [ ] Justerbare tærskelværdier via menu system
 - [ ] Batteriniveau visning
 - [ ] Automatisk gain kontrol
@@ -731,6 +707,7 @@ Følgende funktioner kan tilføjes senere:
 | 3.0 | 2025-01 | Forenklet til minimal testversion (enkelt main.c) |
 | 4.0 | 2025-01 | Fuldt funktionel version med metal klassificering, IIR filter, Start/Stop kontrol |
 | 5.0 | 2026-01 | Modularisering: 11 moduler + include/ mappe. Tilføjet buzzer, jingle, grafisk HUD med ikoner og splash screen |
+| 5.1 | 2026-01 | Fjernet MATLAB capture interface og debug display mode. Nu 10 moduler. |
 
 ---
 

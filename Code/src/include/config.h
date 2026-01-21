@@ -34,7 +34,6 @@
 // Knapper (active low med pull-up)
 #define BTN_START_STOP  PD2 // Start/Stop detektor (Krav 9a)
 #define BTN_CALIBRATE   PD3 // Kalibrering (Krav 9b)
-#define BTN_DEBUG       PD4 // Skift mellem DFT og Debug skærm
 #define SLEEP_PIN       PD5 // Pin 5 = Sleep mode control
 
 // Buzzer output (PWM via Timer2)
