@@ -7,14 +7,14 @@
 #include "include/filter.h"
 #include "include/dft.h"
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 volatile uint32_t mag_filtered = 0;     // Filtreret magnitude (32 bit for multiplikation)
 volatile int16_t ang_filtered = 0;      // Filtreret fase i grader
 
 // Lokal variabel til initialiseringskontrol
 static uint8_t filt_init = 0;
 
-/* ============ IIR FILTER ============ */
+/* --- IIR filter --- */
 /*
  * IIR_Filt - Lavpasfilter for stabile displayværdier
  *

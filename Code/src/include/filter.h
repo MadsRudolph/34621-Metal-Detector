@@ -9,12 +9,12 @@
 
 #include <stdint.h>
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // Filtrerede værdier til display og klassificering
 extern volatile uint32_t mag_filtered;  // Filtreret magnitude
 extern volatile int16_t ang_filtered;   // Filtreret fase i grader
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * IIR lavpasfilter til magnitude og fase

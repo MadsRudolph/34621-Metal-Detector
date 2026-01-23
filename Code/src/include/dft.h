@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // DFT resultater (buffer værdier efter et komplet vindue)
 extern volatile int32_t Re_buff;    // Real del
 extern volatile int32_t Im_buff;    // Imaginær del
@@ -22,7 +22,7 @@ extern volatile int16_t ang;        // Fase i grader (-180 til +180)
 // Flag der indikerer at en DFT er færdig
 extern volatile uint8_t DFT_done;
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * Akkumulerer en ADC sample til DFT

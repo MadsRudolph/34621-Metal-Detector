@@ -7,12 +7,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-/* ============ DFT INDSTILLINGER ============ */
+/* --- DFT indstillinger --- */
 #define F_SAMPLE 8000       // Sample frekvens (Hz) - skal være 4x signal frekvens
 #define F_SIGNAL 2000       // TX/RX signal frekvens (Hz)
 #define N 64                // Antal samples per DFT vindue (flere = mere præcist, men langsommere)
 
-/* ============ DFT FASEKOEFFICIENTER ============ */
+/* --- DFT fasekoefficienter --- */
 // For samples periodisk Pi/2 ved vælgelse af k = 16
 // Dette sikrer at vi ikke behøver at lave udregninger med Realdel og Imaginærdel samtidig
 // og ydermere betyder dette at vi kan forudregne og slippe for at regne med andet end +/- 1
@@ -21,13 +21,13 @@
 #define RePhase3 -1         // cos(Pi)
 #define ImPhase4 -1         // sin(3Pi/2)
 
-/* ============ ADC INDSTILLINGER ============ */
+/* --- ADC indstillinger --- */
 #define ADC_MIDDELVAERDI 512  // DC offset kompensation (512 = midt i 10-bit range)
 
-/* ============ METAL KLASSIFICERING ============ */
+/* --- Metal klassificering --- */
 #define PHASE_THRESHOLD 5   // Grader - tærskel for ferro/non-ferro klassificering
 
-/* ============ PIN KONFIGURATION ============ */
+/* --- Pin konfiguration --- */
 // TX signal output
 #define TX_PIN    PB1       // Pin 9 = TX signal (2kHz firkantbølge til sendespole)
 

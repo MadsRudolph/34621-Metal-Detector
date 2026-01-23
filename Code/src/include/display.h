@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * Vis DFT resultater på display

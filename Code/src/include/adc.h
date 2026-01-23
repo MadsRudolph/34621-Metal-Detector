@@ -9,11 +9,11 @@
 
 #include <stdint.h>
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // Rå ADC værdi (10-bit, 0-1023)
 extern int16_t ADC_Raw;
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * Initialiserer ADC med:

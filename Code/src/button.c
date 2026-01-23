@@ -10,7 +10,7 @@
 #include "include/button.h"
 #include "include/config.h"
 
-/* ============ BUTTON INIT ============ */
+/* --- Button Init --- */
 void button_init(void) {
     // Pin D2 som input - Start/Stop knap (Krav 9a)
     DDRD &= ~(1 << BTN_START_STOP);
@@ -21,7 +21,7 @@ void button_init(void) {
     PORTD |= (1 << BTN_CALIBRATE);
 }
 
-/* ============ BUTTON READ FUNKTIONER ============ */
+/* --- Button Read funktioner --- */
 // Returnerer 1 hvis IKKE trykket, 0 hvis trykket (active low)
 
 uint8_t button_read_start_stop(void) {

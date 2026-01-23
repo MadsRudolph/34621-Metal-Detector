@@ -12,12 +12,12 @@
 
 #include <stdint.h>
 
-/* ============ METAL TYPER ============ */
+/* --- Metal typer --- */
 #define METAL_NONE      0   // Intet metal detekteret
 #define METAL_FERRO     1   // Jernholdigt metal (stort negativt faseskift)
 #define METAL_NONFERRO  2   // Ikke-jernholdigt metal (lille/positivt faseskift)
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // Detektor tilstand
 extern uint8_t detection_active;    // 1=kører, 0=pauset
 
@@ -26,7 +26,7 @@ extern uint8_t is_calibrated;       // 1=kalibreret, 0=ikke kalibreret
 extern uint16_t cal_mag;            // Kalibreret magnitude baseline
 extern int16_t cal_ang;             // Kalibreret fase baseline
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * Klassificer detekteret metal baseret på faseskift

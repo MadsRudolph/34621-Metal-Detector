@@ -26,7 +26,7 @@ static uint8_t last_metal = 255;      // Sidst viste metaltype
 static uint8_t last_calibrated = 255; // Sidst viste kalibreringstilstand
 static uint8_t last_active = 255;     // Sidst viste detection_active tilstand
 
-/* ============ HOVED HUD DISPLAY ============ */
+/* --- Hoved HUD display --- */
 void display_dft(void) {
     // Tjek om detektionstilstand er ændret - kræver fuld gentegning
     if (last_active != detection_active) {
@@ -124,7 +124,7 @@ void display_dft(void) {
     }
 }
 
-/* ============ KALIBRERINGS BESKED ============ */
+/* --- Kalibrerings besked --- */
 void display_calibrated(void) {
     clear_display();
     last_metal = 255;  // Tving gentegning efter kalibreringsskærm
@@ -133,7 +133,7 @@ void display_calibrated(void) {
     sendStrXY("================", 4, 0);
 }
 
-/* ============ SPLASH SKÆRM ============ */
+/* --- Splash skærm --- */
 void display_splash(void) {
     clear_display();
 

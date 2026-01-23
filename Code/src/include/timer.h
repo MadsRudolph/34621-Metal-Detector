@@ -10,14 +10,14 @@
 
 #include <stdint.h>
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // Flag der indikerer TX rising edge (bruges til DFT synkronisering)
 extern volatile uint8_t rising_edge_Flag;
 
 // Sleep mode flag
 extern volatile uint8_t do_sleep;
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * Initialiserer Timer0 i CTC mode

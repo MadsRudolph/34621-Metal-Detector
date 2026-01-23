@@ -12,7 +12,7 @@
 #include "include/filter.h"
 #include "include/config.h"
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // Detektor tilstand
 uint8_t detection_active = 1;       // Start i aktiv tilstand
 
@@ -21,7 +21,7 @@ uint8_t is_calibrated = 0;          // Ikke kalibreret ved opstart
 uint16_t cal_mag = 0;               // Kalibreret magnitude baseline
 int16_t cal_ang = 0;                // Kalibreret fase baseline
 
-/* ============ METAL KLASSIFICERING ============ */
+/* --- Metal klassificering --- */
 /*
  * classify_metal - Klassificer metal type baseret på faseskift
  *
@@ -64,14 +64,14 @@ uint8_t classify_metal(void) {
     return METAL_NONFERRO;
 }
 
-/* ============ KALIBRERING ============ */
+/* --- Kalibrering --- */
 void calibrate(void) {
     cal_mag = mag_filtered;     // Gem nuværende magnitude som reference
     cal_ang = ang_filtered;     // Gem nuværende fase som reference
     is_calibrated = 1;
 }
 
-/* ============ START/STOP ============ */
+/* --- Start/Stop --- */
 void toggle_detection(void) {
     detection_active = !detection_active;
 

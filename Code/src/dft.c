@@ -10,7 +10,7 @@
 #include "include/config.h"
 #include "include/timer.h"
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 // DFT akkumulator variable
 volatile uint8_t j = 0;             // Sample tæller inden for vindue
 volatile int32_t Re = 0;            // Real akkumulator
@@ -30,7 +30,7 @@ volatile uint8_t DFT_done = 0;
 // Lokal variabel til transformeret sample
 static volatile int16_t xn = 0;
 
-/* ============ DFT AKKUMULERING ============ */
+/* --- DFT akkumulering --- */
 /*
  * DFT_sum - Akkumulerer samples til DFT
  *
@@ -92,7 +92,7 @@ void DFT_sum(int16_t ADC_Raw) {
     }
 }
 
-/* ============ DFT BEREGNING ============ */
+/* --- DFT beregning --- */
 /*
  * DFT_Calc - Beregner magnitude og fase
  *

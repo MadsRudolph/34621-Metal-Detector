@@ -10,10 +10,10 @@
 #include "include/timer.h"
 #include "include/dft.h"
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 int16_t ADC_Raw = 0;    // Rå ADC værdi (signed for DFT beregning)
 
-/* ============ ADC INIT ============ */
+/* --- ADC Init --- */
 void adc_init(void) {
     // Reference = AVCC (intern 5V reference)
     ADMUX = (1 << REFS0);
@@ -35,7 +35,7 @@ void adc_init(void) {
     ADCSRA |= (1 << ADSC);
 }
 
-/* ============ ADC INTERRUPT ============ */
+/* --- ADC Interrupt --- */
 /*
  * ADC Conversion Complete Interrupt
  *

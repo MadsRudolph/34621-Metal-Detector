@@ -21,7 +21,7 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-/* ============ MODUL INCLUDES ============ */
+/* --- Modul includes --- */
 #include "include/config.h"
 #include "include/timer.h"
 #include "include/adc.h"
@@ -35,7 +35,7 @@
 #include "drivers/I2C.h"
 #include "drivers/ssd1306.h"
 
-/* ============ MAIN ============ */
+/* --- Main --- */
 int main(void) {
     // Initialiser hardware - Timer og ADC FØRST (uafhængig af display)
     Timer1_init();

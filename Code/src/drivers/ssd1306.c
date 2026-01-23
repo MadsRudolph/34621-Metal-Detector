@@ -463,7 +463,7 @@ void dim(bool dim) {
 	ssd1306_command(contrast);
 }
 
-/* ============ GRAFISKE FUNKTIONER ============ */
+/* --- Grafiske funktioner --- */
 
 /**
  * Tegn et 32x24 pixel ikon ved angivet position

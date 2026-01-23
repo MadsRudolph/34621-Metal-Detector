@@ -7,7 +7,7 @@
 #include "include/jingle.h"
 #include "include/config.h"
 
-/* ============ TONE FUNKTION ============ */
+/* --- Tone funktion --- */
 static void tone(uint16_t freq, uint16_t ms) {
     uint16_t half = 500000UL / freq;
     uint32_t cycles = ((uint32_t)freq * ms) / 1000;
@@ -20,7 +20,7 @@ static void tone(uint16_t freq, uint16_t ms) {
     }
 }
 
-/* ============ OPSTARTSLYD ============ */
+/* --- Opstartslyd --- */
 void play_startup_jingle(void) {
     // Stigende power-up lyd
     tone(400, 80);

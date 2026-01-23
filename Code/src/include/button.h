@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 
-/* ============ FUNKTIONER ============ */
+/* --- Funktioner --- */
 
 /*
  * Initialiserer knap pins som input med pull-up

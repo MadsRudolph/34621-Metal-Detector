@@ -11,14 +11,14 @@
 #include "include/config.h"
 #include "include/detection.h"
 
-/* ============ GLOBALE VARIABLE ============ */
+/* --- Globale variable --- */
 volatile uint8_t rising_edge_Flag = 0;  // Flag der indikerer TX rising edge
 volatile uint8_t do_sleep = 0;          // Sleep mode flag
 
 // Lokal tæller til TX toggle
 static uint8_t i = 0;
 
-/* ============ TIMER0 INIT ============ */
+/* --- Timer0 Init --- */
 void timer0_init(void) {
     // Sæt TX pin som output
     DDRB |= (1 << TX_PIN);
@@ -36,7 +36,7 @@ void timer0_init(void) {
     TIMSK0 = (1 << OCIE0A);
 }
 
-/* ============ TIMER1 INIT (SLEEP MODE) ============ */
+/* --- Timer1 Init (Sleep Mode) --- */
 void Timer1_init(void) {
     // Phase correct PWM mode, 10-bit
     TCCR1A |= (1 << WGM10) | (1 << WGM11);
@@ -55,7 +55,7 @@ void Timer1_init(void) {
 
 }
 
-/* ============ TIMER0 INTERRUPT ============ */
+/* --- Timer0 Interrupt --- */
 /*
  * Timer0 Compare Match A Interrupt
  *
@@ -86,7 +86,7 @@ ISR(TIMER0_COMPA_vect) {
     }
 }
 
-/* ============ TIMER1 INTERRUPT (SLEEP MODE) ============ */
+/* --- Timer1 Interrupt (Sleep Mode) --- */
 ISR(TIMER1_COMPB_vect) {
     // Kun toggle sleep mode når detektor er aktiv
     // Når stoppet holder detection.c SLEEP_PIN høj permanent

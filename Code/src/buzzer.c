@@ -10,14 +10,14 @@
 #include "include/buzzer.h"
 #include "include/config.h"
 
-/* ============ LOKALE VARIABLE ============ */
+/* --- Lokale variable --- */
 static uint8_t buzzer_enabled = 1;
 static uint8_t beep_counter = 0;
 static uint8_t beep_on_timer = 0;
 
 #define BEEP_DURATION 1  // Kort beep (~50ms)
 
-/* ============ BUZZER INIT ============ */
+/* --- Buzzer Init --- */
 void buzzer_init(void) {
     DDRB |= (1 << BUZZER_PIN);
     TCCR2A = (1 << WGM21);
@@ -27,7 +27,7 @@ void buzzer_init(void) {
     PORTB &= ~(1 << BUZZER_PIN);
 }
 
-/* ============ BUZZER UPDATE ============ */
+/* --- Buzzer Update --- */
 void buzzer_update(uint16_t signal) {
     if (!buzzer_enabled || signal < 1) {
         TCCR2A &= ~(1 << COM2A0);
@@ -81,7 +81,7 @@ void buzzer_update(uint16_t signal) {
     }
 }
 
-/* ============ BUZZER ENABLE/DISABLE ============ */
+/* --- Buzzer Enable/Disable --- */
 void buzzer_enable(uint8_t enabled) {
     buzzer_enabled = enabled;
     if (!enabled) {
@@ -90,7 +90,7 @@ void buzzer_enable(uint8_t enabled) {
     }
 }
 
-/* ============ BEKRÆFTELSES BEEP ============ */
+/* --- Bekræftelses beep --- */
 void buzzer_beep(uint16_t duration_ms) {
     TCCR2A |= (1 << COM2A0);
     while (duration_ms > 0) {
@@ -101,7 +101,7 @@ void buzzer_beep(uint16_t duration_ms) {
     PORTB &= ~(1 << BUZZER_PIN);
 }
 
-/* ============ DOBBELT BEEP ============ */
+/* --- Dobbelt beep --- */
 void buzzer_double_click(void) {
     TCCR2A |= (1 << COM2A0);
     _delay_ms(50);
