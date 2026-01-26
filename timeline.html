@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VLF Metal Detector - Project Timeline</title>
+    <title>VLF Metal Detector - Project Dashboard [Completed]</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -300,11 +300,94 @@
         /* Sections */
         .section {
             display: none;
+            animation: fadeIn 0.4s ease-out;
         }
 
         .section.active {
             display: block;
         }
+
+        /* Lab & Showcase Styles */
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .showcase-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            cursor: pointer;
+        }
+
+        .showcase-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .showcase-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .showcase-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .showcase-item:hover .showcase-overlay {
+            opacity: 1;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .graph-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        /* Terminal Effect */
+        #terminal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #05090e;
+            z-index: 10000;
+            color: #3fb950;
+            font-family: 'Consolas', monospace;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.3rem;
+            opacity: 0;
+            animation: typeIn 0.05s forwards;
+        }
+
+        @keyframes typeIn { to { opacity: 1; } }
 
         /* Generic Card Style */
         .glass-card,
@@ -352,6 +435,31 @@
             border-color: var(--glass-border-hover);
             box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
             background: linear-gradient(180deg, rgba(33, 38, 45, 0.8) 0%, rgba(22, 27, 34, 0.6) 100%);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(63, 185, 80, 0.1);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+            border-radius: 50px;
+            color: var(--accent-green);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px rgba(63, 185, 80, 0.1);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulseGlow 2s infinite;
         }
 
         .team-card:hover::before {
@@ -1365,15 +1473,19 @@
     <div class="container">
         <header>
             <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
-                <div>
+                <div style="text-align: left;">
+                    <div class="status-badge">
+                        <span class="status-dot"></span>
+                        Project Fully Functional & Completed
+                    </div>
                     <h1>VLF Metal Detector</h1>
-                    <p>Project Development Timeline</p>
+                    <p>Technological Review & Implementation Archive</p>
                 </div>
                 <svg class="header-wave" viewBox="0 0 100 30">
                     <path d="M0,15 C10,5 20,25 30,15 C40,5 50,25 60,15 C70,5 80,25 90,15 L100,15" />
                 </svg>
             </div>
-            <div class="date-range">January 5 - 19, 2026</div>
+            <div class="date-range">Jan 5 - Jan 19, 2026 · Submission Ready</div>
         </header>
 
         <nav class="tabs">
@@ -1384,15 +1496,15 @@
             <button class="tab" data-section="meetings">Meetings</button>
             <button class="tab" data-section="matrix">Responsibilities</button>
             <button class="tab" data-section="tech">Tech Stack</button>
-            <button class="tab" data-section="arch">System Architecture</button>
+            <button class="tab" data-section="system">System Overview</button>
         </nav>
 
         <!-- Overview Section -->
         <div id="overview" class="section active">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-value">15</div>
-                    <div class="stat-label">Development Days</div>
+                    <div class="stat-value" style="color: var(--accent-green);">100%</div>
+                    <div class="stat-label">Project Complete</div>
                 </div>
                 <a href="https://github.com/MadsRudolph/34621-Metal-Detector/commits/master" target="_blank"
                     class="stat-card" style="text-decoration: none; display: block;">
@@ -1946,6 +2058,19 @@
                         Full assembly with PCBs in enclosure, mounted on wooden dowel. Fully functional metal detector.
                     </div>
                 </div>
+                <div class="milestone">
+                    <div class="milestone-date">January 23, 2026</div>
+                    <div class="milestone-title">Final Project Report & Documentation</div>
+                    <div class="milestone-owner">
+                        <span class="owner-badge mads">Mads</span>
+                        <span class="owner-badge sigurd">Sigurd</span>
+                        <span class="owner-badge andreas">Andreas</span>
+                        <span class="owner-badge jonas">Jonas</span>
+                    </div>
+                    <div class="milestone-desc" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 5px;">
+                        Technical documentation finalized and submitted. Comprehensive review of all DSP and hardware subsystems.
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2251,86 +2376,344 @@
             </div>
         </div>
 
-        <!-- System Architecture Section -->
-        <div id="arch" class="section">
+        <!-- Consolidated System Overview -->
+        <div id="system" class="section">
             <div class="section-header">
-                <h2>Hardware Architecture</h2>
-                <p>Interactive signal flow from TX activation to Digital Processing</p>
+                <h2>System Overview</h2>
+                <p>Interactive hardware architecture and real-world performance benchmarks</p>
             </div>
 
-            <div class="arch-viz-wrapper">
+            <!-- Restored Hardware Architecture -->
+            <div class="arch-viz-wrapper" style="margin-bottom: 3rem;">
                 <svg viewBox="0 0 1000 400" class="arch-svg">
-                    <!-- Definitions for markers -->
                     <defs>
                         <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
                             <polygon points="0 0, 10 3.5, 0 7" fill="var(--glass-border)" />
                         </marker>
                     </defs>
-
-                    <!-- TX Path -->
-                    <g class="arch-block" data-name="ATMega328P (MCU)" data-owner="Mads"
-                        data-desc="Central controller running the main loop and 2kHz timer interrupts.">
-                        <rect x="50" y="150" width="120" height="100" rx="10" fill="rgba(88, 166, 255, 0.1)"
-                            stroke="var(--accent-blue)" stroke-width="2" />
+                    <g class="arch-block" data-name="ATMega328P (MCU)" data-owner="Mads" data-desc="Central controller running the main loop and 2kHz timer interrupts.">
+                        <rect x="50" y="150" width="120" height="100" rx="10" fill="rgba(88, 166, 255, 0.1)" stroke="var(--accent-blue)" stroke-width="2" />
                         <text x="110" y="205" class="arch-label" text-anchor="middle">MCU</text>
                     </g>
-
                     <path d="M 170 200 L 230 200" class="arch-arrow" marker-end="url(#arrowhead)" />
                     <circle cx="200" cy="200" r="20" class="hotspot-hitbox" />
                     <circle cx="200" cy="200" r="4" class="arch-hotspot" data-signal="PWM Drive: 2kHz Square Wave" />
-
-                    <g class="arch-block" data-name="H-Bridge" data-owner="Sigurd"
-                        data-desc="High-efficiency power stage (98%) driving the transmitter coil.">
-                        <rect x="240" y="150" width="120" height="100" rx="10" fill="rgba(188, 140, 255, 0.1)"
-                            stroke="var(--accent-purple)" stroke-width="2" />
+                    <g class="arch-block" data-name="H-Bridge" data-owner="Sigurd" data-desc="High-efficiency power stage (98%) driving the transmitter coil.">
+                        <rect x="240" y="150" width="120" height="100" rx="10" fill="rgba(188, 140, 255, 0.1)" stroke="var(--accent-purple)" stroke-width="2" />
                         <text x="300" y="205" class="arch-label" text-anchor="middle">H-Bridge</text>
                     </g>
-
                     <path d="M 360 200 L 420 200" class="arch-arrow" marker-end="url(#arrowhead)" />
                     <circle cx="390" cy="200" r="20" class="hotspot-hitbox" />
                     <circle cx="390" cy="200" r="4" class="arch-hotspot" data-signal="AC Load: 12Vpp VLF Signal" />
-
-                    <g class="arch-block" data-name="TX Coil" data-owner="Jonas"
-                        data-desc="Primary induction coil designed for optimal flux density at 2kHz.">
-                        <circle cx="480" cy="200" r="50" fill="rgba(210, 153, 34, 0.1)" stroke="var(--accent-orange)"
-                            stroke-width="2" />
+                    <g class="arch-block" data-name="TX Coil" data-owner="Jonas" data-desc="Primary induction coil designed for optimal flux density at 2kHz.">
+                        <circle cx="480" cy="200" r="50" fill="rgba(210, 153, 34, 0.1)" stroke="var(--accent-orange)" stroke-width="2" />
                         <text x="480" y="205" class="arch-label" text-anchor="middle">TX Coil</text>
                     </g>
-
-                    <!-- RX Path -->
-                    <g class="arch-block" data-name="RX Coil" data-owner="Jonas"
-                        data-desc="Bucking coil setup achieved perfect nulling for maximum sensitivity.">
-                        <circle cx="620" cy="200" r="50" fill="rgba(210, 153, 34, 0.1)" stroke="var(--accent-orange)"
-                            stroke-width="2" />
+                    <g class="arch-block" data-name="RX Coil" data-owner="Jonas" data-desc="Bucking coil setup achieved perfect nulling for maximum sensitivity.">
+                        <circle cx="620" cy="200" r="50" fill="rgba(210, 153, 34, 0.1)" stroke="var(--accent-orange)" stroke-width="2" />
                         <text x="620" y="205" class="arch-label" text-anchor="middle">RX Coil</text>
                     </g>
-
                     <path d="M 670 200 L 730 200" class="arch-arrow" marker-end="url(#arrowhead)" />
                     <circle cx="700" cy="200" r="20" class="hotspot-hitbox" />
                     <circle cx="700" cy="200" r="4" class="arch-hotspot" data-signal="Induced EMF: Microvolt range" />
-
-                    <g class="arch-block" data-name="Op-Amp Amp" data-owner="Andreas"
-                        data-desc="Precision low-noise amplification stage for the microvolt RX signal.">
-                        <rect x="740" y="150" width="120" height="100" rx="10" fill="rgba(63, 185, 80, 0.1)"
-                            stroke="var(--accent-green)" stroke-width="2" />
+                    <g class="arch-block" data-name="Op-Amp Amp" data-owner="Andreas" data-desc="Precision low-noise amplification stage for the microvolt RX signal.">
+                        <rect x="740" y="150" width="120" height="100" rx="10" fill="rgba(63, 185, 80, 0.1)" stroke="var(--accent-green)" stroke-width="2" />
                         <text x="800" y="205" class="arch-label" text-anchor="middle">Amplifier</text>
                     </g>
-
                     <path d="M 800 150 L 800 100 L 110 100 L 110 140" class="arch-arrow" marker-end="url(#arrowhead)" />
-                    <circle cx="455" cy="100" r="20" class="hotspot-hitbox" />
-                    <circle cx="455" cy="100" r="4" class="arch-hotspot"
-                        data-signal="Filtered Signal: DC-offset Analog" />
                 </svg>
-
                 <div id="arch-info" class="arch-info-overlay">
-                    <h4 id="arch-info-title">Interactive Diagram</h4>
-                    <p id="arch-info-desc">Hover over any component to explore the hardware details and lead engineers.
-                    </p>
+                    <h4 id="arch-info-title">Interactive Schematic</h4>
+                    <p id="arch-info-desc">Hover over components to explore the signal chain and lead engineers.</p>
                 </div>
             </div>
+
+                <!-- High-Fidelity Battery Lab -->
+                <div class="graph-card" style="grid-column: span 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                        <div>
+                            <h3>Interactive Battery Performance Lab</h3>
+                            <p style="font-size: 0.8rem; color: var(--text-secondary);">Real-world 9V Alkaline discharge curve under 2kHz system load.</p>
+                        </div>
+                        <!-- High-Fidelity Summary Box -->
+                        <div id="battery-summary-box" style="background: rgba(13, 17, 23, 0.9); border: 1px solid var(--glass-border); padding: 0.8rem 1.2rem; border-radius: 12px; font-size: 0.75rem; min-width: 280px; backdrop-filter: blur(4px);">
+                            <div style="font-weight: 800; color: var(--accent-blue); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;">
+                                <span>TEST SUMMARY</span>
+                                <span style="color: var(--accent-green);">PASSED ✓</span>
+                            </div>
+                            <div style="display: flex; gap: 1.5rem; border-top: 1px solid var(--glass-border); padding-top: 0.5rem;">
+                                <div><span style="color: var(--text-secondary);">Runtime:</span> <span style="font-weight: 600;">164.3 min</span></div>
+                                <div><span style="color: var(--text-secondary);">Volt Drop:</span> <span style="font-weight: 600;">1190 mV</span></div>
+                                <div><span style="color: var(--text-secondary);">Avg Rate:</span> <span style="font-weight: 600;">7.2 mV/min</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="battery-lab-container" style="height: 350px; width: 100%; position: relative; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--glass-border);">
+                        <canvas id="battery-canvas" width="1200" height="300" style="width: 100%; height: 100%;"></canvas>
+                        <div id="battery-tooltip" style="position: absolute; display: none; background: var(--bg-primary); border: 1px solid var(--accent-blue); padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; pointer-events: none; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                            <div id="tooltip-time" style="color: var(--text-secondary); margin-bottom: 2px;">Time: 0 min</div>
+                            <div id="tooltip-volt" style="font-weight: 700; color: var(--accent-blue);">Voltage: 8.9V</div>
+                        </div>
+                        <div style="position: absolute; left: 10px; top: 10px; font-size: 0.7rem; color: var(--text-secondary);">Voltage (V)</div>
+                        <div style="position: absolute; left: 45px; bottom: 0; font-size: 0.7rem; color: var(--text-secondary);">Time (0-300 min)</div>
+                    </div>
+                    <div style="display: flex; gap: 2rem; margin-top: 1.5rem; justify-content: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary);">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--accent-blue);"></div>
+                            <span>Active System Load</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-secondary);">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--accent-red);"></div>
+                            <span>Cutoff (6.0V)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Material Discrimination -->
+                <div class="graph-card">
+                    <h3>Material Discrimination</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.5rem;">One-touch signal shift visualization</p>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <button onclick="setSimpleTarget(0)" style="flex:1; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-size: 0.7rem; font-weight: 600;">Air (Baseline)</button>
+                        <button onclick="setSimpleTarget(-55)" style="flex:1; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(210,153,34,0.1); color: #d29922; cursor: pointer; font-size: 0.7rem; font-weight: 600;">Iron (-55°)</button>
+                        <button onclick="setSimpleTarget(-142)" style="flex:1; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--glass-border); background: rgba(88,166,255,0.1); color: #58a6ff; cursor: pointer; font-size: 0.7rem; font-weight: 600;">Aluminum (-142°)</button>
+                    </div>
+                    <div id="simple-hud" style="background: #0d1117; padding: 0.8rem; border-radius: 8px; text-align: center; margin-bottom: 1rem; border: 1px solid var(--glass-border);">
+                        <span style="font-size: 0.6rem; color: var(--text-secondary);">TARGET IDENTITY:</span>
+                        <span id="simple-target-label" style="font-weight: 900; margin-left: 10px;">CLEAR</span>
+                    </div>
+                    <canvas id="simple-phase-canvas" width="400" height="100" style="width: 100%; height: 80px; border-radius: 6px; background: #010409;"></canvas>
+                </div>
+
+                <!-- H-Bridge Efficiency Metric (Small Standalone card) -->
+                <div class="graph-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: 900; color: var(--accent-blue); margin-bottom: 0.5rem;">98%</div>
+                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 1px;">H-Bridge Efficiency</div>
+                    <p style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.5rem;">Validated via QSPICE Thermal Simulation</p>
+                </div>
+            </div>
+            </div>
+
+            <!-- Enhanced Project Gallery -->
+            <div class="section-header" style="margin-top: 3rem;">
+                <h2>Project Gallery</h2>
+                <p>Click any image to view full-screen</p>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <button class="gallery-tab active" data-category="all" onclick="filterGallery('all')">All</button>
+                <button class="gallery-tab" data-category="cad" onclick="filterGallery('cad')">3D CAD</button>
+                <button class="gallery-tab" data-category="simulation" onclick="filterGallery('simulation')">Simulations</button>
+                <button class="gallery-tab" data-category="diagram" onclick="filterGallery('diagram')">Diagrams</button>
+                <button class="gallery-tab" data-category="pcb" onclick="filterGallery('pcb')">PCB</button>
+                <button class="gallery-tab" data-category="measurement" onclick="filterGallery('measurement')">Measurements</button>
+            </div>
+
+            <style>
+                .gallery-tab {
+                    padding: 0.5rem 1.2rem;
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 8px;
+                    color: var(--text-secondary);
+                    cursor: pointer;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                }
+                .gallery-tab:hover { background: rgba(255,255,255,0.08); color: white; }
+                .gallery-tab.active { background: var(--accent-blue); color: #000; border-color: var(--accent-blue); }
+
+                .gallery-item {
+                    position: relative;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    cursor: pointer;
+                    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                    border: 1px solid var(--glass-border);
+                    background: #0d1117;
+                }
+                .gallery-item:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(88, 166, 255, 0.15);
+                    border-color: var(--accent-blue);
+                }
+                .gallery-item img {
+                    width: 100%;
+                    height: 200px;
+                    object-fit: cover;
+                    transition: transform 0.5s ease;
+                }
+                .gallery-item:hover img { transform: scale(1.1); }
+                .gallery-item .caption {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    padding: 1rem;
+                    background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
+                    transform: translateY(100%);
+                    transition: transform 0.3s ease;
+                }
+                .gallery-item:hover .caption { transform: translateY(0); }
+                .gallery-item .caption h4 { margin: 0 0 0.25rem 0; font-size: 0.9rem; }
+                .gallery-item .caption p { margin: 0; font-size: 0.7rem; color: var(--text-secondary); }
+                .gallery-item .zoom-icon {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 32px;
+                    height: 32px;
+                    background: rgba(0,0,0,0.7);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                    font-size: 0.9rem;
+                }
+                .gallery-item:hover .zoom-icon { opacity: 1; }
+
+                .lightbox {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.95);
+                    backdrop-filter: blur(20px);
+                    z-index: 10000;
+                    display: none;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 2rem;
+                }
+                .lightbox.open { display: flex; }
+                .lightbox img {
+                    max-width: 90%;
+                    max-height: 85vh;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+                }
+                .lightbox-close {
+                    position: absolute;
+                    top: 20px;
+                    right: 30px;
+                    font-size: 2rem;
+                    color: white;
+                    cursor: pointer;
+                    width: 50px;
+                    height: 50px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 50%;
+                    transition: all 0.3s ease;
+                }
+                .lightbox-close:hover { background: var(--accent-red); }
+                .lightbox-caption {
+                    position: absolute;
+                    bottom: 30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    text-align: center;
+                    color: white;
+                }
+                .lightbox-caption h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; }
+                .lightbox-caption p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; }
+            </style>
+
+            <!-- Gallery Grid -->
+            <div id="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                <div class="gallery-item" data-category="cad" onclick="openLightbox('assets/photos/3D_modeller_samlet.png', 'Full Assembly', '3D CAD model of the complete metal detector')">
+                    <img src="assets/photos/3D_modeller_samlet.png" alt="Full Assembly" style="object-fit: contain; background: #f8f8f8;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Full Assembly</h4><p>3D CAD Model</p></div>
+                </div>
+                <div class="gallery-item" data-category="cad" onclick="openLightbox('assets/photos/3D_assembly_ironman.png', 'Exploded View', 'Control unit and coil housing separated')">
+                    <img src="assets/photos/3D_assembly_ironman.png" alt="Exploded View" style="object-fit: contain; background: #f8f8f8;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Exploded View</h4><p>Control Unit + Coil</p></div>
+                </div>
+                <div class="gallery-item" data-category="simulation" onclick="openLightbox('assets/photos/Simulering_Hbro.png', 'QSPICE H-Bridge', 'Power stage switching waveforms at 2kHz')">
+                    <img src="assets/photos/Simulering_Hbro.png" alt="QSPICE Simulation" style="object-fit: cover; background: #000;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>QSPICE H-Bridge</h4><p>Switching Waveforms</p></div>
+                </div>
+                <div class="gallery-item" data-category="diagram" onclick="openLightbox('assets/photos/Blokdiagram.png', 'System Block Diagram', 'Complete signal flow from TX to metal classification')">
+                    <img src="assets/photos/Blokdiagram.png" alt="Block Diagram" style="object-fit: contain; background: white;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Block Diagram</h4><p>System Architecture</p></div>
+                </div>
+                <div class="gallery-item" data-category="diagram" onclick="openLightbox('assets/photos/battery_discharge_test.png', 'Battery Test Results', '164 minutes runtime with 9V alkaline under 2kHz load')">
+                    <img src="assets/photos/battery_discharge_test.png" alt="Battery Test" style="object-fit: cover; background: white;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Battery Discharge</h4><p>Real Test Data</p></div>
+                </div>
+                <div class="gallery-item" data-category="pcb" onclick="openLightbox('assets/photos/Højre_PCB.png', 'Control PCB (Right)', 'Main control board with MCU and display connector')">
+                    <img src="assets/photos/Højre_PCB.png" alt="Right PCB" style="object-fit: contain; background: #1a1a2e;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Control PCB</h4><p>MCU + Display</p></div>
+                </div>
+                <div class="gallery-item" data-category="diagram" onclick="openLightbox('assets/photos/Rx_amp.png', 'RX Amplifier Circuit', 'Complete receive amplifier with MCP6002 op-amp and ADC interface')">
+                    <img src="assets/photos/Rx_amp.png" alt="RX Amplifier" style="object-fit: contain; background: #f9f9f9;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>RX Amplifier</h4><p>Op-Amp Circuit</p></div>
+                </div>
+                <div class="gallery-item" data-category="diagram" onclick="openLightbox('assets/photos/Dead_Time_forklarings_diagram.png', 'Dead-Time Generator', 'Comparator-based dead-time circuit preventing shoot-through')">
+                    <img src="assets/photos/Dead_Time_forklarings_diagram.png" alt="Dead Time" style="object-fit: contain; background: #fafafa;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Dead-Time Gen</h4><p>Shoot-Through Protection</p></div>
+                </div>
+                <div class="gallery-item" data-category="simulation" onclick="openLightbox('assets/photos/RX-filter_simulation.png', 'RX Filter Response', 'Frequency response showing 2kHz passband and anti-aliasing')">
+                    <img src="assets/photos/RX-filter_simulation.png" alt="RX Filter" style="object-fit: cover; background: #0a0a0a;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>RX Filter</h4><p>Frequency Response</p></div>
+                </div>
+                <div class="gallery-item" data-category="measurement" onclick="openLightbox('assets/photos/LC_Tank_current.png', 'LC Tank Current', 'Oscilloscope capture of resonant tank current at 2kHz')">
+                    <img src="assets/photos/LC_Tank_current.png" alt="LC Tank" style="object-fit: cover; background: #1a1a1a;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>LC Tank Current</h4><p>Oscilloscope Capture</p></div>
+                </div>
+                <div class="gallery-item" data-category="pcb" onclick="openLightbox('assets/photos/Venstre_PCB.png', 'Power PCB (Left)', 'H-Bridge power stage and gate driver board')">
+                    <img src="assets/photos/Venstre_PCB.png" alt="Left PCB" style="object-fit: contain; background: #1a1a2e;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Power PCB</h4><p>H-Bridge + Gate Driver</p></div>
+                </div>
+                <div class="gallery-item" data-category="diagram" onclick="openLightbox('assets/photos/Timer1.png', 'Timer1 Configuration', 'ATmega328P Timer1 setup for 2kHz generation')">
+                    <img src="assets/photos/Timer1.png" alt="Timer1" style="object-fit: contain; background: white;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Timer1 Config</h4><p>2kHz Generation</p></div>
+                </div>
+                <div class="gallery-item" data-category="pcb" onclick="openLightbox('assets/photos/Dead_Time_PCB.png', 'Dead-Time PCB', 'PCB layout for the dead-time generator circuit')">
+                    <img src="assets/photos/Dead_Time_PCB.png" alt="Dead Time PCB" style="object-fit: cover; background: #1a1a2e;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>Dead-Time PCB</h4><p>Gate Driver Protection</p></div>
+                </div>
+                <div class="gallery-item" data-category="pcb" onclick="openLightbox('assets/photos/Rx_forstærker_PCB.png', 'RX Amplifier PCB', 'PCB layout for the receive amplifier board')">
+                    <img src="assets/photos/Rx_forstærker_PCB.png" alt="RX Amp PCB" style="object-fit: cover; background: #1a1a2e;">
+                    <div class="zoom-icon">🔍</div>
+                    <div class="caption"><h4>RX Amp PCB</h4><p>Signal Conditioning</p></div>
+                </div>
+            </div>
+
+            <!-- Lightbox Modal -->
+            <div id="gallery-lightbox" class="lightbox" onclick="closeLightbox()">
+                <div class="lightbox-close">×</div>
+                <img id="lightbox-img" src="" alt="Full view">
+                <div class="lightbox-caption">
+                    <h3 id="lightbox-title"></h3>
+                    <p id="lightbox-desc"></p>
+                </div>
+            </div>
+
+
+
         </div>
 
-        <!-- Feature Spotlight Modal -->
         <div id="file-modal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -2480,50 +2863,161 @@
             }, observerOptions);
 
             // Animate elements on load
-            document.querySelectorAll('.stat-card, .team-card, .meeting-card, .section-header, .tech-item').forEach((el, index) => {
-                el.classList.add('fade-in-entry');
-                el.style.animationDelay = `${index * 0.1}s`;
-                // For sections already visible, observer might not trigger if we don't observe
-                observer.observe(el);
+            window.addEventListener('load', () => {
+                document.querySelectorAll('.stat-card, .team-card, .meeting-card, .section-header, .tech-item').forEach((el, index) => {
+                    el.classList.add('fade-in-entry');
+                    el.style.animationDelay = `${index * 0.1}s`;
+                    observer.observe(el);
+                });
+                showMemberDetails('mads'); // Default selection
             });
 
-            // Tab Navigation
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
+            // Comprehensive Battery Lab Logic
+            (function() {
+                const canvas = document.getElementById('battery-canvas');
+                const ctx = canvas.getContext('2d');
+                const tooltip = document.getElementById('battery-tooltip');
+                const tTime = document.getElementById('tooltip-time');
+                const tVolt = document.getElementById('tooltip-volt');
 
-                    const sectionId = tab.dataset.section;
-                    document.querySelectorAll('.section').forEach(s => {
-                        if (s.classList.contains('active')) {
-                            s.classList.remove('active');
-                        }
+                const experimentalData = [
+                    [0, 8.95], [10, 8.91], [20, 8.87], [30, 8.82], [40, 8.78], [50, 8.72],
+                    [60, 8.65], [70, 8.58], [80, 8.51], [90, 8.42], [100, 8.35], [110, 8.28],
+                    [120, 8.19], [130, 8.10], [140, 8.01], [150, 7.89], [164, 7.76]
+                ];
+                const theoreticalData = [[164, 7.76], [200, 7.41], [240, 6.82], [280, 5.95]];
+                const MAX_TIME = 300;
+
+                function getCoords(time, volt) {
+                    const x = (time / MAX_TIME) * (canvas.width - 60) + 40;
+                    const y = canvas.height - 40 - ((volt - 5.5) / 4) * (canvas.height - 60);
+                    return {x, y};
+                }
+
+                function drawBatteryLab(mouseX = -1) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // PASS/FAIL ZONE SHADING
+                    const {x: cutoffX} = getCoords(100, 5.5);
+                    ctx.fillStyle = 'rgba(255, 123, 114, 0.03)';
+                    ctx.fillRect(40, 20, cutoffX - 40, canvas.height - 60);
+                    ctx.fillStyle = 'rgba(63, 185, 80, 0.03)';
+                    ctx.fillRect(cutoffX, 20, canvas.width - cutoffX - 20, canvas.height - 60);
+
+                    // Grid lines & Voltage Labels
+                    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+                    ctx.lineWidth = 1;
+                    ctx.font = '10px Inter';
+                    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                    for (let v = 6; v <= 9; v++) {
+                        const {y} = getCoords(0, v);
+                        ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(canvas.width - 20, y); ctx.stroke();
+                        ctx.fillText(v + 'V', 10, y + 4);
+                    }
+
+                    // Experimental Line (Solid Blue)
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#58a6ff';
+                    ctx.lineWidth = 4;
+                    experimentalData.forEach((p, i) => {
+                        const {x, y} = getCoords(p[0], p[1]);
+                        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                     });
+                    ctx.stroke();
 
-                    const activeSection = document.getElementById(sectionId);
-                    activeSection.classList.add('active');
-
-                    // Re-trigger animations for the new section
-                    activeSection.querySelectorAll('.fade-in-entry').forEach((el, index) => {
-                        el.style.animation = 'none';
-                        el.offsetHeight; /* trigger reflow */
-                        el.style.animation = null;
-                        el.style.animationDelay = `${index * 0.05}s`;
+                    // Theoretical Projection (Dashed)
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(88, 166, 255, 0.4)';
+                    ctx.setLineDash([10, 5]);
+                    ctx.lineWidth = 2;
+                    theoreticalData.forEach((p, i) => {
+                        const {x, y} = getCoords(p[0], p[1]);
+                        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
                     });
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Measured End Marker
+                    const {x: endX, y: endY} = getCoords(164, 7.76);
+                    ctx.fillStyle = '#ff7b72';
+                    ctx.beginPath(); ctx.arc(endX, endY, 5, 0, Math.PI * 2); ctx.fill();
+
+                    if (mouseX > 0) {
+                        let closest = [...experimentalData, ...theoreticalData].reduce((prev, curr) => {
+                            const pX = getCoords(prev[0], prev[1]).x;
+                            const cX = getCoords(curr[0], curr[1]).x;
+                            return (Math.abs(cX - mouseX) < Math.abs(pX - mouseX) ? curr : prev);
+                        });
+
+                        const {x, y} = getCoords(closest[0], closest[1]);
+                        ctx.fillStyle = 'white';
+                        ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+                        
+                        tooltip.style.display = 'block';
+                        const rect = canvas.getBoundingClientRect();
+                        tooltip.style.left = (x / (canvas.width / rect.width)) + 'px';
+                        tooltip.style.top = (y / (canvas.height / rect.height) - 60) + 'px';
+                        tTime.textContent = `Time: ${closest[0]} min`;
+                        tVolt.textContent = `Voltage: ${closest[1]}V`;
+                    }
+                }
+
+                canvas.addEventListener('mousemove', e => {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+                    drawBatteryLab(x);
+                });
+                canvas.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                    drawBatteryLab();
+                });
+                drawBatteryLab();
+            })();
+
+            // Architecture Interaction
+            document.querySelectorAll('.arch-block').forEach(block => {
+                block.addEventListener('mouseenter', () => {
+                    document.getElementById('arch-info-title').textContent = `${block.dataset.name} | Lead: ${block.dataset.owner}`;
+                    document.getElementById('arch-info-desc').textContent = block.dataset.desc;
+                });
+                block.addEventListener('mouseleave', () => {
+                    document.getElementById('arch-info-title').textContent = "Interactive Schematic";
+                    document.getElementById('arch-info-desc').textContent = "Hover over components to explore the signal chain and lead engineers.";
                 });
             });
 
-
-
-            // Architecture Hotspots
             document.querySelectorAll('.arch-hotspot').forEach(spot => {
                 spot.addEventListener('mouseenter', () => {
                     document.getElementById('arch-info-title').textContent = spot.dataset.signal;
-                    document.getElementById('arch-info-desc').textContent = "Signal intensity and phase measured at this point in the circuit.";
+                    document.getElementById('arch-info-desc').textContent = "Signal integrity point verified during assembly.";
                 });
-                spot.addEventListener('mouseleave', () => {
-                    document.getElementById('arch-info-title').textContent = "Interactive Diagram";
-                    document.getElementById('arch-info-desc').textContent = "Hover over any component to explore the hardware details and lead engineers.";
+            });
+
+            // Tab Navigation Logic
+            const sections = document.querySelectorAll('.section');
+            const tabs = document.querySelectorAll('.tab');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const sectionId = tab.dataset.section;
+                    
+                    // Update Tab UI
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Update Section Visibility
+                    sections.forEach(s => s.classList.remove('active'));
+                    const target = document.getElementById(sectionId);
+                    if (target) {
+                        target.classList.add('active');
+                        // Re-trigger entrance animations
+                        target.querySelectorAll('.fade-in-entry').forEach((el, i) => {
+                            el.style.animation = 'none';
+                            el.offsetHeight; 
+                            el.style.animation = null;
+                            el.style.animationDelay = `${i * 0.05}s`;
+                        });
+                    }
                 });
             });
 
@@ -2901,6 +3395,98 @@
                     document.getElementById('arch-info-desc').textContent = "Hover over any component to explore the hardware details and lead engineers.";
                 });
             });
+
+            // Simple Phase Lab
+            let currentSimplePhase = 0;
+            const simpleCanvas = document.getElementById('simple-phase-canvas');
+            const sCtx = simpleCanvas.getContext('2d');
+            
+            window.setSimpleTarget = function(val) {
+                currentSimplePhase = val;
+                const label = document.getElementById('simple-target-label');
+                if (val === 0) { label.textContent = "CLEAR"; label.style.color = "white"; }
+                else if (val === -55) { label.textContent = "IRON [FERRO]"; label.style.color = "#d29922"; }
+                else { label.textContent = "ALUMINUM [NON-FERRO]"; label.style.color = "#58a6ff"; }
+                drawSimplePhase();
+            };
+
+            function drawSimplePhase() {
+                sCtx.clearRect(0,0,simpleCanvas.width,simpleCanvas.height);
+
+                // Draw baseline reference wave (always dotted, white)
+                sCtx.strokeStyle = 'rgba(255,255,255,0.15)';
+                sCtx.lineWidth = 2;
+                sCtx.setLineDash([6, 6]);
+                sCtx.beginPath();
+                for(let x=0; x<simpleCanvas.width; x++) {
+                    const y = 50 + Math.sin(x*0.05)*30;
+                    if(x===0) sCtx.moveTo(x,y); else sCtx.lineTo(x,y);
+                }
+                sCtx.stroke();
+                sCtx.setLineDash([]);
+
+                // Draw shifted signal wave
+                const color = currentSimplePhase === 0 ? '#f0f6fc' : (currentSimplePhase > -70 ? '#d29922' : '#58a6ff');
+                sCtx.strokeStyle = color;
+                sCtx.lineWidth = 3;
+                sCtx.shadowBlur = 10;
+                sCtx.shadowColor = color;
+                sCtx.beginPath();
+                const shift = (currentSimplePhase/180) * Math.PI * 20;
+                for(let x=0; x<simpleCanvas.width; x++) {
+                    const y = 50 + Math.sin((x+shift)*0.05)*30;
+                    if(x===0) sCtx.moveTo(x,y); else sCtx.lineTo(x,y);
+                }
+                sCtx.stroke();
+                sCtx.shadowBlur = 0;
+            }
+            drawSimplePhase();
+
+            // Gallery Lightbox Functions
+            function openLightbox(src, title, desc) {
+                const lightbox = document.getElementById('gallery-lightbox');
+                document.getElementById('lightbox-img').src = src;
+                document.getElementById('lightbox-title').textContent = title;
+                document.getElementById('lightbox-desc').textContent = desc;
+                lightbox.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                const lightbox = document.getElementById('gallery-lightbox');
+                lightbox.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            // Close lightbox on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeLightbox();
+            });
+
+            // Gallery Filter Function
+            function filterGallery(category) {
+                // Update active tab
+                document.querySelectorAll('.gallery-tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.category === category);
+                });
+
+                // Filter items with animation
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    const matches = category === 'all' || item.dataset.category === category;
+                    item.style.transition = 'all 0.4s ease';
+                    if (matches) {
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                        item.style.display = 'block';
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            if (!matches) item.style.display = 'none';
+                        }, 400);
+                    }
+                });
+            }
         </script>
 </body>
 
