@@ -4,261 +4,70 @@
 
 **Electromagnetic Sensors & Digital Signal Processing**
 
-[![Status](https://img.shields.io/badge/Status-In%20Progress-green?style=for-the-badge)](https://github.com)
-[![Course](https://img.shields.io/badge/DTU-34621-red?style=for-the-badge)](https://www.dtu.dk)
-[![Platform](https://img.shields.io/badge/Platform-Arduino%20Nano-00979D?style=for-the-badge&logo=arduino)](https://www.arduino.cc/)
-[![License](https://img.shields.io/badge/License-Educational-blue?style=for-the-badge)](LICENSE)
-[![Timeline](https://img.shields.io/badge/Project-Timeline-purple?style=for-the-badge)](https://madsrudolph.github.io/34621-Metal-Detector/)
+[![Report](https://img.shields.io/badge/Report-PDF-red?style=flat-square)](Docs/Metaldetektor_Projekt.pdf)
+[![Timeline](https://img.shields.io/badge/Project-Timeline-purple?style=flat-square)](https://madsrudolph.github.io/34621-Metal-Detector/)
+[![Status](https://img.shields.io/badge/Status-Completed-success?style=flat-square)](https://github.com)
 
-<br>
-
-*A Very Low Frequency induction balance metal detector with real-time DFT-based phase detection*
-
-[Features](#features) | [Hardware](#hardware) | [Getting Started](#getting-started) | [Progress](#progress) | [Team](#team) | [Timeline](https://madsrudolph.github.io/34621-Metal-Detector/)
+_A technical implementation of a VLF induction balance metal detector using real-time DFT-based phase detection._
 
 ---
 
 </div>
 
-> [!NOTE]
-> This project is in **active development**. Core firmware is feature-complete with modular architecture, IIR filtering, buzzer feedback, and metal classification. H-bridge driver and RX amplifier are designed and simulated. Hardware build and integration testing in progress.
+## Overview
 
-<br>
+This project targets the development of a functional VLF metal detector built on the ATmega328P. It features modular firmware, IIR signal smoothing, and phase-based classification to distinguish between ferromagnetic and non-ferromagnetic metals.
 
-## Features
+### Features
 
-<table>
-<tr>
-<td width="50%">
+- **DSP Core:** Single-bin DFT optimized for 4x oversampling (8 kHz) with real-time phase observation.
+- **Power Stage:** High-efficiency H-bridge MOSFET driver for the transmitter coil.
+- **Coil System:** Concentric coil design with an integrated bucking coil for balance.
+- **Feedback:** Real-time OLED HUD and variable-tone buzzer for proximity detection.
 
-### Signal Processing
-- Single-bin DFT optimized for 4x oversampling
-- No trigonometric calculations needed (coefficients: +1, -1, 0)
-- 8 kHz sample rate, 64-sample window
-- Real-time magnitude and phase calculation
-- IIR filtering for stable readings
-- Phase-based metal classification (ferro/non-ferro)
+## Architecture
 
-</td>
-<td width="50%">
-
-### Hardware Design
-- H-bridge MOSFET driver (IRF5305PbF + IRL530)
-- RX amplifier circuit (BC337 transistor)
-- Concentric coil configuration with bucking coil
-- Timer-synchronized ADC sampling
-- OLED display output (SSD1306)
-- Buzzer for audio feedback
-
-</td>
-</tr>
-</table>
-
-<br>
-
-## System Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              TX PATH                                        │
-│  ┌─────────┐    ┌─────────┐    ┌─────────┐                                 │
-│  │   MCU   │───>│ H-Bridge│───>│ TX Coil │                                 │
-│  │ 2kHz SQ │    │ MOSFET  │    │  200mm  │                                 │
-│  └─────────┘    └─────────┘    └────┬────┘                                 │
-│       ^                             │                                       │
-│       │                         [Metal]                                     │
-│       │                             │                                       │
-│       │              RX PATH        v                                       │
-│  ┌────┴────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐                  │
-│  │ 10-bit  │<───│ Bucking │<───│ RX Coil │<───│ RX Amp  │                  │
-│  │   ADC   │    │  Coil   │    │  80mm   │    │ BC337   │                  │
-│  └────┬────┘    └─────────┘    └─────────┘    └─────────┘                  │
-│       │                                                                     │
-│       v              DIGITAL SIGNAL PROCESSING                              │
-│  ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐                  │
-│  │   DFT   │───>│IIR Filt │───>│ Detect  │───>│ Display │                  │
-│  │  Re/Im  │    │ Smooth  │    │ Classify│    │ + Buzzer│                  │
-│  └─────────┘    └─────────┘    └─────────┘    └─────────┘                  │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    MCU[MCU / 2kHz SQ] --> HB[H-Bridge] --> TX[TX Coil]
+    Target((Metal)) -. Induction .-> RX[RX Coil]
+    RX --> AMP[RX Amp] --> ADC[10-bit ADC]
+    ADC --> DFT[DFT Processing] --> IIR[IIR Filter] --> UI[OLED + Buzzer]
 ```
 
-<br>
+## Specifications
 
-## Hardware
+| Component        | Specification                     |
+| :--------------- | :-------------------------------- |
+| **TX Frequency** | 2 kHz (Square Wave)               |
+| **Sample Rate**  | 8 kHz (4x Oversampling)           |
+| **MCU**          | ATmega328P (Arduino Nano @ 16MHz) |
+| **Driver**       | H-Bridge (IRF5305 + IRL530)       |
+| **Sensors**      | Concentric Coils (Bucking config) |
+| **UI**           | SSD1306 OLED (I2C)                |
 
-<table>
-<tr>
-<th>Component</th>
-<th>Part</th>
-<th>Description</th>
-</tr>
-<tr>
-<td><b>Microcontroller</b></td>
-<td>ATmega328P</td>
-<td>Arduino Nano @ 16MHz</td>
-</tr>
-<tr>
-<td><b>ADC</b></td>
-<td>Internal</td>
-<td>10-bit, Timer0 auto-trigger @ 8kHz</td>
-</tr>
-<tr>
-<td><b>TX Driver</b></td>
-<td>IRF5305 + IRL530</td>
-<td>H-bridge MOSFET, ~90% efficiency</td>
-</tr>
-<tr>
-<td><b>Display</b></td>
-<td>SSD1306</td>
-<td>128×64 OLED, I2C</td>
-</tr>
-<tr>
-<td><b>Power</b></td>
-<td>6LR61</td>
-<td>9V alkaline battery</td>
-</tr>
-</table>
+## Repository
 
-### Key Parameters
-
-| Parameter | Value | Notes |
-|:----------|:-----:|:------|
-| TX Coil | `Ø200 mm` | 20 turns, ~190 µH |
-| RX Coil | `Ø80 mm` | 200 turns, ~12.6 mH |
-| Bucking Coil | `Ø120 mm` | 20 turns, ~430 µH |
-| TX Frequency | `2 kHz` | Timer0 generated square wave |
-| Sample Rate | `8 kHz` | 4× oversampling |
-| DFT Window | `64 samples` | ~8 ms (16 TX cycles) |
-| Detection Depth | `50 mm` | Requirement target |
-| H-bridge Efficiency | `~90%` | QSPICE validated |
-| Runtime | `100 min` | @ 9V battery |
-
-<br>
-
-## Repository Structure
-
-```
-34621-Metal-Detector/
-├── Code/                     # Main firmware (PlatformIO)
-│   └── src/
-│       ├── main.c            # Main program loop
-│       ├── adc.c             # ADC auto-trigger sampling
-│       ├── button.c          # Button handling with debounce
-│       ├── buzzer.c          # Audio feedback (beeps)
-│       ├── capture.c         # MATLAB serial interface
-│       ├── detection.c       # Metal classification
-│       ├── dft.c             # DFT calculation
-│       ├── display.c         # OLED output with graphical HUD
-│       ├── filter.c          # IIR filtering
-│       ├── jingle.c          # Startup melody
-│       ├── timer.c           # Timer0/Timer1 setup
-│       ├── include/          # Header files
-│       │   ├── config.h      # Global configuration
-│       │   └── *.h           # Module headers
-│       └── drivers/          # I2C, SSD1306 drivers
-├── Docs/                     # Project documentation
-│   ├── Theory/               # Technical analysis
-│   ├── Guides/               # Implementation guides
-│   ├── Matlab/               # MATLAB verification scripts
-│   └── Project_Roadmap.md    # Requirements tracking
-├── KiCad/                    # PCB schematics
-│   ├── Metaldetector/        # H-bridge and MCU
-│   └── rx forstærker/        # RX amplifier circuit
-├── LTspice/                  # LTspice simulations
-├── QSPICE/                   # QSPICE simulations (H-bridge)
-└── Literature/               # Datasheets & references
-```
-
-<br>
+- `Code/` — Core firmware (PlatformIO, C)
+- `Docs/` — Technical reports and [Final PDF](Docs/Metaldetektor_Projekt.pdf)
+- `KiCad/` — Hardware schematics and PCB designs
+- `Simulation/` — LTspice and QSPICE validation files
+- `Scripts/` — MATLAB and Python analysis tools
 
 ## Getting Started
 
-### Prerequisites
-
-- [PlatformIO](https://platformio.org/) (VS Code extension or CLI)
-- Arduino Nano (ATmega328P)
-- USB cable (Mini-B)
-
-### Build & Upload
+Build and upload using [PlatformIO](https://platformio.org/):
 
 ```bash
-# Clone the repository
-git clone https://github.com/MadsRudolph/34621-Metal-Detector.git
-cd 34621-Metal-Detector/Code
-
-# Build
-pio run
-
-# Upload to board
+cd Code
 pio run -t upload
-
-# Monitor serial output
 pio device monitor
 ```
 
-<details>
-<summary><b>Pin Configuration</b></summary>
-
-<br>
-
-| Pin | Function | Direction |
-|:---:|:---------|:---------:|
-| 9 (PB1) | TX signal output (2kHz square wave) | OUT |
-| 11 (PB3) | Buzzer output (PWM tone) | OUT |
-| A0 (PC0) | RX signal input (ADC) | IN |
-| A4 (PC4) | I2C SDA (OLED) | I/O |
-| A5 (PC5) | I2C SCL (OLED) | OUT |
-| D2 (PD2) | Start/Stop button | IN |
-| D3 (PD3) | Calibration button | IN |
-| D4 (PD4) | Debug display toggle | IN |
-
-</details>
-
-<br>
-
-## Progress
-
-| Phase | Status | Progress |
-|:------|:------:|:---------|
-| Requirements & Planning | Done | 100% |
-| Coil Design | Done | 100% |
-| Circuit Design (H-bridge) | Done | 100% |
-| RX Amplifier Design | Done | 100% |
-| QSPICE/LTspice Simulations | Done | 100% |
-| Core Firmware (TX/RX/DFT) | Done | 100% |
-| IIR Filtering | Done | 100% |
-| Metal Classification | Done | 100% |
-| UI Firmware (Buttons/Buzzer) | Done | 100% |
-| Code Modularization | Done | 100% |
-| Hardware Build | Active | 40% |
-| Integration Testing | Pending | 0% |
-| Final Report | Active | 50% |
-
-**Overall Progress: ~75%** (Software 95%, Hardware 40%)
-
-> **Deadline:** January 23, 2026
->
-> See [Project_Roadmap.md](Docs/Project_Roadmap.md) for detailed requirements analysis and implementation status.
-
-<br>
-
-## Team
-
-<table>
-<tr>
-<td align="center"><b>Mads Rudolph</b></td>
-<td align="center"><b>Andreas Skaaning</b></td>
-<td align="center"><b>Jonas Beck</b></td>
-<td align="center"><b>Sigurd Hestbech</b></td>
-</tr>
-</table>
-
-<div align="center">
-
-**DTU Diplom** · January 2026
-
 ---
 
-<sub>Educational project for DTU course 34621 — Electromagnetic Sensors and Digital Signal Processing</sub>
-
+<div align="center">
+<b>Mads Rudolph · Andreas Skaaning · Jonas Beck · Sigurd Hestbech</b>
+<br>
+<sub>DTU Course 34621 · January 2026</sub>
 </div>
