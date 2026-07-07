@@ -5,7 +5,7 @@
 **Electromagnetic Sensors & Digital Signal Processing**
 
 [![Report](https://img.shields.io/badge/Report-PDF-red?style=flat-square)](Docs/Metaldetektor_Projekt.pdf)
-[![Timeline](https://img.shields.io/badge/Project-Timeline-purple?style=flat-square)](https://madsrudolph.github.io/34621-Metal-Detector/timeline.html)
+[![Timeline](https://img.shields.io/badge/Project-Timeline-purple?style=flat-square)](https://skab101.github.io/34621-Metal-Detector/timeline.html)
 [![Status](https://img.shields.io/badge/Status-Completed-success?style=flat-square)](https://github.com)
 
 _A technical implementation of a VLF induction balance metal detector using real-time DFT-based phase detection._
